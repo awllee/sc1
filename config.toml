@@ -1,0 +1,82 @@
+baseURL = "https://awllee.github.io/sc1-2019/"
+languageCode = "en-us"
+title = "SC1"
+
+theme = "hugo-ivy"
+ignoreFiles = ["\\.Rmd$", "_files$", "_cache$"]
+footnotereturnlinkcontents = "↩"
+
+[[menu.main]]
+    name = "Home"
+    url = "/"
+    weight = 1
+[[menu.main]]
+    name = "About"
+    url = "/about/"
+    weight = 20
+[[menu.main]]
+    name = "Intro to R"
+    url = "/intro-r/"
+    weight = 2
+[[menu.main]]
+    name = "Reproducibility"
+    url = "/reproducibility/"
+    weight = 3
+[[menu.main]]
+    name = "Packages"
+    url = "/packages/"
+    weight = 4
+[[menu.main]]
+    name = "Common R"
+    url = "/common-r/"
+    weight = 5
+[[menu.main]]
+    name = "Functional / OO"
+    url = "/functional-oo/"
+    weight = 6
+[[menu.main]]
+    name = "Tidyverse"
+    url = "/tidyverse/"
+    weight = 7
+[[menu.main]]
+    name = "Performance / Bugs"
+    url = "/profile-debug/"
+    weight = 8
+[[menu.main]]
+    name = "Dense matrices"
+    url = "/dense-matrix/"
+    weight = 9
+[[menu.main]]
+    name = "Sparse matrices"
+    url = "/sparse-matrix/"
+    weight = 10
+[[menu.main]]
+    name = "Optimization"
+    url = "/optimization/"
+    weight = 11
+[[menu.main]]
+    name = "Integration"
+    url = "/integration/"
+    weight = 12
+[[menu.main]]
+    name = "Notes"
+    url = "/notes/"
+    weight = 13
+[[menu.main]]
+    name = "Lectures"
+    url = "/lectures/"
+    weight = 14
+[[menu.main]]
+    name = "Exercises"
+    url = "/exercises/"
+    weight = 15
+
+[params]
+    description = "Statistical Computing 1"
+    footer = "&copy; [Anthony Lee](https://sites.google.com/view/anthonylee) 2019 | [Github](https://github.com/awllee)"
+    highlightjsVersion = "9.12.0"
+    highlightjsCDN = "//cdn.bootcss.com"
+    highlightjsLang = ["r", "yaml", "tex"]
+    highlightjsTheme = "github"
+    GithubEdit = "https://github.com/awllee/sc1-2019/edit/master/content/"
+    GithubView = "https://github.com/awllee/sc1-2019/blob/master/content/"

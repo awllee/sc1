@@ -1,0 +1,31 @@
+language: r
+dist: xenial
+cache: packages
+branches:
+    only:
+        - master
+r_packages:
+    - ggplot2
+    - leaflet
+    - DT
+r_github_packages:
+    - rstudio/blogdown
+    - yihui/xaringan
+
+before_script:
+    - Rscript -e 'blogdown::install_hugo()'
+
+script:
+    - Rscript -e 'blogdown::build_site()'
+
+before_deploy:
+    - rm public/slides/.gitignore
+
+deploy:
+    provider: pages
+    skip_cleanup: true
+    github_token: $GITHUB_PAT
+    on:
+        branch: master
+    local_dir: public
+    target_branch: gh-pages

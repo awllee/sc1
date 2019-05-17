@@ -1,0 +1,12 @@
+---
+title: Resourced note
+weight: 3
+---
+
+We load some data, which is just `x <- 1:100`.
+
+```{r}
+  load("data.RData")
+  x
+  mean(x)
+```

@@ -1,0 +1,33 @@
+---
+title: Rmarkdown test page
+weight: 4
+---
+
+Some math
+
+$$\pi(\varphi) = \int \varphi(x) \pi({\rm d}x).$$
+
+Here we are testing RMarkdown rendering.
+
+```{r}
+mc <- function(mu, f, N) {
+  v = 0.0
+  for (i in 1:N) {
+    x <- mu()
+    v <- v + f(x)
+  }
+  return(v/N)
+}
+
+unif <- function() {
+  return(runif(1))
+}
+
+g = sin
+
+N <- 1000
+
+system.time(y <- mc(unif, g, N))
+
+print(paste(y, ", ", 1.0 - cos(1.0)))
+```
