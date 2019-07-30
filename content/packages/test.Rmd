@@ -1,4 +1,0 @@
----
-title: Testing your R package
-weight: 4
----

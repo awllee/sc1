@@ -166,9 +166,9 @@ Logical operators are useful for combining logical values. These are
 |:--------:|:------------------------:|
 | !        | not                      |
 | &        | and                      |
-| |        | or                       |
+| \|        | or                       |
 | &&       | short-circuit and        |
-| ||       | short-circuit or         |
+| \|\|       | short-circuit or         |
 
 A short-circuit `&&` or `||` evaluates only those values from left to right that are required to determine if the result is `TRUE` or `FALSE`. For example, `FALSE && x` evaluates to `FALSE` and `TRUE || x` evaluates to `TRUE` irrespective of the value of `x` and so `x` need not be evaluated.
 
@@ -637,7 +637,7 @@ for (i in 1:n) {
 }
 ```
 
-In R it is often preferable for performance reasons to use loop replacements such as `apply`, `lapply`. We will consider this in more detail later.
+Some people prefer to use loop replacements such as `apply` and `lapply`. We will consider this in more detail later.
 
 When using loops, the commands `break` and `next` are useful. The former immediately exits the loop, while the latter immediately starts the next iteration of the loop.
 

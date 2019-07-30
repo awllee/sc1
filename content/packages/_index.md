@@ -2,4 +2,4 @@
 title: Packages
 ---
 
-We consider version control, making a package and testing code.
+We consider organizing your code, version control, making a package and testing code.
