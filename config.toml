@@ -11,10 +11,6 @@ footnotereturnlinkcontents = "↩"
     url = "/"
     weight = 1
 [[menu.main]]
-    name = "About"
-    url = "/about/"
-    weight = 20
-[[menu.main]]
     name = "Intro to R"
     url = "/intro-r/"
     weight = 2
@@ -58,18 +54,6 @@ footnotereturnlinkcontents = "↩"
     name = "Integration"
     url = "/integration/"
     weight = 12
-[[menu.main]]
-    name = "Notes"
-    url = "/notes/"
-    weight = 13
-[[menu.main]]
-    name = "Lectures"
-    url = "/lectures/"
-    weight = 14
-[[menu.main]]
-    name = "Exercises"
-    url = "/exercises/"
-    weight = 15
 
 [params]
     description = "Statistical Computing 1"
