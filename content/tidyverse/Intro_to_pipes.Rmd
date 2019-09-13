@@ -8,7 +8,7 @@ body {
 text-align: justify}
 </style>
   
-Here we introduce the pipe operator, which is provided by the [`magrittr`](https://cran.r-project.org/web/packages/magrittr/) `R` package. This introduction is extremely short, and we refer to [R for Data Science](https://r4ds.had.co.nz) for details.
+Here we introduce the pipe operator, which is provided by the [`magrittr`](https://cran.r-project.org/web/packages/magrittr/) `R` package. This introduction is extremely short, and we refer to [R for Data Science](https://r4ds.had.co.nz) for details. We start by explaining what pipes are, how they work and then we will give examples of when they are useful.
   
 ## Pipe basic
 
@@ -74,8 +74,12 @@ x %>% { matrix(.[[1]], nrow = .[[2]], ncol = .[[3]], byrow = .[[4]]) }
 ```
 which is equivalent to `matrix(letters[1:6], nrow = 2, ncol = 3, byrow = TRUE)`.
 
+## When are pipes useful?
 
-
+Have gone through the introduction to pipes, you might wonder why should you care given that you can obtain the same result using a composition of function. Indeed, the first example where we plotted $\sqrt(|\text{cos}(x)|)$ is simple enough for explaining how pipes work, but it not an example where pipes are useful (doing `plot(sqrt(abs(cos(x))))` might be clearer). To motivate pipes, consider the following example:
+```{r}
+library(qgam)
+```
 
 
 <!-- Consider the data set: -->
