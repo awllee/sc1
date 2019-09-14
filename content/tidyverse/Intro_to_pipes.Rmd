@@ -10,7 +10,7 @@ text-align: justify}
   
 Here we introduce the pipe operator, which is provided by the [`magrittr`](https://cran.r-project.org/web/packages/magrittr/) `R` package. This introduction is extremely short, and we refer to [R for Data Science](https://r4ds.had.co.nz) for details. We start by explaining what pipes are, how they work and then we will give examples of when they are useful.
   
-## Pipe basic
+## Pipes basic
 
 The pipe operator `%>%` is quite simple, but very useful in certain situations. Consider the following code:
 ```{r, fig.show = TRUE}
@@ -24,7 +24,7 @@ library(magrittr)
 
 x %>% cos %>% abs %>% sqrt %>% plot
 ```
-As you can see, the output is the same, with the exception of the y-axis label, which is now "." (we'll explain the reason for that in a moment). Now, what is happening? Essentially, the pipe operator is used in expressions of the type `R_object %>% A_function` and it trasforms this expression into something equivalent to `A_function( R_object )`. So the function composition `f1(f2(x))` becomes `x %>% f2 %>% f1`.  
+As you can see, the output is the same, with the exception of the y-axis label, which is now "." (we'll explain the reason for that in a moment). Now, what is happening? Essentially, the pipe operator is used in expressions of the type `R_object %>% A_function` and it transforms this expression into something equivalent to `A_function( R_object )`. So the function composition `f1(f2(x))` becomes `x %>% f2 %>% f1`.  
 
 To be more precise, the code `x %>% cos %>% abs %>% sqrt %>% plot` is equivalent to:
 ```{r}
@@ -41,7 +41,7 @@ myFun(x)
 ```
 that is, we are applying a sequence of functions and we are storing the partial results in the ".". This should explain why `.` appears in the y-axis label. 
 
-Now, what do we do if we want to specify if we want to specify some extra arguments, for example as in the code
+Now, what do we do if we want to specify some extra arguments, for example as in the code
 ```{r}
 plot(x = x, y = sqrt(abs(cos(x))), ylab = "y")
 ```
@@ -51,16 +51,16 @@ x %>% cos %>% abs %>% sqrt %>% plot(x = x, y = ., ylab = "y")
 ```
 Hence, we use `.` as a placeholder for the argument that is being piped (the lhs of the pipe operator). 
 
-WARNING: a clarifications is needed here. By default the placeholder `.` will be used as the first argument of the function to be applied (here `plot()`). That is, `x %>% plot(ylab = "y")` is equivalent to `plot(., ylab = "y")` where `. == x`. The behaviour is overridden if the placeholders appear elsewhere on the rhs. For instance `x %>% plot(x = ., ylab = "y")` is not equivalent to `plot(x, x = ., ylab = "y")`, but it is the same as `plot(x = x, ylab = "y")`. However the following does not work:
+WARNING: a clarifications is needed here. By default the placeholder `.` will be used as the first argument of the function to be applied (here `plot()`). That is, `x %>% plot(ylab = "y")` is equivalent to `plot(., ylab = "y")` where `.` is equal to `x`, the lhs of the pipe. The behaviour is overridden if the placeholder appears somewhere on the rhs. For instance `"y" %>% plot(x = x, ylab = .)` is not equivalent to `plot(., x = x, ylab = .)` with `. == x`,  but it is the same as `plot(x = x, ylab = "y")`. Hence, if we use the placeholder explicitly on the rhs of the pipe, the placeholder `.` will not be assigned to the first argument of the rhs function. However, notice that the following does not work:
 ```{r, eval = FALSE}
 x %>% plot(x = x, y = . + 1, ylab = "y")
 # Error in plot.xy(xy, type, ...) : invalid plot type
 ```
-Why? Because here the placeholder appears only the nested expression (`. + 1`) and the above code is equivalent to `plot(x, x = x, y = x + 1, ylab = "y")`, which leads to an error. Hence, when the placeholder appears only in nested expressions on the rhs of the pipe, the `%>%` follows the default behaviour consisting using the `.` (where `. == x` here) as the first argument of the function to be applied (`plot`). To override this we must sandwhich the rhs of the pipe using curly `{}` brackets:
+Why? Because here the placeholder appears only the nested expression (`. + 1`) and the above code is equivalent to `plot(., x = x, y = . + 1, ylab = "y")` with `. == x`, which leads to an error. Hence, when the placeholder appears only in nested expressions on the rhs of the pipe, the `%>%` follows the default behaviour consisting using the `.` (where `. == x` here) as the first argument of the rhs function to be applied (`plot`). To override this we must sandwhich the rhs of the pipe using curly `{}` brackets:
 ```{r}
 x %>% { plot(x = x, y = . + 1, ylab = "y") }
 ```
-which makes so that the `.` appears only where in it is explicitly used.
+which makes so that the `.` is used only in the function arguments where it appears explicitly.
  
 Having clarified this, we can now show how the `.` can be used multiple times inside the rhs function, for instance:
 ```{r}
@@ -76,11 +76,127 @@ which is equivalent to `matrix(letters[1:6], nrow = 2, ncol = 3, byrow = TRUE)`.
 
 ## When are pipes useful?
 
-Have gone through the introduction to pipes, you might wonder why should you care given that you can obtain the same result using a composition of function. Indeed, the first example where we plotted $\sqrt(|\text{cos}(x)|)$ is simple enough for explaining how pipes work, but it not an example where pipes are useful (doing `plot(sqrt(abs(cos(x))))` might be clearer). To motivate pipes, consider the following example:
-```{r}
+Have gone through the introduction to pipes, you might wonder why should you care given that you can obtain the same result using a composition of functions. Indeed, the first example where we plotted $\sqrt(|\text{cos}(x)|)$ is simple enough for explaining how pipes work, but it is not an example where pipes are useful (doing `plot(sqrt(abs(cos(x))))` might be clearer). To motivate pipes, consider the following example:
+```{r, message = FALSE}
 library(qgam)
+data(UKload)
+head(UKload)
 ```
+Here we are loading data on total electricity demand in the UK. Here variable `NetDemand` is the demand, `Posan` is a cyclical variable indicating the position along the year and `Dow` is the day of the week (in French!). See `?UKload` for an explanation regarding the meaning of the other variables. Now let's look at the following code: 
+```{r, message = FALSE}
+plot(NetDemand ~ Posan, 
+     transform(
+       head(
+         subset(UKload, Dow == "lundi", select = c("NetDemand", "Posan")), 
+         100), 
+       Posan = Posan * 365)
+     )
+```
+What are we doing here? We are performing the following steps:
 
+1. `subset` selects the Mondays (`"lundi"`) and the `NetDemand` and `Posan` columns;
+2. `head` selects the first 100 rows;
+3. `transform` makes so that `Posan` takes value in $[0, 365]$ rather than $[0, 1]$.
+4. `plot` plots `NetDemand` vs `Posan`.
+
+Now, to understand what is going on here, you need to read the code from the inner-most function call (`subset`) to the outer-most one (`plot`). So the code does not clearly express the sequence of operations detailed in the numbered list above. This is an example where pipes lead to much clearer code: 
+```{r, message = FALSE}
+UKload %>% 
+  subset(Dow == "lundi", select = c("NetDemand", "Posan")) %>%
+  head(100) %>%
+  transform(Posan = Posan * 365) %>%
+  plot(NetDemand ~ Posan, data = .)
+```
+In fact, we can understand which operations are being performed by simply going from the top to the bottom line. It is also clear what arguments are being provided to each function. In summary, pipes are useful when you are calling a sequence of functions where the output of one function is going to be the input of the next one.
+
+## Advanced piping
+
+Here we briefly mention some extra details and some more exotic types of pipes.
+
+### The assignment pipe %<>%
+
+Consider the following code:
+```{r, message = FALSE}
+x <- c(5, 1, 7, 9, 3)
+
+x %<>% sort
+
+x
+```
+What happened? Here the assignment pipe `%<>%` is a shortcut for `x <- x %>% sort`. That is, it performs the pipelined operations and then it stores the result in `x`. Importantly, `%<>%` can only be the first pipe in a pipeline, so that:
+```{r, message = FALSE}
+x <- c(5, 1, 7, 9, 3)
+
+x %>% sort %<>% sort(decreasing = TRUE)
+
+x
+```
+does not work, in the sense that `x` is not modified. Instead:
+```{r, message = FALSE}
+x <- c(5, 1, 7, 9, 3)
+
+x %<>% sort %>% sort(decreasing = TRUE)
+
+x
+```
+does modify `x`. Notice that `x` is in decreasing order, so the output of the last pipe in the pipeline is stored in `x`.
+
+### The `tee` pipe `%T>%`
+
+Consider the code:
+```{r, message = FALSE}
+100 %>% 
+  seq(0, 2*pi, length.out = .) %>%
+  cos %>%
+  plot
+```
+which is plotting the $\text{cos}(x)$ at 100 values in $[0, 2\pi]$. Now, what if also we want to store the computed value of $\text{cos}(x)$? The following would not work: 
+```{r, message = FALSE, fig.show='hide'}
+x <- 100 %>% 
+  seq(0, 2*pi, length.out = .) %>%
+  cos %>%
+  plot
+x
+```
+In fact, we are storing in `x` the output of the final function in the pipe, which is `plot` (and `plot` returns `NULL`). Storing partial results of the pipe requires using the `%T>%` operator as follows:
+```{r, message = FALSE, fig.show='hide'}
+x <- 100 %>% 
+  seq(0, 2*pi, length.out = .) %>%
+  cos %T>%
+  plot
+x[1:10]
+```
+This produces the plot (not shown) and returns the output of the call to `cos()`. The `%T>%` operator differs from `%>%` because it returns output of its lhs, rather than of its rhs. As a final example consider:
+```{r, message = FALSE}
+par(mfrow = c(1, 2))
+
+100 %>% 
+  seq(0, pi, length.out = .) %>%
+  cos %T>%
+  plot(ylab = "cos(x)") %>%
+  acos %>%
+  plot(ylab = "acos(cos(x))")
+```
+which clarifies that the `cos %T>% plot` section of the pipeline passes the output of `cos()` to the next section. So the `%T>%` operator is useful when you want to "keep piping" by skipping the output of one pipeline component. In this specific example we are not interested in the output of `plot`, which is being called only for its side effects (the plot it draws).
+
+### The `exposition` pipe `%$%`
+
+This type of pipe is useful when working with named lists and data frames. Consider the example:
+```{r}
+UKload %>%
+  subset(Year == 2011) %>% 
+  { cor(.$wM, .$NetDemand) }
+```
+We compute the correlation between electricity demand and temperature in 2011 (see above for explanations regarding why we need the curly brackets here). Now, we can do the same with less code by doing:
+```{r}
+UKload %>%
+  subset(Year == 2011) %$%
+  cor(wM, NetDemand)
+```
+Here the `%$%` operator makes so that the names of the object on the lhs are available in the function call on the rhs. In base `R` this would be achieved using the `with` function:
+```{r}
+with(UKload %>% subset(Year == 2011), cor(wM, NetDemand))
+```
 
 <!-- Consider the data set: -->
 <!-- ```{r} -->
