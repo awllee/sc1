@@ -17,9 +17,6 @@ before_script:
 script:
     - Rscript -e 'blogdown::build_site()'
 
-before_deploy:
-    - rm public/slides/.gitignore
-
 deploy:
     provider: pages
     skip_cleanup: true
