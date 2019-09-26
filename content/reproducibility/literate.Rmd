@@ -7,7 +7,7 @@ weight: 2
 >
 > -- Donald E. Knuth
 
-Literate programming was introduced by Donald Knuth in [a 1984 article] (https://doi.org/10.1093/comjnl/27.2.97) featuring the quote above.
+Literate programming was introduced by Donald Knuth in [a 1984 article](https://doi.org/10.1093/comjnl/27.2.97) featuring the quote above.
 
 In practice, literate programming involves writing source code that can be processed to produce
 

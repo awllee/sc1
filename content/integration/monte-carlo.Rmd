@@ -262,7 +262,7 @@ $$n^{1/2} \{ n^{-1} S_{n}(f) - \pi(f) \} \overset{L}{\to} N(0,\sigma^{2}(f))$$
 as $n\rightarrow\infty$, where $\bar{f}=f-\pi(f)$ and
 $$\sigma^{2}(f)=\mathsf{E}_{\pi}\left[\bar{f}(X_{0})^{2}\right]+2\sum_{k=1}^{\infty}\mathsf{E}_{\pi}\left[\bar{f}(X_{0})\bar{f}(X_{k})\right]<\infty.$$
 
-## Basic definitions (needs tidying)
+## Basic definitions
 
 The LLN and CLT we have seen make various assumptions about the Markov chain $\mathbf{X}$ that you may not be familiar with. For this course, it is not necessary to go into too much detail about the beautiful theory underlying Markov chains on general state spaces and corresponding ergodic averages. What is clear is that we are interested in a fairly restricted set of Markov chains. So we will just define at a high-level the basic ideas.
 
