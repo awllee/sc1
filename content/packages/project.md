@@ -46,4 +46,4 @@ library(Matrix)
 
 ## Example project
 
-An example R project can be found at **insert here**.
+An example R project can be found [here](https://github.com/awllee/SC1ExampleProject). You can clone it and knit the RMarkdown document if you like.
