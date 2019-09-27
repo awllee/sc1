@@ -39,13 +39,9 @@ footnotereturnlinkcontents = "↩"
     url = "/profile-debug/"
     weight = 8
 [[menu.main]]
-    name = "Dense matrices"
-    url = "/dense-matrix/"
+    name = "Matrices"
+    url = "/matrices/"
     weight = 9
-[[menu.main]]
-    name = "Sparse matrices"
-    url = "/sparse-matrix/"
-    weight = 10
 [[menu.main]]
     name = "Optimization"
     url = "/optimization/"
