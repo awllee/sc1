@@ -90,7 +90,7 @@ deploy:
     target_branch: gh-pages
 ```
 
-Rather than building an R package, Travis will render the RMarkdown file and place it in to the "public" subdirectory. Then the deploy options tell Travis to copy the public directory to the `gh-pages` branch of the repository.
+Rather than building an R package, Travis will render the RMarkdown file and place it in the "public" subdirectory. Then the deploy options tell Travis to copy the public directory to the `gh-pages` branch of the repository.
 
 For Travis to successfully deploy the webpages, you should create a `gh-pages` branch in your repository. You can do this using the GitHub web interface. You should also go to the settings page for the repository and in the GitHub Pages section you should select the `gh-pages` branch as the source.
 

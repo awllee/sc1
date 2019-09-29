@@ -46,7 +46,7 @@ The documentation builder also creates/overwrites the NAMESPACE file, which spec
 
 ## Testing
 
-Package functions should meet certain criteria. One can make check that they meet these criteria by writing test functions that only "pass" if the criteria are met.
+Package functions should meet certain criteria. One can check that they meet these criteria by writing test functions that only "pass" if the criteria are met.
 
 In many cases, developers write informal test scripts that they run while working on a particular piece of functionality. When the functionality they are working on is "complete", they then commit their code changes and often never test the functionality again unless a bug appears later.
 

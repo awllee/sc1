@@ -10,7 +10,7 @@ output:
 >
 > -- Davis & Rabinowitz, Methods of Numerical Integration (1975), p. 208.
 
-```{r, message=FALSE}
+```{r, message=FALSE, echo=FALSE}
 library(tidyverse)
 ```
 
@@ -22,7 +22,7 @@ In practice, for one dimensional integrals you can use R's `integrate` function.
 
 # Polynomial interpolation
 
-We consider approximation of a continuous function $f$ on $[a,b], i.e. $f \in C^0([a,b])$ using a polynomial function $p$. One practical motivation is that polynomials can be integrated. A theoretical, high-level motivation is the Weierstrass Approximation Theorem.
+We consider approximation of a continuous function $f$ on $[a,b]$, i.e. $f \in C^0([a,b])$ using a polynomial function $p$. One practical motivation is that polynomials can be integrated exactly. A theoretical, high-level motivation is the Weierstrass Approximation Theorem.
 
 **Weierstrass Approximation Theorem**. Let $f \in C^0([a,b])$. There exists a sequence of polynomials $(p_n)$ that converges uniformly to $f$ on $[a,b]$. That is,
 $$\Vert f - p_n \Vert_\infty = \max_{x \in [a,b]} | f(x) - p_n(x) | \to 0.$$

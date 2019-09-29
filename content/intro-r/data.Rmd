@@ -83,7 +83,7 @@ Using a CSV file has the benefit that the data is in a standard format that can 
 
 ## Saving and loading in R's data format
 
-R has support for saving and loading using an R-specific binary format. In combination with compression (the default), this can substantially reduce large file sizes through and speed up the saving/loading process. R data files are usually given the ".Rdata" extension.
+R has support for saving and loading using an R-specific binary format. In combination with compression (the default), this can substantially reduce large file sizes and speed up the saving/loading process. R data files are usually given the ".Rdata" extension.
 
 ```{r}
 save(my.data, file="synthetic-data.Rdata")

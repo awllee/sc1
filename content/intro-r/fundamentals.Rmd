@@ -572,7 +572,7 @@ foo()
 
 Lexical scoping is now very common, and R's specific scoping rules are *usually* easy to work with.
 
-A particularly problem is when a programmer expects a variable to be defined locally within a function but it is not, and instead a global variable with the same name is used.
+A particular problem is when a programmer expects a variable to be defined locally within a function but it is not, and instead a global variable with the same name is used.
 
 Curly braces `{` and `}` do not define a new scope in R.
 
