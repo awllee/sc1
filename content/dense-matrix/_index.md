@@ -1,3 +1,0 @@
----
-title: Dense matrix computations
----

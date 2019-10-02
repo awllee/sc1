@@ -5,12 +5,12 @@ branches:
     only:
         - master
 r_packages:
-    - mgcViz
-    - leaflet
-    - DT
+    - tidyverse
+    - qgam
+
+>>>>>>> 367d0fac0145e7246eeb6f59b26e191b007cfe21
 r_github_packages:
     - rstudio/blogdown
-    - yihui/xaringan
 
 before_script:
     - Rscript -e 'blogdown::install_hugo()'
@@ -19,7 +19,7 @@ script:
     - Rscript -e 'blogdown::build_site()'
 
 before_deploy:
-    - rm public/slides/.gitignore
+    - rm public/.gitignore
 
 deploy:
     provider: pages

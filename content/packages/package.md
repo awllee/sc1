@@ -46,7 +46,7 @@ The documentation builder also creates/overwrites the NAMESPACE file, which spec
 
 ## Testing
 
-Package functions should meet certain criteria. One can make check that they meet these criteria by writing test functions that only "pass" if the criteria are met.
+Package functions should meet certain criteria. One can check that they meet these criteria by writing test functions that only "pass" if the criteria are met.
 
 In many cases, developers write informal test scripts that they run while working on a particular piece of functionality. When the functionality they are working on is "complete", they then commit their code changes and often never test the functionality again unless a bug appears later.
 
@@ -84,3 +84,12 @@ covr::report()
 A simple report with code coverage for each file will appear in R's viewer pane. File names can be clicked to see how many times each line is covered.
 
 Code coverage tools only tell us which lines are covered. When lines are not covered, one might introduce new tests to cover additional lines. In general, more coverage is better, but it is not uncommon for large projects to have less than 100% coverage.
+
+## Example package
+
+An example R package can be found [here](https://github.com/awllee/SC1ExamplePackage).
+
+You can install a package from GitHub in R via ```devtools::install_github("https://github.com/awllee/SC1ExamplePackage")
+```
+
+This is why the git repository includes computer-generated content, specifically `NAMESPACE` and the `man` folder.
