@@ -5,7 +5,7 @@ branches:
     only:
         - master
 r_packages:
-    - ggplot2
+    - mgcViz
     - leaflet
     - DT
 r_github_packages:
