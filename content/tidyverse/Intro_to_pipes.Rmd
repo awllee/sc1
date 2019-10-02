@@ -1,5 +1,5 @@
 ---
-title: A very short introduction to pipes 
+title: 1. A very short introduction to pipes 
 weight: 2
 ---
 

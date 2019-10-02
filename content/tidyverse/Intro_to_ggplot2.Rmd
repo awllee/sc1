@@ -1,0 +1,19 @@
+---
+title: 2. Layered visualizations with ggplot2
+weight: 2
+---
+
+<style>
+body {
+text-align: justify}
+</style>
+  
+Here we introduce the basic features of the [`ggplot2`](https://cran.r-project.org/web/packages/magrittr/) `R` package. 
+
+## Intro to `ggplot2`
+
+Work in progress!!
+
+
+
+
