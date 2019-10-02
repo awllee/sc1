@@ -6,9 +6,8 @@ branches:
         - master
 r_packages:
     - tidyverse
-    - qgam
+    - mgcViz
 
->>>>>>> 367d0fac0145e7246eeb6f59b26e191b007cfe21
 r_github_packages:
     - rstudio/blogdown
 
