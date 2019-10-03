@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/awllee/sc1-2019.svg?branch=master)](https://travis-ci.org/awllee/sc1-2019)
+
 # Statistical Computing 1 Website
 
 This is the source code for generating the [Statistical Computing 1 website](https://awllee.github.io/sc1-2019/).
