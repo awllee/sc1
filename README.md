@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/awllee/sc1-2019.svg?branch=master)](https://travis-ci.org/awllee/sc1-2019)
+[![Build Status](https://travis-ci.com/awllee/sc1-2019.svg?branch=master)](https://travis-ci.com/awllee/sc1-2019)
 
 # Statistical Computing 1 Website
 
