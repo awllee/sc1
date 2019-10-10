@@ -127,9 +127,6 @@ bar <- function(x) {
   force(x)
   return(10)
 }
-foo <- function(x) {
-  return(10)
-}
 bar(warning("this warning is shown"))
 ```
 
