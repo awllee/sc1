@@ -1,0 +1,139 @@
+---
+title: "4. Data transformation with dplyr"
+weight: 2
+---
+
+<style>
+body {
+text-align: justify}
+</style>
+
+The previous two sections focussed on data visualization using `ggplot2`. `ggplot2` assumes that your data is stored in a `data.frame`, so here we explain how to transform your `data.frame` to get it in the right format for plotting and modelling. In particular, the following section focuses on the `dplyr` package, which provides some convenient tools for manipulating data stored in a tabular format (i.e. `data.frames`). Below we demonstrate some of its most commonly used features, and we refer to the [relevant chapter](https://r4ds.had.co.nz/transform.html) of "R for Data Science" for more details.  
+
+## Basic `dplyr` functions
+
+To illustrate the tools provided by `dplyr`, lets us consider again the UK electricity demand data set we used before:
+```{r, message=FALSE}
+library(qgam)
+data(UKload)
+head(UKload)
+```
+One of the simplest functions provided by `dplyr` is `select`, which allows you to select one or more columns of a `data.frame`. For example:
+```{r, message=FALSE, fig.width = 7, fig.height = 6, fig.align='center'}
+library(dplyr)
+library(magrittr)
+library(GGally)
+UKload %>% select(NetDemand, wM, Posan) %>% 
+           ggpairs()
+```
+where `GGally::ggpairs` is the `ggplot2` version of `graphics::pairs`, so the code above is similar to:
+```{r, fig.width = 7, fig.height = 6, fig.align='center'}
+pairs( UKload[ , c("NetDemand", "wM", "Posan")] )
+```
+We can also remove variables, for instance:
+```{r}
+UKload %<>% select(-Date)
+```
+removes the `Date` variable from the data set (notice that we are over-writing `UKload` by using the assignment pipe `%<>%`).
+
+Another useful function is `filter`, which allows you to subset your data using logical conditions, for instance:
+```{r}
+coldMondays <- UKload %>% filter(wM < 5 & Dow == "lundi") %T>% 
+                          {print(head(.), digits = 2)}
+```
+Here we are selecting only the Mondays ("Lundi" in French) where the temperature is below 5 degrees Celsius. We are also printing the first and last few rows of the data by exploiting the `%T>%` pipe (by the way, why do we need the curly brackets `{}` around `print`?). **Warning**: notice that the following would not work:
+```{r}
+coldMondays <- UKload %>% filter(wM < 5 && Dow == "lundi") %T>% 
+                          {print(head(.), digits = 2)}
+```
+because we need to use `&`, which performs elementwise comparisons, not `&&`, which is typically used for programming control-flow (e.g. in if-else statements). Same for `|` and `||`. 
+
+You might also find useful the `arrange` function, which allows you to sort the rows of the data using one of more variable: 
+```{r}
+UKload %<>% arrange(Dow, desc(wM)) %T>% 
+            {print(head(.), digits = 2)} %T>% 
+            {print(tail(.), digits = 2)}
+```
+Above we are modifying the `UKload` dataframe by sorting its rows by day of the week (`Dow`) and by descending temperature (`wM`) (see, `?desc`). More precisely, `arrange` takes a set of column names or expressions and uses the first to order the rows, the second to break the ties in the first, the third to break the ties in the second and so on. It is slightly annoying that the `Dow` factor does not have the order we would have liked (e.g. Mon to Friday), instead it is alphabetical:
+```{r}
+levels(UKload$Dow) # sun, thur, mon, tue, wed, sat, frid
+```
+This gives us the opportunity to illustrate the `mutate` function, which allows us to modify one or more variables of the `data.frame`:
+```{r}
+UKload %<>% mutate(Dow = factor(Dow, levels(Dow)[c(3, 4, 5, 2, 7, 6, 1)])) %>% 
+            arrange(Dow) %T>% 
+            {print(head(.), digits = 2)} %T>% 
+            {print(tail(.), digits = 2)}
+```
+Above we are mutating the `Dow` factor variable by rearranging the order of its levels, in fact:
+```{r}
+levels(UKload$Dow) # mon, tue, wed, thur, fri, sat, sun
+```
+so that the rows of `UKload` are now in order we want (Monday to Sunday).
+
+Notice that the functions described so far have a similar set of arguments, for instance:
+```{r}
+args(arrange)
+args(select)
+args(mutate)
+```
+Hence, the first argument is always a `data.frame` and the `...` contains a variable number of arguments which determine what needs to be done with the data (e.g. in `select(UKload, wM, Posan)` both `wM` and `Posan` end up in the `...`). That fact that the first argument is a `data.frame` is important, because it makes so that pipes work smoothly with `dplyr`.  
+
+## Grouping and summarizing data.frames
+
+The `dplyr` package offers also some very convenient tools for grouping and summarizing data frames. To illustrate these, let us load a fresh version of our electricity demand data:
+```{r}
+data(UKload)
+```
+The `summarise` function allows you to reduce a data frame to a set of scalar variables, for instance:
+```{r}
+UKload %>% summarise(maxDem = max(NetDemand), 
+                     meanTemp = mean(wM), 
+                     nHoly = sum(Holy == "1"))
+```
+Above we are reducing the whole data set to a vector containing the maximum electricity demand, the mean temperature and the total number of holidays, calculated across the whole `data.frame`. Using `summarise` in this simple way can be handy sometimes, but we could do the same thing quite easily in base `R`. It is instead more interesting to use `summarise` in conjunction `group_by`, as the following example illustrates.
+
+Recall that the `UKload` data set contains daily electricity demand observations (`NetDemand`), representing the total demand in the UK between 11:30am and 12am (minus embedded production, e.g. from solar panels). Now suppose that we want to model the total demand during a week, using some of the other variables. To do this it is useful to exploit the `group_by` function, which takes as input a `data.frame` and groups its rows using one or more variables. For example:
+```{r, message = FALSE}
+library(lubridate)
+UKweek <- UKload %>% mutate(wk = week(Date)) %>% 
+                     group_by(Year, wk)
+UKweek
+```
+Here we are using `mutate` and `lubridate::week` to create a new variable, `wk` $\in \{1, 2, \dots, 53\}$, indicating the week to which each observation belongs and then we are grouping the data by year and week. As you can see, the output of `group_by` is not just a `data.frame` but a tibble, which is a "tidy" version of a `data.frame`. Without going too much into details, tibbles inherits the `data.frame` class:
+```{r}
+class(UKweek)
+```
+so we can use them pretty much as if they were just `data.frames`. Notice that the structure of the `UKweek` tibble is printed nicely on the console, in fact we can see its size, the class of each variable (e.g. `wM` is a double `<dbl>` and `Dow` is a factor) and we can also see that it has been grouped by year and week (`Groups: Year, wk [1]`).
+
+The fact that the `UKweek` has been grouped by week and year, makes so that if we perform `dplyr`-based operations to it, these will be applied by group. For instance, here:
+```{r}
+UKweek %<>% summarise(TotDemand = sum(NetDemand),
+                      tempMax = max(wM), 
+                      tempMin = min(wM),
+                      Posan = mean(Posan), 
+                      nHoly = factor(sum(Holy == "1")))
+UKweek
+```
+we are calculating the **weekly** total demand, max and min temperature, the mean position along the year (`Posan`) and the total number of holidays (ranging from 0 to 7). Now we have a weekly demand data set but, before starting modelling it, we discard the last two weeks and the first week of the year by doing: 
+```{r}
+UKweek %<>% filter(wk < 52 & wk > 1)
+```
+The reason for this is that the Christmas and New Year period is quite special in terms of electricity demand dynamics, hence we prefer to discard it here. 
+
+A simple GAM model for weekly total demand might be $D_w \sim N(\mu_w, \sigma)$ where:
+$$
+\mu_w = \mathbb{E}(D_w) = \psi_{N_w} + f_1(T^{max}_w) + f_2(T^{min}_w) + f_3(\text{Posan}_w), 
+$$
+$\psi_{N_t}$ is a parametric effect, whose value depends on the number of holidays taking place during the $w$-th week, while $f_1, f_2$ and $f_3$ are smooth effects (see a previous section for an intro to GAMs, but a deep understanding of GAMs is unnecessary here, as we just want to illustrate the utility of `dplyr` in day-to-day modelling). We fit the model as follows:
+```{r, message = FALSE}
+library(mgcViz)
+fit <- gamV(TotDemand ~ nHoly + s(tempMax) + s(tempMin) + s(Posan), data = UKweek)
+```
+and we then plot the effects:
+```{r, fig.width = 8, fig.height = 6, fig.align='center'}
+print(plot(fit, allTerms = TRUE), pages = 1)
+```
+We can see a strong heating effect depending on the minimal weekly temperature, but no cooling effect (recall that this is UK data!). As expected consumption is higher in the winter than in the summer, and weeks containing holidays have a lower total consumption. 
+
+This section showed how to use the basic tools provided by `dplyr` to transform `data.frames`. To appreciate the practical utility of such tools, you are encouraged to try to transform `UKload` into `UKweek` using only the tools provided by base `R` (that is, without using `group_by` and `summarise`). You are also encouraged to issue a pull request including your solutions, as it would be cool to see how base `R` solutions to this problem look, relative to the `dplyr`-based solution above.
