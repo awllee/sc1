@@ -13,7 +13,7 @@ This section is the natural continuation of the previous one, which focussed on 
 ## Gathering and spreading your data
 
 To illustrate the reshaping tools provided by `tidyr`, here we look at another electricity demand data set. In particular, we consider an Irish smart meter data set which can be found in the `electBook` package. At the time of writing `electBook` is available only on Github, hence we need to install it from there using `devtools`:    
-```{r, message = FALSE}
+```{r, message = FALSE, warning = FALSE}
 library(magrittr)
 library(tidyr)
 library(dplyr)
