@@ -6,8 +6,6 @@ output:
     toc: true
 ---
 
-Under construction.
-
 ## Outlook
 
 The purpose of this chapter is introducing you to object-oriented programming (OOP) in R. Base R offers three different models for OOP:
@@ -401,3 +399,152 @@ When individual objects are related to one another this can be called an [instan
 When all objects of one class are related to all objects of another class in the way that one is a more general version of the other then we model [inheritance](https://en.wikipedia.org/wiki/Class_diagram#Generalization/Inheritance). In S4 a class is modelled to inherit from another class by adding the `contains` argument to the call of `setClass`. If a child class inherits from a parent class this implies that the child will have all slots available that are available to the parent. S4 allows for multiple inheritance such that a vector of classes to inherit from can be provided. In this case a child has all slots of all its parents available.
 
 The inheritance relationships also determine the behaviour of the object; i. e., which methods are associated with a class. The method dispatch (the process of determining which implementation of a generic is called) with S4 can become quite complicated when multiple inheritance or multiple arguments are present. But, if there is only one argument and no multiple inheritance it is quite straight forward to see which method is called: it is first tested whether the method is implemented for the classes of the argument and if not the parent is tested, then the "grand parent", etc. You may want to refer to `?Methods_Details` or [Section 15.5 in Advanced R](https://adv-r.hadley.nz/s4.html#s4-dispatch) for details on the method dispatch in more difficult cases.
+
+## Reference Classes
+
+While S3 and S4 are object-oriented in the sense that they provide polymorphism by the introduction of classes, generic functions and the respective method dispatch mechanism, we have also seen that encapsulation is not as consequently implemented as in other programming languages (as e.g., in Java). Reference Classes provide a model for OOP that allows for a higher degree of encapsulation where methods are not declared as generic functions and then implemented for the class, but they are implemented as part of the class definition.
+
+Another important difference between Reference Class and S3/S4 is that it allows for [modify-in-place](https://adv-r.hadley.nz/names-values.html#modify-in-place) semantics which is different from the [copy-on-modify](https://adv-r.hadley.nz/names-values.html#copy-on-modify) semantics that R uses in most circumstances. Note how this corresponds to more encapsulation, because it allows for the data "inside the object" to be modified by the methods of the object. We will see an example later.
+
+Instead of reimplementing the linear model example for a third time, we are now going to discuss an artificial example. In this example we will have a class `DataContainer` that has a field `data` which holds some numbers. On generation of the object the data is set, but only when a getter method for the field `result` is called will some computation be performed (think of a result that is frequently needed, but very expensive to obtain; here, we compute the mean of the data which isn't expensive, but you get the idea). After the computation is completed a `flag` indicating that the computation is done will be set and the result is returned. If the getter is called again, `result` will be returned without the computation. Unless, new data is set, which will cause `flag` to be reset, such that if the getter method for `result` is called again the computation is redone.
+
+```{r}
+library(methods)
+
+DataContainer <- setRefClass(
+  "DataContainer",
+  fields = c(
+    data   = "numeric",
+    flag   = "logical",
+    result = "numeric"
+  )
+)
+
+dataContainer <- function(data) {
+  dC <- DataContainer$new(data = data)
+  return(dC)
+}
+
+DataContainer$methods(
+  initialize = function(data) {
+    .self$data <- data
+    .self$flag <- FALSE
+  },
+  doComputation = function() {
+    cat("MSG: doing computation now!\n")
+    .self$result <- mean(.self$data)
+    .self$flag   <- TRUE
+  },
+  show = function() {
+    cat("head(data) = ", head(data), "\n", sep = "")
+    cat("result     = ", result, "\n", sep = "")
+  },
+  getResult = function() {
+    if (!flag) {
+      .self$doComputation()
+    }
+    return(result)
+  },
+  setData = function(value) {
+    .self$initialize(data = value)
+  }
+)
+```
+
+We now briefly comment on the code above, before we show that it indeed works how it is supposed to and compare with an analogous S4 implementation that we will see does not work as this one.
+
+First note that the call of `setRefClass` is quite similar to the call of `setClass` when S4 was used. You can find the documentation by calling `?setRefClass`. Note that the fields of the class are defined via the argument `fields` (in `setClass` for S4 they were called `slots`). Many further options are available, as for example declaring inheritance relationships or a mechanism to lock fields to make them private. We will not discuss these details here any further and refer you to the documentation within R. It is important to observe that the call of `setRefClass` returns a generator function which we assign to the variable `DataContainer`. In fact, `setClass` for S4 returns a generator function as well, but for Reference Classes it is more important to be able to access it, as can be seen now. In the definition of `dataContainer` (our constructor or helper function that can be used to generate objects of class `DataContainer`) we call the `new` function of `DataContainer` by using the `$` operator. This nicely illustrates how methods of an object are accessed (i.e., `[object_name]$[method_name]()`). Next we call the `methods` method of `DataContainer` and define the methods `initialize`, `doComputation` and `show` for the class. Further, we define in the same call to `methods` the getter `getResult` and the setter `setData`. Note that we have not used the `accessors` function of the generator as this would not allow us to implement the special behaviour we would like to see. Further, note that in the definition of the functions we use `.self` to refer to the object from within these functions are called. You may be familiar with this from other programming languages (e.g., `this` in Java).
+
+Now we use the Reference Class `DataContainer` above to see that it indeed fascilitates modify-in-place:
+
+```{r}
+dC1 <- dataContainer(rnorm(5))
+
+dC1             # no result set yet!
+dC1$getResult() # calling getResult() will compute the result
+dC1             # now the result is set
+dC1$getResult() # calling getResult() a second time returns the result,
+                # but doesn't do the computation again
+
+# We now reset data to new numbers and then redo the above:
+dC1$setData(rnorm(5))
+
+dC1             # no result set yet!
+dC1$getResult() # calling getResult() will compute the result
+dC1             # now the result is set
+dC1$getResult() # calling getResult() a second time returns the result,
+                # but doesn't do the computation again
+```
+
+Now we do the same implementation with S4 and compare what happens:
+```{r}
+
+setClass(
+  "DataContainer_S4",
+  slots = c(
+    data   = "numeric",
+    flag   = "logical",
+    result = "numeric"
+  )
+)
+
+dataContainer_S4 <- function(data) {
+  dC <- new("DataContainer_S4", data = data)
+  return(dC)
+}
+
+setMethod("initialize", "DataContainer_S4",
+  function(.Object, data){
+    .Object@data <- data
+    .Object@flag <- FALSE
+    return(.Object)
+  }
+)
+
+setGeneric("doComputation", function(x) standardGeneric("doComputation"))
+setMethod("doComputation", "DataContainer_S4",
+  function(x) {
+    cat("MSG: doing computation now!\n")
+    x@result <- mean(x@data)
+    x@flag   <- TRUE
+    return(x)
+  }
+)
+
+setMethod("show", "DataContainer_S4",
+  function(object) {
+    cat("head(data) = ", head(object@data), "\n", sep = "")
+    cat("result     = ", object@result, "\n", sep = "")
+  }
+)
+
+setGeneric("result", function(x) standardGeneric("result"))
+setMethod("result", "DataContainer_S4",
+  function(x) {
+    if (!x@flag) {
+      x <- doComputation(x)
+    }
+    return(x@result)
+  }
+)
+
+setGeneric("data<-", function(x, value) standardGeneric("data<-"))
+setMethod("data<-", "DataContainer_S4",
+  function(x, value) {
+    x <- initialize(x, data = value)
+    return(x)
+  }
+)
+
+dC1 <- dataContainer_S4(rnorm(5))
+
+dC1         # no result set yet!
+result(dC1) # calling getResult() will compute the result
+dC1         # but the result is not set
+result(dC1) # calling getResult() a second time returns the result,
+            # but doesn't do the computation again
+```
+
+We can see that the getter for `result` does the computation and returns the correct result. Also, the slot `result` is set, but due to the modification a copy of the object `dC1` is generated which we never get to see, because `result` does not return it.
+
+This concludes the chapter on object-oriented programming in R. It shall be pointed out, though, that only a fraction of the possibilities were covered here and that you are encouraged to conceptually design your software before you start coding with the right programming paradigm in mind.
