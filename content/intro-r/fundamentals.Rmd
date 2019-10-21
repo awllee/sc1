@@ -29,7 +29,7 @@ x <- "hello"
 x
 ```
 
-One can use the operator `=` instead of `<-`, but this is not recommended.
+One can use the operator `=` instead of `<-`, but this is not recommended. In RStudio **Alt** + **-** is a keyboard shortcut for writing the assignment operator.
 
 A valid variable name consists of letters, numbers and the dot `.` or underscore `_` characters. Visible variable names must start with a letter.
 
