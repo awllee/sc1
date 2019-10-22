@@ -53,7 +53,7 @@ footnotereturnlinkcontents = "↩"
 
 [params]
     description = "Statistical Computing 1"
-    footer = "&copy; [Anthony Lee](https://sites.google.com/view/anthonylee) 2019 | [Github](https://github.com/awllee)"
+    footer = "&copy; 2019 [Anthony Lee](https://sites.google.com/view/anthonylee), [Feng Yu](http://www.bristol.ac.uk/maths/people/feng-yu/index.html), [Tobias Kley](https://people.maths.bris.ac.uk/~tk18582/), [Matteo Fasiolo](https://mfasiolo.github.io/)"
     highlightjsVersion = "9.12.0"
     highlightjsCDN = "//cdn.bootcss.com"
     highlightjsLang = ["r", "yaml", "tex"]
