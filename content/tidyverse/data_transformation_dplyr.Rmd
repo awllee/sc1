@@ -126,7 +126,7 @@ $$
 \mu_w = \mathbb{E}(D_w) = \psi_{N_w} + f_1(T^{max}_w) + f_2(T^{min}_w) + f_3(\text{Posan}_w), 
 $$
 $\psi_{N_t}$ is a parametric effect, whose value depends on the number of holidays taking place during the $w$-th week, while $f_1, f_2$ and $f_3$ are smooth effects (see a previous section for an intro to GAMs, but a deep understanding of GAMs is unnecessary here, as we just want to illustrate the utility of `dplyr` in day-to-day modelling). We fit the model as follows:
-```{r, message = FALSE}
+```{r, message = FALSE, warning = FALSE}
 library(mgcViz)
 fit <- gamV(TotDemand ~ nHoly + s(tempMax) + s(tempMin) + s(Posan), data = UKweek)
 ```

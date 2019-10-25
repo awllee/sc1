@@ -76,7 +76,7 @@ plot(fitG, select = 3, scale = FALSE, residuals = TRUE, pch = 1, ylim = c(-2000,
 Here the points representing the residuals are always plotted after the fit and confidence intervals so, if you change the size of the points, they will completely hide the fit, as on the plot on the right. We could probably live with the limitations mentioned so far, but the biggest issue is that it is quite hard to add new features to the plots offered by `plot.gam`. In fact, `plot.gam` is a big multi-purpose function, and adding a new graphical features requires looking at its source code, understanding what is going on, and modifing the whole function (e.g. we need to add new arguments, choose at which point within `plot.gam` the new graphical layer should be rendered, etc). So adding new features is a rather involved process. 
 
 The good news is that the limitations just mentioned make of `plot.gam` a very good case study illustrating the usefulness of layer-based framework provided by `ggplot2`. In particular, let's see how the `mgcViz` package solves these issues by adopting the layered system based on `ggplot2`. To use it, we need to convert the output of `gam` to an object of class `gamViz`:
-```{r, message = F}
+```{r, message = F, warning = FALSE}
 library(mgcViz)
 fitG_v <- getViz(fitG)
 

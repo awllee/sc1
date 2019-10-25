@@ -252,8 +252,7 @@ Specific "Tidyverse" packages for data cleaning/manipulation that we have not co
    - `lubridate` for handling dates and times;
    - `forcats` for handling factor variables.
    
-The next section will focus on functional programming and modelling using Tidyverse tools.
-
+You might also be interested in looking at the "tidy" functional programming tools provided by the `purrr`. If, instead, you feel that you are getting excessively excited about the Tidyverse, you could try to curb your enthusiasm by reading [this](https://github.com/matloff/TidyverseSkeptic).
    
 
 

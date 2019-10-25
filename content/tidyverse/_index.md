@@ -13,6 +13,6 @@ Chapter 1 of [R for Data Science](https://r4ds.had.co.nz) details the programmin
 
    - introducing pipes `%>%` and explaining their usefulness when programming in `R`.
    - building visualizations with the `ggplot2` package. We'll go through the basics of this package and we will show why the layer-based framework implemented by `ggplot2` is very useful when building a library of visual tools.
-   - Manipulating and transforming data using the `dplyr`, `tidyr` and `purrr` packages, for the purpose of streamlining visualization and modelling.
+   - Manipulating and transforming data using the `dplyr` an `tidyr` packages, for the purpose of streamlining visualization and modelling.
    
 Contents:
