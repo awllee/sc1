@@ -8,38 +8,38 @@ body {
 text-align: justify}
 </style>
 
-As we said before, `ggplot2` provides a powerful framework for building visualization libraries. The best way to see why this is the case, might to examine a real example. Here we consider the `mgcViz` package, with provides a layered framework for visualizing Generalized Additive Models (GAMs) using `ggplot2`. You might have heard about GAMs before but, if you didn't, don't worry because a good background on GAMs is not necessary to understand this section. 
+As we said before, `ggplot2` provides a powerful framework for building visualization libraries. The best way to see why this is the case, might be to examine a real example. Here we consider the `mgcViz` package, with provides a layered framework for visualizing Generalized Additive Models (GAMs) using `ggplot2`. You might have heard about GAMs before but, if you didn't, don't worry because background knowledge on GAMs is not necessary to understand this section. 
 
-GAMs are an extension of Generalized Linear Models (GLMs), which allow using spline-based smooth effects in addition to the usual linear effects used in GLMs. For example, a Poisson GLM might have the following structure $x$:
+GAMs are an extension of Generalized Linear Models (GLMs), which allow using spline-based smooth effects in addition to the usual linear effects used in GLMs. For example, a Poisson GLM might have the following structure
 $$
 y \sim \text{Pois}\{\mu({\bf x})\}, \;\;\; \log \mu({\bf x}) = \beta_0 + \beta_1 x_1 + \beta_2 x_2,
 $$
-where ${\bf x} = \{x_1, x_2\}$ and $\beta_0, \beta_1, \beta_2$ are regression coefficients. So we are modelling the log-rate of a Poisson distribution, using linear effects for variables $x_1$ and $x_2$. A GAM extension of such model could be: 
+where ${\bf x} = \{x_1, x_2\}$ are indipendent variables (covariates) and $\beta_0, \beta_1, \beta_2$ are regression coefficients. Here we are modelling the log-rate of a Poisson distribution, using linear effects for variables $x_1$ and $x_2$. A GAM extension of such model could be
 $$
 \log \mu({\bf x}) = \beta_0 + f_1(x_1) + f_2(x_2),
 $$
-where $f_1$ and $f_2$ are non-linear functions, built using spline basis expansions. That is the first effect is:
+where $f_1$ and $f_2$ are non-linear functions, built using spline basis expansions. That is the first effect is
 $$
 f_1(x_1) = \sum_{j=1}^{K_1} \beta^1_j b_j^1(x_1), 
 $$
-where $b_1^1(x_1), \dots, b_{K_1}^1(x_1)$ are known basis functions and $\beta_1^1, \dots, \beta_{K_1}^1$ are unknown regression coefficients (to be estimated). Effect $f_2$ is defined similarly. There are many classes of effects, for example they can be multidimensional, such as:
+where $b_1^1(x_1), \dots, b_{K_1}^1(x_1)$ are known basis functions and $\beta_1^1, \dots, \beta_{K_1}^1$ are unknown regression coefficients (to be estimated). Effect $f_2$ is defined similarly. There are many classes of effects, for example they can be multidimensional, such as
 $$
 \log \mu({\bf x}) = \beta_0 + f(x_1, x_2),
 $$
 where $f(x_1, x_2)$ is built using 2-D basis functions.
 
-Here we are not interested in discussing how GAMs are estimated, what they can be used for, etc... but we want to demonstrate the advantages of adopting a layer-based system for GAM models. Consider again the following data sets:
+Here we are not interested in discussing how GAMs are estimated, what they can be used for, etc... but we want to demonstrate the advantages of adopting a layer-based system for visualizing GAM models. Consider again the following data sets:
 ```{r, message = FALSE}
 library(qgam)
 data(UKload)
 head(UKload)
 ```
 
-See `?UKload` for more information about the data. A simple GAM model for aggregate electricity demand $\text{Dem_t}$ could be:
+See `?UKload` for more information about the data. A simple GAM model for aggregate electricity demand $\text{Dem}_t$ could be:
 $$
 \mathbb{E}(\text{Dem}_t) \sim \psi_{D_t} + f_1(T_t) + f_2(T^s_t) + f_3(S_t) + f_4(L_{t-48}) + f_5(t),
 $$
-where we have smooth effects for the hourly temperatures ($T_t$), the smoothed temperature ($T^s_t$, defined by $T_{t}^s = \alpha T_{t-1}^s + (1-\alpha)T_t$ with $\alpha = 0.95$), the variable indicating the position within the year ($S_t$), the sequential index representing time ($t$) and the observed load at the same time of the previous day ($L_{t-48}$). $\psi_{D_t}$ is a parametric effect, whose value depends on $D_t$, which is the factor variable indicating the day of the week. This model can be fitted using `mgcv` as follows:
+where we have smooth effects for the hourly temperatures ($T_t$), the smoothed temperature ($T^s_t$, defined by $T_{t}^s = \alpha T_{t-1}^s + (1-\alpha)T_t$ with $\alpha = 0.95$), the variable indicating the position within the year ($S_t$), the sequential index representing time ($t$) and the observed load at the same time of the previous day ($L_{t-48}$). $\psi_{D_t}$ is a parametric effect, whose value depends on $D_t$, which is a factor variable indicating the day of the week. This model can be fitted using `mgcv` as follows:
 ```{r}
 fitG <- gam(NetDemand ~ Dow + s(wM) + s(wM_s95) + s(Posan) + 
                         s(NetDemand.48) + s(Trend, k = 6), data = UKload)
@@ -48,7 +48,7 @@ Let's say that we now want to visualize the seasonal effect, that is the effect 
 ```{r, message = F, fig.width = 6, fig.height = 4, fig.align='center'}
 plot(fitG, select = 3, scale = FALSE)
 ```
-where the `select` argument is used to determine which smooth effect should be plotted. Given that `plot` is a generic function and that
+where the `select` argument is used to determine which smooth effect should be plotted. Given that `plot` is a generic function and that:
 ```{r}
 class(fitG)
 ```
@@ -56,12 +56,12 @@ the above code is calling `plot.gam` from the `mgcv` package. `plot.gam` is base
 ```{r}
 args(plot.gam)
 ```
-Furthermore, many of its arguments are not used at all when most function calls, for instance
+Furthermore, many of its arguments are not used at all during most function calls, for instance
 ```{r, message = F, fig.width = 6, fig.height = 4, fig.show='hide'}
 plot(fitG, select = 3, scale = FALSE, n2 = 100, theta = 10, n3 = 4)
 ```
 
-produces exactly the same plot as before (not shown), because these arguments are not relevant for one-dimensional effects plots. A related problem is that it is not possible to control the graphical options of the layers appearing in the plot. For example:
+produces exactly the same plot as before (not shown), because the arguments `n2`, `theta` and `n3` are not relevant for one-dimensional effects plots. A related problem is that it is not possible to control the graphical options of the layers appearing in the plot. For example:
 ```{r, message = F, fig.width = 6, fig.height = 4, fig.align='center'}
 plot(fitG, select = 3, scale = FALSE, col = "red")
 ```
@@ -73,9 +73,9 @@ plot(fitG, select = 3, scale = FALSE, residuals = TRUE, ylim = c(-2000, 2000))
 plot(fitG, select = 3, scale = FALSE, residuals = TRUE, pch = 1, ylim = c(-2000, 2000))
 ```
 
-Here the points representing the residuals are always plotted after the fit and confidence intervals so, if you change the size of the points, they will completely hide the fit, as on the plot on the right. We could probably live with the limitations mentioned so far, but the biggest issue is that it is quite hard to add new features to the plots offered by `plot.gam`. In fact, `plot.gam` is a big multi-purpose function, and adding a new graphical features requires looking at its source code, understanding what is going on, and modifing the whole function (e.g. we need to add new arguments, choose at which point within `plot.gam` the new graphical layer should be rendered, etc). So adding new features is a rather involved process. 
+Here the points representing the residuals are always plotted over the fitted effect and confidence intervals so, if you change the size of the points, they will completely hide the fit, as on the plot on the right. We could probably live with the limitations mentioned so far, but the biggest issue is that it is quite hard to add new features to the plots offered by `plot.gam`. In fact, `plot.gam` is a big multi-purpose function, and adding a new graphical features requires looking at its source code, understanding what is going on, and modifing the whole function (e.g. we need to add new arguments, choose at which point within `plot.gam` the new graphical layer should be rendered, etc). So adding new features is a rather involved process. 
 
-The good news is that the limitations just mentioned make of `plot.gam` a very good case study illustrating the usefulness of layer-based framework provided by `ggplot2`. In particular, let's see how the `mgcViz` package solves these issues by adopting the layered system based on `ggplot2`. To use it, we need to convert the output of `gam` to an object of class `gamViz`:
+The good news is that the limitations just mentioned make of `plot.gam` a very good case study for illustrating the usefulness of layer-based framework provided by `ggplot2`. In particular, let's see how the `mgcViz` package solves these issues by adopting the layered system based on `ggplot2`. To use it, we need to convert the output of `gam` to an object of class `gamViz`:
 ```{r, message = F, warning = FALSE}
 library(mgcViz)
 fitG_v <- getViz(fitG)
@@ -103,10 +103,10 @@ where the last line calls `print.plotSmooth`. In one step:
 ```{r, fig.show='hide'}
 plot(sm(fitG_v, 3)) + l_fitLine() + l_ciLine() # not shown
 ```
-How does this work? The functions starting with `l_` are layers implemented in `mgcViz` and can be seen as wrappers around one or more `ggplot2` layers (e.g. `mgcViz::l_fitLine` is a wrapper around `mgcViz::geom_line`). All `mgcViz` layers start with the `l_` prefix. 
+How does this work? The functions starting with `l_` are layers implemented in `mgcViz` and can be seen as wrappers around one or more `ggplot2` layers (e.g. `mgcViz::l_fitLine` is a wrapper around `ggplot2::geom_line`). All `mgcViz` layers start with the `l_` prefix. 
 Why is this useful? Because, as we illustrate below:
 
-   - we have now full control over which graphical arguments are passed to each layer;
+   - we now have full control over which graphical arguments are passed to each layer;
    - we can add the layers in the order we like;
    - adding new layers does not require modifying the function that created the initial plot (here `plot.mgcv.smooth.1D`)
    - the number of arguments of the initial plotting function is greatly reduced, in fact
@@ -122,7 +122,7 @@ pl3b <- plot(sm(fitG_v, 3), nsim = 20) + l_simLine()
 gridPrint(pl3a, pl3b, ncol = 2)
 ```
 
-where the second plot shows a set of 20 random curves drawn from (Gaussian approximation to) the posterior distribution of the seasonal effect (but this is not crucial here). As for most smooth effect plots in `mgcViz`, the output of `plot.mgcv.smooth.1D` has class `plotSmooth`, which contains an object of class `c("gg", "ggObj")` is its `$ggObj` slot. Here `gridPrint` simply extracts the `ggplot` objects from `pl3a$ggObj` and `pl3b$ggObj`, and renders them on one page. To get the full list of available `mgcViz` layers do:
+where the second plot shows a set of 20 random curves drawn from (a Gaussian approximation to) the posterior distribution of the seasonal effect (but this is not crucial here). As for most smooth effect plots in `mgcViz`, the output of `plot.mgcv.smooth.1D` has class `plotSmooth`, which contains an object of class `c("gg", "ggObj")` is its `$ggObj` slot. Here `gridPrint` simply extracts the `ggplot` objects from `pl3a$ggObj` and `pl3b$ggObj`, and renders them on one page. To get the full list of available `mgcViz` layers for a particular object, do:
 ```{r listLayers, message = F}
 listLayers( plot(sm(fitG_v, 3)) )
 ```
@@ -135,7 +135,7 @@ pl + geom_hex(data = pl$data$res, alpha = 0.7) + l_fitLine() +
 
 Here we used `ggplot2::geom_hex` to plot the density of the residuals, which required specifying that the residual data can be found in `pl$data$res`, and we zoomed along the $x$-axis on $[0.25, 0.75]$ using `ggplot2::xlim`. 
 
-So this should illustrate some of the advantages of a layered system. To get some insights into how this layered system might be useful to someone trying to build a graphical library for GAM models (but this applies to other models, of course), it's probably instructive to have a look at how `ggplot2` layers can be wrapped up to extend the array of layers made available by `mgcViz`. Here we consider implementing an `mgcViz` layer which plots the residual density using binning, as in the last plot above. Suppose that we want to call such layer `l_binRes`. The first thing we need to do, is to build its general (or generic-like) version:
+The examples above should illustrate some of the advantages of a layered system. To get some insights into how this layered system might be useful to someone trying to build a graphical library for GAM models (but this applies to other models, of course), it's probably instructive to have a look at how `ggplot2` layers can be wrapped up to extend the array of layers made available by `mgcViz`. Here we consider implementing an `mgcViz` layer which plots the residual density using binning, as in the last plot above. Suppose that we want to call such layer `l_binRes`. The first thing we need to do, is to build its general (or generic-like) version:
 ```{r}
 l_binRes <- function(...){
   arg <- list(...)
