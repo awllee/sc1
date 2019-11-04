@@ -1,0 +1,126 @@
+---
+title: Debugging
+weight: 1
+output:
+  blogdown::html_page:
+    toc: true
+---
+
+It is almost impossible to write non-trivial code without bugs, where a "bug" is any flaw that leads to a computation producing an unintended result or causing an error to be thrown. There are many types of bugs: from simple spelling mistakes to logical flaws. In some cases, the source of a bug is obvious and in others a bug arises from misunderstanding something very subtle and it can be difficult to identify the root cause of the problem.
+
+## General tips
+
+There are several tips online, that are language-agnostic for the most part. For example, in [Advanced R](https://adv-r.hadley.nz/debugging.html#debugging-strategy).
+
+Many people view debugging as essentially a specific application of the scientific method. One should try to understand the phenomena by performing experiments and testing hypotheses, often from the perspective of what "should happen" if everything was working correctly.
+
+- Try to understand precisely what the error is or the unintended result. Note that some error messages are cryptic and may not immediately indicate what the real problem is: the obvious symptom of the problem may not identify the source of the problem. Nevertheless, it is often good to start from a definite error and try to work backwards to find its source.
+
+- Try to produce a reproducible, [minimal working example](https://en.wikipedia.org/wiki/Minimal_working_example) of the unintended behaviour. This can greatly reduce the size of the debugging problem at hand, as irrelevant complexity in the original problem can be ignored. To make it reproducible, one may need to consider some specific inputs or fix the seed of a pseudo-random number generator.
+
+- Identify the actual issue. This is clearly easier said than done. There is not much general guidance one can give except that it is often good to be systematic when eliminating hypotheses about the source of the bug, rather than optimistically changing bits of code because you have a "hunch". Or at least switch to a systematic analysis if your first few guesses at the source of the problem are incorrect.
+
+- Fix the bug, and add tests to ensure that the bug is not reintroduced later. The idea here is that the bug was presumably not detected by an existing test, so some cases were not being tested.
+
+Creating a minimal working example is also the point at which you could submit a bug report, if the bug is not in your own code but in someone else's, e.g. a package developer. Developers often cannot fix a bug if you provide a long example of unexpected behaviour in your own code; they want to see a MWE of unexpected behaviour for functions in their own package.
+
+Finally, many people have strong opinions on debugging. There are many approaches that work, and are used by various people. It is not uncommon to spend many hours debugging a specific issue on occasion. However, if you routinely find that it takes many hours to fix bugs, you may want to reconsider your approach.
+
+The advice in [Advanced R](https://adv-r.hadley.nz/debugging.html) is also helpful:
+
+> You shouldn’t need to use these tools when writing new functions. If you find yourself using them frequently with new code, reconsider your approach. Instead of trying to write one big function all at once, work interactively on small pieces. If you start small, you can quickly identify why something doesn’t work, and don’t need sophisticated debugging tools.
+
+## An example of debugging in R
+
+Here we start with an implementation of a function that takes arguments `x` and `array`, and returns the first (i.e. smallest) index of the array `i` such that `array[i] = x`. This is a problematic implementation for a few reasons, but let's go with it. We can't all write perfect code all the time.
+
+```{r}
+find.first <- function(x, array) {
+  i <- 1
+  while (TRUE) {
+    if (array[i] == x) return(i)
+    i <- i + 1
+  }
+}
+```
+
+
+Perhaps an existing test checked whether the function works on a simple example.
+
+```{r}
+3 == find.first(2, c(1,3,2,4,5))
+```
+
+However, now the code is being used in some other function `foo` that finds the index of the first occurrence of `1` in an array. This function `foo` is not called directly, but instead is called by some other function `bar`.
+
+```{r}
+foo <- function(array) {
+  return(find.first(1, array))
+}
+
+bar <- function() {
+  x <- sample(100, 99)
+  foo(x)
+}
+```
+
+```{r, echo=FALSE}
+set.seed(15)
+```
+
+```{r, error=TRUE}
+for (j in 1:100) {
+  bar()  
+}
+```
+
+It is clear that there is a bug in the code, but the error message is not very informative unless you know exactly how `bar` works. It is not even obvious which function has thrown the error. To get more information it is useful to use R's `traceback()` function, which is also sometimes accessible graphically in RStudio.
+
+If you call `traceback()`, you should see information such as:
+
+```
+3. find.first(1, array)
+2. foo(x)
+1. bar()
+```
+
+possibly also with some line numbers. This gives you the call stack that led to the error. At least now we know that the error was thrown by `find.first`.
+
+We may not realize yet why the error was thrown, except that it seems that `array[i] == x` did not evaluate to `TRUE` or `FALSE` for some `i`. To try to determine more, we can first try to find a specific random seed that leads to the error.
+
+It is not difficult to find a specific situation in which the error occurs.
+
+```{r, error=TRUE}
+set.seed(15)
+for (j in 1:100) {
+  print(j)
+  bar()  
+}
+```
+
+So we have an error on the 7th iteration of the for loop, with a seed of 15. To get more detail, we can start R's debugger on the 7th iteration.
+
+```{r, eval=FALSE}
+set.seed(15)
+for (j in 1:100) {
+  if (j == 7) browser()
+  bar()  
+}
+```
+
+The `browser()` call opens an interactive debugging environment where you can type
+
+- 'n' : evaluate the next statement, stepping over function calls;
+- 's' : evaluate the next statement, stepping into function calls;
+- 'f' : finish execution of the current loop or function;
+- 'where' : print a stack trace of all active function calls;
+- 'c' : exit the browser and continue execution at the next statement;
+- 'Q' : exit the browser and the current evaluation and return to the top-level prompt.
+
+Typically, you will use a combination of 'n', 's' and typing variable names to inspect their values, in order to locate a problem.
+
+For example, with the code above, you can use these commands to eventually find that the `array` in the call to `find.first` does not include the value `1`, which ultimately causes the while loop to query `array` at an index larger than its length.
+
+This is certainly a bug, but the specific mistake made depends on what the purpose of the `find.first` function really is. If it is expected that the input `x` is a member of the array `array` then it would make sense to throw a more informative error when `x` is not in `array`, e.g. by checking before the while loop, or by throwing the error when `i` exceeds `length(array)`. Alternatively, it may be the case that `find.first` should return `NA` or `NULL` or `0` when `x` is not in the array.
+
+Once the bug is fixed, one can add appropriate tests to ensure that the same mistake is not made again, e.g. if one refactors the code.

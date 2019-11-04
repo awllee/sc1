@@ -1,0 +1,239 @@
+---
+title: Performance
+weight: 3
+output:
+  blogdown::html_page:
+    toc: true
+---
+
+## Optimized routines
+
+Code written in R will often fail to have good performance, in the sense that it would run faster if written in a language such as C. The main exception is when the computationally intensive code is essentially delegated to optimized library code. A primary example is linear algebra operations, which are performed by a separate library. Many package functions and core R routines are written in C.
+
+## Memory management
+
+One of R's main features is its pass-by-value semantics. While this makes the language easy to use and reason about, it can make it very difficult to write code that has good performance. In particular, after algorithmic complexity, memory management is one of the most important performance issues in practice.
+
+Of course, there are some hidden optimizations that R performs to improve performance. For example, when one updates elements of an array in a for loop,  multiple copies of the array are not made, which would make the time complexity $O(n^2)$, where $n$ is the size of the array.
+
+```{r}
+add.one <- function(x) {
+  for (i in 1:length(x)) {
+    x[i] <- x[i] + 1
+  }
+  x
+}
+
+a1 <- rep(0,5000)
+a2 <- rep(0,10000)
+
+library(microbenchmark)
+microbenchmark(add.one(a1))
+microbenchmark(add.one(a2))
+```
+
+On the other hand, small changes in the code (that would not affect performance in languages that pass by reference) can cause many copies of the array to made.
+
+```{r}
+add.one.bad <- function(x) {
+  y <- x
+  for (i in 1:length(x)) {
+    x[i] <- x[i] + 1
+    y <- x
+  }
+  x
+}
+
+add.one.index <- function(x, i) x[i] + 1
+
+add.one.slow <- function(x) {
+  for (i in 1:length(x)) {
+    x[i] <- add.one.index(x, i)
+  }
+  x
+}
+
+
+system.time(add.one.bad(a1))
+system.time(add.one.bad(a2))
+
+system.time(add.one.slow(a1))
+system.time(add.one.slow(a2))
+```
+
+## Column-major storage
+
+When a matrix is stored in memory, a language typically maps its entries to a contiguous block of memory. This is done using either [column-major or row-major order](https://en.wikipedia.org/wiki/Row-_and_column-major_order). In R, column-major order is used, which means that elements in each column are stored in contiguous blocks.
+
+This has a performance implication, although in R the effects are often overshadowed by other performance penalties. To see the difference, consider the following functions, which fill an $n \times n$ matrix with $1$s.
+
+```{r}
+fill.by.column <- function(n) {
+  x <- rep(1,n)
+  X <- matrix(0,n,n)
+  for (i in 1:n) {
+    X[,i] <- x
+  }
+  X
+}
+
+fill.by.row <- function(n) {
+  x <- rep(1,n)
+  X <- matrix(0,n,n)
+  for (i in 1:n) {
+    X[i,] <- x
+  }
+  X
+}
+```
+
+These functions are not useful at all, one could just use `matrix(1,n,n)` instead. We are interested here only in their performance, which is quite different.
+
+```{r}
+n <- 10000
+system.time(Y1 <- fill.by.column(n))
+system.time(Y2 <- fill.by.row(n))
+```
+
+Filling the matrix column by column is faster because reading and writing memory in contiguous blocks is faster than reading and writing memory locations that are far apart.
+
+## Example: logistic regression
+
+Consider the logistic regression model
+
+$$Y_i \overset{\text{ind}}{\sim} {\rm Bernoulli}(\sigma(\theta^T x_i)), \qquad i \in \{1,\ldots,n\},$$
+where $x_1,\ldots,x_n$ are $d$-dimensional real vectors of explanatory variables, and $\sigma$ is the standard logistic function
+$$\sigma(z) = \frac{1}{1+\exp(-z)}.$$
+The data consists of observed realizations of $(Y_1,\ldots,Y_n)$, $y = (y_1,\ldots,y_n)$, as well as $(x_1,\ldots,x_n)$. We define the $n \times d$ matrix $X = (x_{ij})$.
+
+It is a nice little exercise to derive the log-likelihood, as well as its gradient (i.e. the score) and Hessian, using the fact that $\sigma'(z) = \sigma(z)[1-\sigma(z)]$.
+
+$$\ell(\theta ; y) = \sum_{i=1}^n y_i \log (\sigma(\theta^Tx_i)) + (1-y_i) \log (1 - \sigma(\theta^Tx_i)).$$
+
+\begin{equation}
+\label{eq:scorecomponent}
+\frac{\partial \ell (\theta ; y)}{\partial \theta_j} = \sum_{i=1}^n [y_i - \sigma(\theta^T x_i)] x_{ij},\qquad j \in \{1,\ldots,d \}.
+\end{equation}
+
+\begin{equation}
+\label{eq:hessiancomponents}
+\frac{\partial^2 \ell (\theta ; y)}{\partial \theta_j \partial \theta_k} = - \sum_{i=1}^n \sigma(\theta^T x_i) [1 - \sigma(\theta^T x_i)] x_{ij} x_{ik},\qquad j,k \in \{1,\ldots,d \}.
+\end{equation}
+
+In fact, \autoref{eq:scorecomponent} implies that the score can be written as
+$$\nabla \ell(\theta; y) = X^T [y - p(\theta)],$$
+where $p(\theta)$ is the vector $(p_1(\theta),\ldots,p_n(\theta)$ where $p_i(\theta) = \sigma(\theta^T x_i)$.
+
+Similarly, \autoref{eq:hessiancomponents} implies that the Hessian can be written as
+$$\nabla^2 \ell(\theta; y) = - X^T D(\theta) X,$$
+where $D(\theta)$ is the $n \times n$ diagonal matrix where the $i$th diagonal entry is $p_i(\theta)[1-p_i(\theta)]$ for $i \in \{1,\ldots,d\}$.
+
+It is not hard to see that R functions which perform matrix-vector multiplications have much better performance than equivalent functions relying on for loops.
+
+```{r}
+sigma <- function(v) {
+  1/(1+exp(-v))
+}
+
+ell <- function(theta, X, y) {
+  p <- as.vector(sigma(X%*%theta))
+  sum(y*log(p) + (1-y)*log(1-p))
+}
+
+score <- function(theta, X, y) {
+  p <- as.vector(sigma(X%*%theta))
+  as.vector(t(X)%*%(y-p))
+}
+
+hessian <- function(theta, X) {
+  p <- as.vector(sigma(X%*%theta))
+  -t(X)%*%((p*(1-p))*X)
+}
+```
+
+```{r}
+ell.slow <- function(theta, X, y) {
+  n <- length(y)
+  ll <- 0
+  for (i in 1:n) {
+    v <- sigma(sum(X[i,]*theta))
+    ll <- ll + y[i]*log(v) + (1-y[i])*log(1-v)
+  }
+  ll
+}
+
+score.slow <- function(theta, X, y) {
+  n <- length(y)
+  score <- 0
+  for (i in 1:n) {
+    v <- sigma(sum(X[i,]*theta))
+    score <- score + (y[i]-v)*X[i,]
+  }
+  score
+}
+```
+
+```{r}
+generate.y <- function(X, theta) {
+  n <- dim(X)[1]
+  rbinom(n, size = 1, prob=sigma(X%*%theta))
+}
+
+maximize.ell <- function(ell, score, X, y, theta0) {
+  optim.out <- optim(theta0, fn=ell, gr=score, X=X, y=y, method="BFGS",
+                     control=list(fnscale=-1, maxit=1000, reltol=1e-16))
+  optim.out$par
+}
+```
+
+```{r}
+d <- 10
+n <- 10000
+X <- matrix(rnorm(n*(d-1)), n, d-1)
+X <- cbind(1, X)
+theta.true <- rnorm(d)
+theta.true
+
+y <- generate.y(X, theta.true)
+
+system.time(mle <- maximize.ell(ell, score, X, y, rep(0,d)))
+mle
+
+system.time(mle <- maximize.ell(ell.slow, score.slow, X, y, rep(0,d)))
+mle
+```
+
+## Example: matrix vector multiplications
+
+Here we consider the simple example of performing either $m$ matrix-vector multiplications or a large matrix-matrix multiplication.
+
+```{r}
+n <- 10000
+p <- 200
+m <- 500
+
+A <- matrix(rnorm(n*p), n, p)
+B <- matrix(rnorm(p*m), p, m)
+
+foo <- function(A, B) {
+  C <- matrix(0, n, m)
+  for (i in 1:m) {
+    C[,i] <- A%*%B[,i]
+  }
+  C
+}
+
+system.time(C <- A%*%B)
+system.time(C.alt <- foo(A, B))
+norm(C-C.alt)
+```
+
+Clearly, the matrix-matrix multiplication is more computationally efficient. This is because the implementation of matrix multiplication is [highly optimized](https://en.wikipedia.org/wiki/Matrix_multiplication_algorithm) and is not implemented by performing several matrix-vector multiplications.
+
+In some applications one might need to perform several matrix-vector multiplications with the same vector. For performance, it is better to combine the vectors in a matrix. However, this can sometimes also lead to code that is harder to understand, extend and maintain. So it is usually a good idea to use profiling to ensure that any performance improvements that come at the cost of easily understandable and maintainable code are appropriately justified.
+
+## Writing code in another language
+
+In Statistical Computing 2 you will learn how to use [Rcpp](http://www.rcpp.org/) to write C++ code that is easily called from within R. This is one of the main routes to improving the performance of functions on the critical pathway for an application.
+
+Most other high-level, scientific computing languages have the similar mechanisms for calling C or C++ code. This is a very powerful mechanism for improving performance, as one has complete control over what is computed, but involves writing and maintaining code in two languages, as well as maintaining an interface between the two languages.

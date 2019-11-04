@@ -1,0 +1,81 @@
+---
+title: Profiling
+weight: 2
+output:
+  blogdown::html_page:
+    toc: true
+---
+
+[Profiling](https://en.wikipedia.org/wiki/Profiling_(computer_programming)) in R is fairly straightforward using the [`profvis`](https://rstudio.github.io/profvis/) package, which builds upon base R's `Rprof` functionality.
+
+```{r}
+library(profvis)
+```
+
+This is a *statistical profiler*: it operates by regularly (e.g. every few milliseconds) using operating system interrupts to determine what code is being executed. This enables one to build a picture of where the computation is spending most of its time, and is essentially an application of the Monte Carlo method. Although the results are not deterministic, the profiling operation adds very little overhead to the computation.
+
+Statistical profilers can be viewed in contrast to *instrumenting profilers* of various flavours, which often involve incrementing counters whenever certain events occur. This often involves instrumenting existing code by adding instructions to increment the counters either manually or automatically. For example, incrementing a counter whenever a function is called. Instrumenting profilers can provide very accurate results, but can add substantial overhead to the computation. These tools can be important not only for understanding performance, but also for checking the validity and robustness of code: for example, [Valgrind](https://en.wikipedia.org/wiki/Valgrind) is often used in C code to detect memory leaks and memory reference errors.
+
+We consider here profiling various R functions for generating an array of all primes less than or equal to some number.
+
+## Updating a list of primes
+
+A straightforward approach to generating all prime numbers less than some number $N$ is to iterate through the numbers $3,\ldots,N$ and add the current number to the list of primes if there is no divisor of that number in the current list of primes.
+
+In the following, we profile 3 variants of this approach. The first variant is a very inefficient implementation.
+
+```{r}
+source("generate-primes-1.R", keep.source=TRUE)
+profvis(generate.primes.upto.1(10000))
+```
+
+We see from the `profvis` results that most of the time is spent in line 6 performing the integer modulus operation. If we look at the code more closely, we can see that it is possible to eliminate some of these operations by breaking the loop over primes as soon as one divisor is found.
+
+```{r}
+source("generate-primes-2.R", keep.source=TRUE)
+profvis(generate.primes.upto.2(10000))
+```
+
+This has dramatically reduced the running time of the algorithm, by a factor of about 10. Although the function is fairly short, we may feel that the code is not easy to read. In particular, the overall idea of the algorithm can be lost in the implementation details. So we can consider the same algorithm, but where we call a helper function called `any.divisors` instead.
+
+```{r}
+source("generate-primes-3.R", keep.source=TRUE)
+profvis(generate.primes.upto.3(10000))
+```
+
+It seems reasonable to say that the third version of the algorithm is easier to understand. Moreover, there is little to no performance penalty.
+
+## The Sieve of Eratosthenes
+
+A more computationally efficient approach is the [Sieve of Eratosthenes](https://en.wikipedia.org/wiki/Sieve_of_Eratosthenes). In this approach, one does not check whether each number is prime by checking divisors. Instead, one starts with a list of numbers from $1$ to $N$ and successively marks all multiples of each prime, in order, as composite. To identify the next prime after $2$ for marking multiples, one simply needs to find the next number not marked composite.
+
+This approach is so much faster, that we consider finding all primes up to $1000000$ instead of up to $10000$.
+
+```{r}
+source("sieve-1.R", keep.source=TRUE)
+profvis(sieve.1(1000000))
+```
+
+We see that most of the time is spent in lines 8--10, which correspond to marking `s` as composite and incrementing `s` by the current prime. We can remove some of these computations by noticing that if $i$ is prime then all multiples $2i,3i,\ldots,(i-1)i$ will already have been marked as composite. It follows that one can also stop "sieving" as soon as $i > \sqrt{N}$.
+
+```{r}
+source("sieve-2.R", keep.source=TRUE)
+profvis(sieve.2(1000000))
+```
+
+There appears to be a moderate improvement in performance for this size of problem. We notice that a substantial amount of time is spent in the `while` loop, which mainly involves incrementing `s` and flagging the corresponding number as composite. We can vectorize this computation and separate it cleanly from the rest of the algorithm, as follows.
+
+```{r}
+source("sieve-3.R", keep.source=TRUE)
+profvis(sieve.3(1000000))
+```
+
+This gives another improvement to performance. It is worth noting that creating an array of multiples is faster than iterating through multiples in R, because the cost of allocating memory is negligible in comparison to the benefit of eliminating the loop. In a programming language such as C, the reverse is often true, as allocating memory is typically expensive in comparison to iteration once compiled into machine code.
+
+## Comments
+
+Profiling in this scenario is already quite useful, as one can see which parts of the code are critical for performance. In larger applications, profiling is even more useful as one can quickly determine which functions are the most important from a performance perspective: if 1% of computation time is spent in a particular function, very little improvement can be derived by improving it, whereas if 99% of computation time is spent in a function one can conceivably improve performance very substantially by accelerating the implementation or improving the corresponding algorithm itself.
+
+Profiling is also helpful for maintaining code readability and modularity: in some cases performance can be improved by sacrificing readability, or modularity of the code. Doing so can make sense if the code is critical to performance, but it makes little sense when the code is unimportant from a performance perspective.
+
+Finally, when profiling code and trying to improve its performance, good testing tools are very useful for ensuring that any improvement in performance has not come at the cost of breaking existing functionality, including in rare, corner cases.
