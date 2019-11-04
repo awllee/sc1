@@ -98,12 +98,12 @@ for (j in 1:100) {
 }
 ```
 
-So we have an error on the 7th iteration of the for loop, with a seed of 15. To get more detail, we can start R's debugger on the 7th iteration.
+So we have an error on one of the iterations of the for loop, with a seed of 15. Annoyingly, the exact iteration does seem to depend on the version of R that is used. To get more detail, we can start R's debugger on that iteration.
 
 ```{r, eval=FALSE}
 set.seed(15)
 for (j in 1:100) {
-  if (j == 7) browser()
+  if (j == <whatever the index is>) browser()
   bar()  
 }
 ```
