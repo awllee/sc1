@@ -11,6 +11,7 @@ r_packages:
     - devtools
     - hexbin
     - microbenchmark
+    - profvis
 
 r_github_packages:
     - rstudio/blogdown
