@@ -12,7 +12,7 @@ Here we introduce the pipe operator, which is provided by the [`magrittr`](https
   
 ## Pipes basic
 
-The pipe operator `%>%` is quite simple, but very useful in certain situations. Consider the following code:
+The pipe operator `%>%` is quite simple, but very useful in certain situations. In RStudio, you can use the keyboard shortcut **Ctrl** + **Shift** + **M** to produce `%>%`. Consider the following code:
 ```{r, fig.show = TRUE}
 x <- seq(0, 2*pi, by = 0.01)
 
