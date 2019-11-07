@@ -12,6 +12,7 @@ r_packages:
     - hexbin
     - microbenchmark
     - profvis
+    - miniCRAN
 
 r_github_packages:
     - rstudio/blogdown
