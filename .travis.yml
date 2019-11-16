@@ -13,6 +13,8 @@ r_packages:
     - microbenchmark
     - profvis
     - miniCRAN
+    - pracma
+    - minpack.lm
 
 r_github_packages:
     - rstudio/blogdown
