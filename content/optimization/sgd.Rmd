@@ -1,5 +1,5 @@
 ---
-title: "Numerical Optimisation"
+title: "Gradient Descent and Stochastic Gradient Descent"
 weight: 3
 output: html_document
 ---
