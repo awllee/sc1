@@ -36,7 +36,7 @@ for $f\in L_{1}(\mathsf{X},\mu)$. Then
 $$\lim_{n \to \infty}\frac{1}{n}S_{n}(f)=\mu(f),$$
 almost surely.
 
-The random variable $n^{-1} S_n(f)$, or a realization of it, is a *Monte Carlo approximation* of $\mu(f)$. It is straightforward to deduce that the approximation is unbiased, i.e. $\mathbb{E}[n^{-1}S_n(f)] = $\mu(f)$.
+The random variable $n^{-1} S_n(f)$, or a realization of it, is a *Monte Carlo approximation* of $\mu(f)$. It is straightforward to deduce that the approximation is unbiased, i.e. $\mathbb{E}[n^{-1}S_n(f)] = \mu(f)$.
 
 This probabilistic convergence result does not provide any information about the random error $S_n(f) - \mu(f)$ for finite $n$. For $f \in L_2(\mathsf{X}, \mu) = \{f: \mu(f^2) < \infty \}$, the variance of $S_n(f)$ is straightforward to derive.
 
