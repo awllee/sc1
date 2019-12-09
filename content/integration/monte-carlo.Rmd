@@ -38,7 +38,7 @@ almost surely.
 
 The random variable $n^{-1} S_n(f)$, or a realization of it, is a *Monte Carlo approximation* of $\mu(f)$. It is straightforward to deduce that the approximation is unbiased, i.e. $\mathbb{E}[n^{-1}S_n(f)] = \mu(f)$.
 
-This probabilistic convergence result does not provide any information about the random error $S_n(f) - \mu(f)$ for finite $n$. For $f \in L_2(\mathsf{X}, \mu) = \{f: \mu(f^2) < \infty \}$, the variance of $S_n(f)$ is straightforward to derive.
+This probabilistic convergence result does not provide any information about the random error $n^{-1}S_n(f) - \mu(f)$ for finite $n$. For $f \in L_2(\mathsf{X}, \mu) = \{f: \mu(f^2) < \infty \}$, the variance of $n^{-1}S_n(f)$ is straightforward to derive.
 
 **Proposition** (Variance). Let $(X_{n})_ {n \geq 1}$ and $S_n(f)$ be as in the SLLN, where $f \in L_2(\mathsf{X}, \mu)$. Then
 $${\rm var} \{ n^{-1} S_n(f) \} = \frac{\mu(f^2)-\mu(f)^2}{n}.$$
@@ -57,7 +57,7 @@ This is of course very slow in comparison to quadrature rules in one dimension, 
 
 At a first glance, one benefit of Monte Carlo is that the $\mathcal{O}(n^{-1/2})$ rate of convergence is independent of dimension. Naturally, this is not the whole story: in some cases the constant term $\mu(\bar{f}^2)$ may grow quickly with dimension, in which case the curse of dimensionality is not avoided.
 
-The other immediate observation we can make is that while the error of the quadrature rules we saw previously depends explicitly on the smoothness of the function being integrated, the error of $S_n(f)$ depends explicitly on $\mu(\bar{f}^2)$, i.e. the variance of $f(X)$ when $X \sim \mu$. There is no need for $f$ to even be continuous, but it should ideally have a second moment under $\mu$.
+The other immediate observation we can make is that while the error of the quadrature rules we saw previously depends explicitly on the smoothness of the function being integrated, the error of $n^{-1} S_n(f)$ depends explicitly on $\mu(\bar{f}^2)$, i.e. the variance of $f(X)$ when $X \sim \mu$. There is no need for $f$ to even be continuous, but it should ideally have a second moment under $\mu$.
 
 ```{r}
 # set the seed to fix the pseudo-random numbers
