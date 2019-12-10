@@ -315,14 +315,12 @@ We will only consider finite intervals here.
 ## Integrating the interpolating polynomial approximation
 
 Consider integrating a Lagrange polynomial $p_{k-1}$ over $[a,b]$. We have
-
 \begin{align}
 I(p_{k-1}) &= \int_a^b p_{k-1}(x) {\rm d}x \\
   &= \int_a^b \sum_{i=1}^k \ell_i(x) f(x_i) {\rm d}x \\
   &= \sum_{i=1}^k f(x_i) \int_a^b \ell_i(x) {\rm d}x \\
   &= \sum_{i=1}^k w_i f(x_i),
 \end{align}
-
 where for $i \in \{1,\ldots,k\}$, $w_i := \int_a^b \ell_i(x) {\rm d}x$ and we recall that $\ell_i(x) = \prod_{j=1,j\neq i}^k \frac{x-x_j}{x_i-x_j}$.
 
 The approximation of $I(f)$ is $\hat{I}(f) = I(p_{k-1})$, where $p_{k-1}$ depends only on the choice of interpolating points $x_1,\ldots,x_k$.
