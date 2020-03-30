@@ -23,7 +23,7 @@ You can log in to Travis using your GitHub account.
 
 Your repositories should be listed in Travis, and you can choose which ones undergo continuous integration by toggling them. You may need to synchronize your GitHub account within Travis to see new repositories.
 
-In order for Travis to build your R package, a file called `.travis.yml` should be placed in your repository.
+In order for Travis to build your R package, a file called `.travis.yml` should be placed in your repository. 
 
 For a simple R package, the following should be sufficient:
 
@@ -40,6 +40,12 @@ r_github_packages:
 
 after_success:
   - Rscript -e 'covr::codecov()'
+```
+Next, you have to tell R to ignore this file. You do this by adding the following code to the **.Rbuildignore** file in your package.
+
+```
+## Ignore travis config file
+^\.travis\.yml$
 ```
 
 The information in the file tells Travis to build the master branch on an Ubuntu 16.04 (Xenial Xerus) system. If you have added tests using "testthat" these will be automatically run as part of the package build. Code coverage will also be run.
