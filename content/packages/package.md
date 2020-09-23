@@ -89,7 +89,9 @@ Code coverage tools only tell us which lines are covered. When lines are not cov
 
 An example R package can be found [here](https://github.com/awllee/SC1ExamplePackage).
 
-You can install a package from GitHub in R via ```devtools::install_github("https://github.com/awllee/SC1ExamplePackage")
+You can install a package from GitHub in R via
+```
+devtools::install_github("https://github.com/awllee/SC1ExamplePackage")
 ```
 
 This is why the git repository includes computer-generated content, specifically `NAMESPACE` and the `man` folder.
