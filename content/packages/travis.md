@@ -3,19 +3,15 @@ title: Testing a package using Travis
 weight: 4
 ---
 
-An R package that is publicly available on GitHub can be tested using [Travis CI (.org)](https://travis-ci.org/). CI stands for continuous integration.
+An R package that is publicly available on GitHub can be tested using [Travis CI (.co,)](https://travis-ci.com/). CI stands for continuous integration.
 
 CI is a useful tool when developing software collaboratively because pull requests can automatically trigger tests. This means that the reviewer of the pull request can be sure that the code works, insofar as the tests pass, and focus on other aspects of the code.
 
 Even in non-collaborative development, this can be useful as tests can be configured to run systematically against different configurations. For example, operating systems and versions of R.
 
-## Travis CI org vs com
+## Travis CI .org vs .com
 
 There have historically been two different services for public and private repositories. However, now Travis CI is aiming to service both types of repositories on [Travis CI .com](https://travis-ci.com/).
-
-Moreover, [they are encouraging new repositories to be linked to the .com version](https://blog.travis-ci.com/2018-05-02-open-source-projects-on-travis-ci-com-with-github-apps).
-
-Although I have no experience with Travis CI .com, I expect using it will be similar to using Travis CI .org.
 
 ## Getting set up
 
@@ -23,7 +19,7 @@ You can log in to Travis using your GitHub account.
 
 Your repositories should be listed in Travis, and you can choose which ones undergo continuous integration by toggling them. You may need to synchronize your GitHub account within Travis to see new repositories.
 
-In order for Travis to build your R package, a file called `.travis.yml` should be placed in your repository. 
+In order for Travis to build your R package, a file called `.travis.yml` should be placed in your repository.
 
 For a simple R package, the following should be sufficient:
 
