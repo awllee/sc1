@@ -1,4 +1,4 @@
-baseURL = "https://awllee.github.io/sc1-2019/"
+baseURL = "https://awllee.github.io/sc1/"
 languageCode = "en-us"
 title = "SC1"
 
@@ -58,5 +58,5 @@ footnotereturnlinkcontents = "↩"
     highlightjsCDN = "//cdn.bootcss.com"
     highlightjsLang = ["r", "yaml", "tex"]
     highlightjsTheme = "github"
-    GithubEdit = "https://github.com/awllee/sc1-2019/edit/master/content/"
-    GithubView = "https://github.com/awllee/sc1-2019/blob/master/content/"
+    GithubEdit = "https://github.com/awllee/sc1/edit/master/content/"
+    GithubView = "https://github.com/awllee/sc1/blob/master/content/"
