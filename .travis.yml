@@ -23,7 +23,7 @@ before_script:
     - Rscript -e 'blogdown::install_hugo()'
 
 script:
-    - Rscript -e 'blogdown::build_site()'
+    - Rscript -e 'blogdown::build_site(build_rmd = TRUE)'
 
 before_deploy:
     - rm public/.gitignore
