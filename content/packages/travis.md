@@ -3,7 +3,7 @@ title: Testing a package using Travis
 weight: 4
 ---
 
-An R package that is publicly available on GitHub can be tested using [Travis CI (.co,)](https://travis-ci.com/). CI stands for continuous integration.
+An R package that is publicly available on GitHub can be tested using [Travis CI (.com)](https://travis-ci.com/). CI stands for continuous integration.
 
 CI is a useful tool when developing software collaboratively because pull requests can automatically trigger tests. This means that the reviewer of the pull request can be sure that the code works, insofar as the tests pass, and focus on other aspects of the code.
 
