@@ -32,7 +32,7 @@ For exampole, you can use mathematics: for $i \in {1,\ldots,n}$,
 
 The difference is that you can insert R code chunks
 
-<<chunk-name, fig.height=5>>=
+<<chunk-name, fig.height=5, fig=TRUE>>=
 xs <- seq(0,2*pi,0.01)
 ys <- sin(xs)
 plot(xs, ys, type="l")
