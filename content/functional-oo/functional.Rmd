@@ -31,7 +31,7 @@ One can also return functions.
 
 ```{r}
 negate <- function(f) {
-  nf <- function(...) {
+  function(...) {
     return(-f(...))
   }
 }
@@ -43,7 +43,7 @@ negative.add(1, 2)
 Functions can be stored in lists.
 
 ```{r}
-arithmetic <- list(add = function(x,y) x+y, multiply = function(x,y) x*y)
+arithmetic <- list(add=function(x,y) x+y, multiply=function(x,y) x*y)
 arithmetic$add(1,2)
 ```
 
@@ -66,8 +66,10 @@ make.foo <- function(x) {
   foo <- function(y) x + y
 }
 
-f <- make.foo(10)
+f <- make.foo(10) # f(y) = 10 + y
 f(3)
+f(5)
+exists('x')
 ```
 
 You may have used this feature without even thinking about it very much.
