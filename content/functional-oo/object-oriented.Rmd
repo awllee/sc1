@@ -8,7 +8,7 @@ output:
 
 ## Outlook
 
-The purpose of this chapter is introducing you to object-oriented programming (OOP) in R. Base R offers three different models for OOP:
+The purpose of this chapter is to introduce object-oriented programming (OOP) in R. Base R offers three different models for OOP:
 
 - [S3](http://search.r-project.org/library/base/html/UseMethod.html),
 - [S4](http://search.r-project.org/library/methods/html/Introduction.html), and
@@ -20,13 +20,13 @@ Here we focus on an introduction of the models available in base R and a discuss
 
 ## Terminology
 
-An important reason to use OOP is that it allows for [**polymorphism**](https://en.wikipedia.org/wiki/Polymorphism_(computer_science)), which greatly fascilitates reusability and extendability. Polymorphism means that a single symbol may refer to different types. In particular, this approach allows for the separation of the interface of a piece of software and its implementation. A software developer who wants to reuse some already existing software thus only needs to know the interface against which he is programming and what the expected behaviour is. The details of the implementation on the other hand are not required to be know. One specific implementation of an interface could thus even be exchanged for another one and the two implementations may (internally) works quite different without affecting the validity of the software that makes use of them.
+An important reason to use OOP is that it allows for [**polymorphism**](https://en.wikipedia.org/wiki/Polymorphism_(computer_science)), which greatly facilitates re-usability and extendability. Polymorphism means that a single symbol may refer to different types. In particular, this approach allows for the separation of the interface of a piece of software and its implementation. A software developer who wants to reuse some already existing software thus only needs to know the interface against which he is programming and what the expected behaviour is. The details of the implementation on the other hand are not required to be know. One specific implementation of an interface could thus even be exchanged for another one and the two implementations may (internally) works quite different without affecting the validity of the software that makes use of them.
 
-In OOP the implementation is **encapsulated** in an **object**; i. e., its data and functionality are conceptionally at the same place, but separate from the rest. Every object is typed and the details of the type are specified in its **class** definition. The state (this can include data) of an object is specified via its **fields** and the behaviour is specified by its **methods**. Many OOP model (but not all) allow for [**inheritance**](https://en.wikipedia.org/wiki/Inheritance_(object-oriented_programming)) when defining new classes. If one class (the derived class is usually referred to as the child) inherits from another class (the base class is usually referred to as the parent) then the child class will have all the fields and methods of the parent class available and the fields and methods from the definition are added to those. The resulting hierarchical structure is often displayed graphically in form of a [class diagram](https://en.wikipedia.org/wiki/Class_diagram) which are part of the [Unified Modelling Language](https://en.wikipedia.org/wiki/Unified_Modeling_Language) (UML). The use of UML can be very helpful when designing software systems using OOP.
+In OOP the implementation is **encapsulated** in an **object**; i.e., its data and functionality are conceptually at the same place, but separate from the rest. The state (this can include data) of an object is specified via its **fields** and the behaviour is specified by its **methods**. Many OOP model (but not all) allow for [**inheritance**](https://en.wikipedia.org/wiki/Inheritance_(object-oriented_programming)) when defining new classes. If one class (the derived class is usually referred to as the child) inherits from another class (the base class is usually referred to as the parent) then the child class will have all the fields and methods of the parent class available and the fields and methods from the definition are added to those. The resulting hierarchical structure is often displayed graphically in form of a [class diagram](https://en.wikipedia.org/wiki/Class_diagram) which are part of the [Unified Modelling Language](https://en.wikipedia.org/wiki/Unified_Modeling_Language) (UML). The use of UML can be very helpful when designing software systems using OOP.
 
 With classes and their relationships to each other laid out in a tactical way (e. g., via inheritance and how they interact or are associated to each other) software systems become more easily maintainable and it is often possible to extend functionality without changes to the already existing code. Reusable solutions and best practices in OOP are documented in a formalised fashion as [**design patterns**](https://en.wikipedia.org/wiki/Software_design_pattern).
 
-The different OOP models in R vary in the degree of encapsulation that they provide. S3 is probably the least rigorous of the models available in base R. In [Advanced R](https://adv-r.hadley.nz/oo.html) it is described as **functional OOP**, because of the mechanism in which a function call of the form `generic(object, additional_args)` is dispatached. Here, a **method dispatach** refers to finding the right code to evaluate given the type of `object`. S4 enforces more disciplined programming by requiring formal definitions that S3 does not require. The upside to this extra work is that a greater degree of integrity can be guaranteed. Reference Classes implement properly encapsulated object-oriented paradigm. In particular, they are **mutable**, meaning that they can be modified in place avoiding R's usual copy-on-modify mechanism.
+The different OOP models in R vary in the degree of encapsulation that they provide. S3 is probably the least rigorous of the models available in base R. In [Advanced R](https://adv-r.hadley.nz/oo.html) it is described as **functional OOP**, because of the mechanism in which a function call of the form `generic(object, additional_args)` is dispatched. Here, a **method dispatch** refers to finding the right code to evaluate given the type of `object`. S4 enforces more disciplined programming by requiring formal definitions that S3 does not require. The upside to this extra work is that a greater degree of integrity can be guaranteed. Reference Classes implement properly encapsulated object-oriented paradigm. In particular, they are **mutable**, meaning that they can be modified in place avoiding R's usual copy-on-modify mechanism.
 
 ## S3
 
@@ -61,13 +61,13 @@ y  <- b0[1] + b0[2] * x + rnorm(n)
 simple_lin_regression <- function(y, x) {
   # define design matrix
   n <- length(y)
-  D  <- matrix(c(rep(1, n), x), ncol = 2)
+  D <- matrix(c(rep(1, n), x), ncol = 2)
   
   # compute the OLS estimate
-  b  <- solve(t(D) %*% D) %*% t(D) %*% y 
+  b <- solve(t(D) %*% D) %*% t(D) %*% y 
   
   # the object will encapsulate y, X and b
-  slr <- list(response = y, regressor = x, estimate = b)
+  slr <- list(response=y, regressor=x, estimate=b)
   
   # the object `slr` is declared to be an S3 object of
   # class "simple_lin_regression", by
@@ -79,7 +79,7 @@ simple_lin_regression <- function(y, x) {
 sl1 <- simple_lin_regression(y, x)
 ```
 
-One reason for organising the data and estimates in this way is that we can now implement special versions of generic methods (e. g., `print` and `plot`) that will be capable of working with this class of objects. Methods for S3 objects are defined by the following naming convenction `[method_name].[class_name]()`. For example, we can implement `print` and `plot` for our class `simple_lin_regression` by the following code
+One reason for organising the data and estimates in this way is that we can now implement special versions of generic methods (e. g., `print` and `plot`) that will be capable of working with this class of objects. Methods for S3 objects are defined by the following naming convention `[method_name].[class_name]()`. For example, we can implement `print` and `plot` for our class `simple_lin_regression` by the following code
 
 ```{r}
 print.simple_lin_regression <- function(x, ...) {
@@ -194,30 +194,9 @@ setClass("simple_lin_regression",
 )
 ```
 
-In the call of `setClass` above, two arguments are provided. The first argument (it is named `Class`) is the name of the class that is being defined. The second argument is `slots` which is required to be a named character vector. Note that declaring an S4 class, where fields are declared by name and type, is more rigorous than declaring a class in S3 where any base typed object can be turned into an S3 object by adding the attribute `class` (with the name of the S3 class) to it.
+In the call of `setClass` above, two arguments are provided. The first argument is the name of the class that is being defined. The second argument is `slots` (more commonly referred as fields or variables) which is required to be a named character vector. Note that declaring an S4 class, where fields are declared by name and type, is more rigorous than declaring a class in S3 where any base typed object can be turned into an S3 object by adding the attribute `class` (with the name of the S3 class) to it.
 
-An object from the class can then be instantiated by use of the function `new`. To avoid that an end-user needs to deal with the mechanics of S4 this call is usally wrapped in a constructor class (similar to what was also done in S3):
-
-```{r}
-# Constructor for `simple_lin_regression`.
-#
-# This function computes the ordinary least squares estimate
-# for the simple linear regression E[y|x] = b0 + b1 * x.
-#
-# Params: y - a vector with n elements; observed responses
-#         x - a vector with n elements; observed regressors
-#
-# Returns: an S4 object of type simple_lin_regression
-simple_lin_regression <- function(y, x) {
-  slr <- new("simple_lin_regression",
-             response  = y,
-             regressor = x
-             )
-  return(slr)
-}
-```
-
-We could now call `simple_lin_regression(y, x)` and it would return an S4 object of class "simple_lin_regression" with the slots `response` and `regressor` set (try this!) but, as you might have noticed, computing the estimate has not yet been implemented and therefore this slot would be `numeric(0)`. Instead of implementing the computation of the least squares estimate in the constructor, we are going to use a special mechanism for initialisation that is provided by S4:
+After defining the fields in a class, we need to define the methods. We should first define a special initialisation method. This method must be called `initialize` (note the American spelling):
 
 ```{r}
 setMethod("initialize", "simple_lin_regression",
@@ -227,10 +206,10 @@ setMethod("initialize", "simple_lin_regression",
 
     # define design matrix
     n <- length(response)
-    D  <- matrix(c(rep(1, n), regressor), ncol = 2)
+    D <- matrix(c(rep(1, n), regressor), ncol = 2)
 
     # compute the OLS estimate
-    b  <- solve(t(D) %*% D) %*% t(D) %*% response
+    b <- solve(t(D) %*% D) %*% t(D) %*% response
     .Object@estimate <- as.numeric(b)
     return(.Object)
   }
@@ -239,9 +218,9 @@ setMethod("initialize", "simple_lin_regression",
 
 Explanation and some remarks regarding the above definition of `initialize` for objects of class `simple_lin_regression` are in order now. We first describe the code line by line.
 
-The first two arguments to `setMethod` are the name of the generic function that we are implementing (here: `initialize`) and the signature, i. e., the classes that some of the arguments of this function have to have for this particular implementation of the function to be invoked. `initialize` is a non-standard generic function that is called within the function `new` and by default (does some checks and then) sets the slots to the values provided as the arguments to `new`.
+The first two arguments to `setMethod` are the name of the generic function that we are implementing (here: `initialize`) and the signature, i.e., the classes that some of the arguments of this function have to have for this particular implementation of the function to be invoked. `initialize` is a non-standard generic function that is called within the function `new` (which constructs a new object of this class and is called by `new("simple_lin_regression", response=y, regressor=x)`) and should at the least set the slots to the values provided as the arguments to `new`.
 
-Our implementation above will be called if the first argument `.Object`, this is the class of the object created by `new`, is of class "simple_lin_regression". Further (cf. the second line of the call of `setMethod` above), we now require that only two additional arguments are provided in the call of `new("simple_lin_regression", ...)`: these arguments must be called `response` and `regressor` and no other argument (in particular, no `estimate`) must be given. You may want to take a look at the definitions of the generic function `initialize` and the function `new`.
+Our implementation above will be called if the first argument `.Object`, which is the class of the object created by `new`, is of class "simple_lin_regression". Further (cf. the second line of the call of `setMethod` above), we now require that only two additional arguments are provided in the call of `new("simple_lin_regression", ...)`: these arguments must be called `response` and `regressor` and no other argument (in particular, no `estimate`) must be given. You may want to take a look at the definitions of the generic function `initialize` and the function `new`.
 
 In lines 3 and 4 of the code above we then set the values of slots `response` and `regressor` to the values that are passed to the call of `new`. Note that slots of an object can be accessed via the `@` operator. To achieve proper encapsulation, the `@` operator should only be used within method definitions, but never from outside. To allow end-users to access the value of slots, one should instead provide getter and setter methods (more on that later).
 
@@ -251,8 +230,7 @@ In the last line of the definition of the new `initialize` method we return the 
 
 **Note**: Implementing an `initialize` method for a class also provides for a convenient and reliable way to set default values to each slot. Another way to set default values is by setting the `prototype` argument of `setClass`, but the R documentation of `setClass` contains a remark that discourages users to do so and implement the `initialize` method instead.
 
-
-With the specialised implementation of `initialize` in place we could now call `simple_lin_regression(y, x)` and will see that it returns an object with all slots properly populated (try that). But, before we actually call it we will also implement the `print` and `plot` method for the "simple_lin_regression" S4 class. Not that this is similar to the implementation of `initialize`, but possibly a bit easier:
+We will also implement the `print` and `plot` method for the "simple_lin_regression" S4 class. Not that this is similar to the implementation of `initialize`, but possibly a bit easier:
 
 ```{r}
 setMethod("print", "simple_lin_regression",
@@ -265,7 +243,7 @@ setMethod("print", "simple_lin_regression",
 )
 
 setMethod("plot", "simple_lin_regression",
-  function(x, y = NULL, ...) {
+  function(x, ...) {
     plot(x = x@regressor, y = x@response,
          xlab = expression(X), ylab = expression(Y))
     abline(a = x@estimate[1], b = x@estimate[2])
@@ -275,10 +253,15 @@ setMethod("plot", "simple_lin_regression",
 
 In the above implementation of the generic functions `print` and `plot` for the signature "simple_lin_regression" note that the code is almost exactly the same as the code that we used when implementing the S3 methods, but that in S4 we use the `@` operator to access the slots while in S3 we used `$`, because we were accessing named list elements (recall that the base type of our S3 implementation was `list()`). 
 
-Now we can finally call the constructor to create the object and may use the designated `print` and `plot` method to handle it.
+We now instantiate an object of this class by calling the function `new`. Just like in most other programming languages, it is not necessary to write an additional constructor function for the S4 implementation due to the more formal and rigorous implementation of OOP with S4. Rather, we simply call the function `new`. We also try out the `print` and `plot` functions we have defined for the class `simple_lin_regression`.
 
 ```{r}
-slm1 <- simple_lin_regression(y, x)
+n  <- 50
+b0 <- matrix(c(2, -1), ncol = 1)
+x  <- rnorm(n)
+y  <- b0[1] + b0[2] * x + rnorm(n)
+slm1 <- new("simple_lin_regression", response=y, regressor=x)
+str(slm1)
 print(slm1)
 plot(slm1)
 ```
@@ -290,15 +273,15 @@ setGeneric("residual_analysis")
 setMethod("residual_analysis", "simple_lin_regression",
   function(x) {
     predictions <- x@estimate[1] + x@estimate[2] * x@regressor
-    plot(x = predictions, y = x@response - predictions,
-         xlab = expression(hat(Y)), ylab = expression(Y - hat(Y)))
+    plot(x=predictions, y=x@response - predictions,
+         xlab=expression(hat(Y)), ylab=expression(Y - hat(Y)))
   }
 )
 
 residual_analysis(slm1)
 ```
 
-Here we have used `setGeneric` to make the `residual_analysis` generic function available and then `setMethod` to implement it for objects of class `simple_lin_regression`. Not that we have again used the `@` operator in the implementation.
+In S4, we use `setGeneric` to make the `residual_analysis` generic function available and then `setMethod` to implement it for objects of class `simple_lin_regression`. Not that we have again used the `@` operator in the implementation.
 
 Next, we will add getter and setter methods that were mentioned before. Getter and setter methods should be provided to end users when they are meant to read and write the values of slots. First we do this for the `response` slot:
 
@@ -398,11 +381,11 @@ When individual objects are related to one another this can be called an [instan
 
 When all objects of one class are related to all objects of another class in the way that one is a more general version of the other then we model [inheritance](https://en.wikipedia.org/wiki/Class_diagram#Generalization/Inheritance). In S4 a class is modelled to inherit from another class by adding the `contains` argument to the call of `setClass`. If a child class inherits from a parent class this implies that the child will have all slots available that are available to the parent. S4 allows for multiple inheritance such that a vector of classes to inherit from can be provided. In this case a child has all slots of all its parents available.
 
-The inheritance relationships also determine the behaviour of the object; i. e., which methods are associated with a class. The method dispatch (the process of determining which implementation of a generic is called) with S4 can become quite complicated when multiple inheritance or multiple arguments are present. But, if there is only one argument and no multiple inheritance it is quite straight forward to see which method is called: it is first tested whether the method is implemented for the classes of the argument and if not the parent is tested, then the "grand parent", etc. You may want to refer to `?Methods_Details` or [Section 15.5 in Advanced R](https://adv-r.hadley.nz/s4.html#s4-dispatch) for details on the method dispatch in more difficult cases.
+The inheritance relationships also determine the behaviour of the object; i.e., which methods are associated with a class. The method dispatch (the process of determining which implementation of a generic is called) with S4 can become quite complicated when multiple inheritance or multiple arguments are present. But, if there is only one argument and no multiple inheritance it is quite straight forward to see which method is called: it is first tested whether the method is implemented for the classes of the argument and if not the parent is tested, then the "grand parent", etc. You may want to refer to `?Methods_Details` or [Section 15.5 in Advanced R](https://adv-r.hadley.nz/s4.html#s4-dispatch) for details on the method dispatch in more difficult cases.
 
 ## Reference Classes
 
-While S3 and S4 are object-oriented in the sense that they provide polymorphism by the introduction of classes, generic functions and the respective method dispatch mechanism, we have also seen that encapsulation is not as consequently implemented as in other programming languages (as e.g., in Java). Reference Classes provide a model for OOP that allows for a higher degree of encapsulation where methods are not declared as generic functions and then implemented for the class, but they are implemented as part of the class definition.
+While S3 and S4 are object-oriented in the sense that they provide polymorphism by the introduction of classes, generic functions and the respective method dispatch mechanism, we have also seen that encapsulation is not as consequently implemented as in other programming languages (as e.g. in C++ or Python). Reference Classes provide a model for OOP that allows for a higher degree of encapsulation where methods are not declared as generic functions and then implemented for the class, but they are implemented as part of the class definition.
 
 Another important difference between Reference Class and S3/S4 is that it allows for [modify-in-place](https://adv-r.hadley.nz/names-values.html#modify-in-place) semantics which is different from the [copy-on-modify](https://adv-r.hadley.nz/names-values.html#copy-on-modify) semantics that R uses in most circumstances. Note how this corresponds to more encapsulation, because it allows for the data "inside the object" to be modified by the methods of the object. We will see an example later.
 
@@ -411,19 +394,8 @@ Instead of reimplementing the linear model example for a third time, we are now 
 ```{r}
 library(methods)
 
-DataContainer <- setRefClass(
-  "DataContainer",
-  fields = c(
-    data   = "numeric",
-    flag   = "logical",
-    result = "numeric"
-  )
-)
-
-dataContainer <- function(data) {
-  dC <- DataContainer$new(data = data)
-  return(dC)
-}
+DataContainer <- setRefClass("DataContainer",
+                             fields=c(data="numeric", flag="logical", result="numeric"))
 
 DataContainer$methods(
   initialize = function(data) {
@@ -453,12 +425,12 @@ DataContainer$methods(
 
 We now briefly comment on the code above, before we show that it indeed works how it is supposed to and compare with an analogous S4 implementation that we will see does not work as this one.
 
-First note that the call of `setRefClass` is quite similar to the call of `setClass` when S4 was used. You can find the documentation by calling `?setRefClass`. Note that the fields of the class are defined via the argument `fields` (in `setClass` for S4 they were called `slots`). Many further options are available, as for example declaring inheritance relationships or a mechanism to lock fields to make them private. We will not discuss these details here any further and refer you to the documentation within R. It is important to observe that the call of `setRefClass` returns a generator function which we assign to the variable `DataContainer`. In fact, `setClass` for S4 returns a generator function as well, but for Reference Classes it is more important to be able to access it, as can be seen now. In the definition of `dataContainer` (our constructor or helper function that can be used to generate objects of class `DataContainer`) we call the `new` function of `DataContainer` by using the `$` operator. This nicely illustrates how methods of an object are accessed (i.e., `[object_name]$[method_name]()`). Next we call the `methods` method of `DataContainer` and define the methods `initialize`, `doComputation` and `show` for the class. Further, we define in the same call to `methods` the getter `getResult` and the setter `setData`. Note that we have not used the `accessors` function of the generator as this would not allow us to implement the special behaviour we would like to see. Further, note that in the definition of the functions we use `.self` to refer to the object from within these functions are called. You may be familiar with this from other programming languages (e.g., `this` in Java).
+First note that the call of `setRefClass` is quite similar to the call of `setClass` when S4 was used. You can find the documentation by calling `?setRefClass`. Note that the fields of the class are defined via the argument `fields` (in `setClass` for S4 they were called `slots`). Many further options are available, as for example declaring inheritance relationships or a mechanism to lock fields to make them private. We will not discuss these details here any further and refer you to the documentation within R. It is important to observe that the call of `setRefClass` returns a generator function which we assign to the variable `DataContainer`. In fact, `setClass` for S4 returns a generator function as well, but for Reference Classes it is more important to be able to access it, as can be seen now. Next we define `methods` of `DataContainer`: `initialize`, `doComputation` and `show`. Further, we define in the same call to `methods` the getter `getResult` and the setter `setData`. Note that we have not used the `accessors` function of the generator as this would not allow us to implement the special behaviour we would like to see. Further, note that in the definition of the functions we use `.self` to refer to the object from within, similar to `self` in e.g. Python and `this` in C++.
 
-Now we use the Reference Class `DataContainer` above to see that it indeed fascilitates modify-in-place:
+We call the `new` function of `DataContainer` to instantiate a new `DataContainer` object. Note that we use `$` to access methods in an object, similar to `.` in Python or C++. We will illustrate the modify-in-place behaviour of Refernce classes.
 
 ```{r}
-dC1 <- dataContainer(rnorm(5))
+dC1 = DataContainer$new(data=rnorm(5))
 
 dC1             # no result set yet!
 dC1$getResult() # calling getResult() will compute the result
@@ -479,19 +451,8 @@ dC1$getResult() # calling getResult() a second time returns the result,
 Now we do the same implementation with S4 and compare what happens:
 ```{r}
 
-setClass(
-  "DataContainer_S4",
-  slots = c(
-    data   = "numeric",
-    flag   = "logical",
-    result = "numeric"
-  )
-)
-
-dataContainer_S4 <- function(data) {
-  dC <- new("DataContainer_S4", data = data)
-  return(dC)
-}
+setClass("DataContainer_S4",
+  slots = c(data="numeric", flag="logical", result="numeric"))
 
 setMethod("initialize", "DataContainer_S4",
   function(.Object, data){
@@ -531,18 +492,16 @@ setMethod("result", "DataContainer_S4",
 setGeneric("data<-", function(x, value) standardGeneric("data<-"))
 setMethod("data<-", "DataContainer_S4",
   function(x, value) {
-    x <- initialize(x, data = value)
+    x <- initialize(x, data=value)
     return(x)
   }
 )
 
-dC1 <- dataContainer_S4(rnorm(5))
+dC1 <- new("DataContainer_S4", data=rnorm(5))
 
 dC1         # no result set yet!
 result(dC1) # calling getResult() will compute the result
-dC1         # but the result is not set
-result(dC1) # calling getResult() a second time returns the result,
-            # but doesn't do the computation again
+dC1         # but dC1$result is not set
 ```
 
 We can see that the getter for `result` does the computation and returns the correct result. Also, the slot `result` is set, but due to the modification a copy of the object `dC1` is generated which we never get to see, because `result` does not return it.
