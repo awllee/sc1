@@ -44,15 +44,17 @@ add.one.bad <- function(x) {
   x
 }
 
-add.one.index <- function(x, i) x[i] + 1
-
-add.one.slow <- function(x) {
-  for (i in 1:length(x)) {
-    x[i] <- add.one.index(x, i)
-  }
+add.one.index <- function(x, i) {
+  x[i] <- x[i] + 1
   x
 }
 
+add.one.slow <- function(x) {
+  for (i in 1:length(x)) {
+    x <- add.one.index(x, i)
+  }
+  x
+}
 
 system.time(add.one.bad(a1))
 system.time(add.one.bad(a2))
