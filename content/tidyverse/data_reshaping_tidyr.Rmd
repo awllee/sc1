@@ -8,26 +8,26 @@ body {
 text-align: justify}
 </style>
 
-This section is the natural continuation of the previous one, which focussed on data transformation with `dplyr`. Here we show how to use the `tidyr` package, which provides tools for reshaping your data for the purpose of modelling and visualization, and we will illustrate more features of `dplyr`. As for the previous sections, here we cover the basics and we refer to the [relevant chapter](https://r4ds.had.co.nz/tidy-data.html) of "R for Data Science" for more details.    
+This section is the natural continuation of the previous one, which focussed on data transformation with `dplyr`. Here we show how to use the `tidyr` package, which provides tools for reshaping your data for the purpose of modelling and visualization, and we will illustrate more features of `dplyr`. As for the previous sections, here we cover the basics and we refer to the [relevant chapter](https://r4ds.had.co.nz/tidy-data.html) of "R for Data Science" for more details.
 
-## Gathering and spreading your data
+## Pivoting your data
 
-To illustrate the reshaping tools provided by `tidyr`, here we look at another electricity demand data set. In particular, we consider an Irish smart meter data set which can be found in the `electBook` package. At the time of writing `electBook` is available only on Github, hence we need to install it from there using `devtools`:    
+To illustrate the reshaping tools provided by `tidyr`, here we look at another electricity demand data set. In particular, we consider an Irish smart meter data set which can be found in the `electBook` package. At the time of writing `electBook` is available only on Github, hence we need to install it from there using `devtools`:
 ```{r, message = FALSE, warning = FALSE}
 library(magrittr)
 library(tidyr)
 library(dplyr)
 library(ggplot2)
 
-# Install electBook only if it is not already installed         
-if( !require(electBook) ){ 
+# Install electBook only if it is not already installed
+if( !require(electBook) ){
   library(devtools)
   install_github("mfasiolo/electBook")
   library(electBook)
 }
 ```
 
-Then we load the smart meter data: 
+Then we load the smart meter data:
 ```{r}
 data(Irish)
 ```
@@ -45,27 +45,29 @@ Now, suppose that we want to plot the consumption of some of the customers over 
 ```{r, fig.width = 7, fig.height = 5, fig.align = 'center'}
 matplot(indCons[1:(48*7), 1:3], type = 'l')
 ```
-Here we are plotting the consumption of the first three customers over the first 7 days (we have 48 observations per day). To do the same in `ggplot2` we need to put the data in a "long" format, that is we need a `data.frame` where one columns contains the demand values and another indicates to which customer each demand value belongs to. This can be achieved easily using `tidyr::gather`: 
+Here we are plotting the consumption of the first three customers over the first 7 days (we have 48 observations per day). To do the same in `ggplot2` we need to put the data in a "long" format, that is we need a `data.frame` where one columns contains the demand values and another indicates to which customer each demand value belongs to. This can be achieved easily using `tidyr::pivot_longer`:
+
 ```{r}
-longDat <- indCons %>% gather(key = "ID", value = "dem") 
+longDat <- indCons %>% pivot_longer(cols = everything(), names_to = "ID", values_to = "dem") %>% dplyr::arrange(ID)
 head(longDat, 5)
 tail(longDat, 5)
 ```
-As you can see, the demand of all the customers has been aligned in a single vector, and the customer ID is reported in a separate column. In the call to `gather`, the `key` argument specifies the name we wish to give to the variable whose values formed the column names in the original data set (the customer IDs). The `value` argument specifies the name we wish to give to the variable whose values were spread over the columns of the original data set (the electricity consumption). 
+As you can see, the demand of all the customers has been aligned in a single vector, and the customer ID is reported in a separate column. In the call to `pivot_longer`, the `cols` argument specifies the set of columns whose names are values. The `names_to` argument specifies the name we wish to give to the variable whose values formed the column names in the original data set (the customer IDs). The `values_to` argument specifies the name we wish to give to the variable whose values were spread over the columns of the original data set (the electricity consumption).
 
 One issue with the long format is that it uses more memory, in fact:
 ```{r}
 indCons %>% object.size %>% format(units = "MB")
 longDat %>% object.size %>% format(units = "MB")
 ```
-This is mainly due to the `ID` column, which pretty much doubles the memory needed to store our data. The problem can be alleviated by converting the `ID` variable from a character string to a factor:  
+This is mainly due to the `ID` column, which pretty much doubles the memory needed to store our data. The problem can be alleviated by converting the `ID` variable from a character string to a factor:
 ```{r}
-longDat %<>% mutate(ID = as.factor(ID)) 
+longDat %<>% mutate(ID = as.factor(ID))
 longDat %>% object.size %>% format(units = "MB")
 ```
-The memory saving occurs because we store only one copy of the factor levels (which are character strings). This can be done directly in the call to `gather`, by specifying that the `key` must be treated as a factor:
+The memory saving occurs because we store only one copy of the factor levels (which are character strings). This can be done directly in the call to `pivot_longer`, by specifying that the `names` must be transformed into a factor:
+
 ```{r}
-longDat <- indCons %>% gather(key = "ID", value = "dem", factor_key = TRUE)
+longDat <- indCons %>% pivot_longer(cols = everything(), names_to = "ID", values_to = "dem", names_transform = list(ID = as.factor))
 longDat %>% object.size %>% format(units = "MB")
 ```
 
@@ -74,7 +76,7 @@ Having put the data in this format, we can try to plot the demand using `ggplot2
 longDat %>% filter(ID %in% levels(ID)[1:3]) %>%
             group_by(ID) %>%
             slice(1:(48 * 7)) %>%
-            ggplot(aes(x = 1:nrow(.), y = dem, col = ID)) + 
+            ggplot(aes(x = 1:nrow(.), y = dem, col = ID)) +
             geom_line()
 ```
 Here we are using filter to select the first three customers, then we group the data by customer ID and we use `slice` to select the first $48 \times 7$ observations for each customers. However, we didn't quite get the plot we wanted, because the consumption of the three customers does not overlap, but it's plotted sequentially along the $x$-axis. To get the `ggplot2` equivalent of the plot we got with `matplot`, we need a variable going from 1 to $48 \times 7$ repeatedly for each of the customers. This is achieved as follows:
@@ -83,7 +85,7 @@ longDat %>% filter(ID %in% levels(ID)[1:3]) %>%
             group_by(ID) %>%
             slice(1:(48 * 7)) %>%
             mutate(counter = row_number()) %>%
-            ggplot(aes(x = counter, y = dem, col = ID)) + 
+            ggplot(aes(x = counter, y = dem, col = ID)) +
             geom_line()
 ```
 Where we used `row_number` within `mutate` to add a new `counter` variable to the data. `counter` is shown by the following plot:
@@ -92,7 +94,7 @@ longDat %>% filter(ID %in% levels(ID)[1:3]) %>%
             group_by(ID) %>%
             slice(1:(48 * 7)) %>%
             mutate(counter = row_number()) %>%
-            ggplot(aes(x = 1:nrow(.), y = counter, col = ID)) + 
+            ggplot(aes(x = 1:nrow(.), y = counter, col = ID)) +
             geom_line()
 ```
 
@@ -103,8 +105,8 @@ longDat %>% group_by(ID) %>%
             mutate(counter = row_number()) %>%
             group_by(counter) %>%
             summarise(dem = sum(dem)) %>%
-            ggplot(aes(x = 1:nrow(.), y = dem)) + 
-            geom_smooth() + 
+            ggplot(aes(x = 1:nrow(.), y = dem)) +
+            geom_smooth() +
             geom_point()
 ```
 As an exercises, try to work out what the above code does, and what is being plotted.
@@ -115,27 +117,26 @@ longDat %<>% group_by(ID) %>%
              mutate(counter = row_number()) %>%
              ungroup()
 ```
-where we use `ungroup` to remove the grouping created by `group_by`. Now, suppose that we were given `longDat`, and that we wanted to spread it out on a wide format (as in the original `indCons` data set). We can achieve this using the `spread` function:
+where we use `ungroup` to remove the grouping created by `group_by`. Now, suppose that we were given `longDat`, and that we wanted to spread it out on a wide format (as in the original `indCons` data set). We can achieve this using the `tidyr::pivot_wider` function:
 ```{r}
-wideDat <- longDat %>% spread(key = "ID", value = "dem")
+wideDat <- longDat %>% pivot_wider(names_from = "ID", values_from = "dem")
 
 print(wideDat, n = 5, width = 60, n_extra = 0)
 ```
 As you can see we got back a wide `data.frame`, where the values of `longDat$ID` are variable names. Now, suppose that we wanted to transform `wideDat` back to a long format. Simply doing the following is not a good idea:
 ```{r}
-longDat2 <- wideDat %>% gather(key = "ID", value = "dem", factor_key = TRUE)
+longDat2 <- wideDat %>% pivot_longer(cols = everything(), names_to = "ID", values_to = "dem", names_transform = list(ID = as.factor)) %>% dplyr::arrange(ID)
 head(longDat2)
 tail(longDat2)
 ```
-because the counter `variable` is considered to be an ID! The solution is specifying which columns we want to gather when reshaping the data:
+because the variable `counter` is considered to be an ID! The solution is specifying which columns we want to gather when reshaping the data:
 ```{r}
-longDat2 <- wideDat %>% gather(I1002:I1241, key = "ID", value = "dem", factor_key = TRUE)
+longDat2 <- wideDat %>% pivot_longer(cols = I1002:I1241, names_to = "ID", values_to = "dem", names_transform = list(ID = as.factor)) %>% dplyr::arrange(ID)
 head(longDat2)
 ```
 where we are using `I1002:I1241` to specify that we want to gather all the columns included between `I1002` and `I1241`. This worked well, but it required us to know the names of the two "limit" columns (`I1002` and `I1241`) and there is the assumption that all the columns to be gathered are included between them (which is not always the case). A better alternative is the following:
 ```{r}
-longDat3 <- wideDat %>% gather(starts_with("I1"), key = "ID", 
-                               value = "dem", factor_key = TRUE)
+longDat3 <- wideDat %>% pivot_longer(cols = starts_with("I1"), names_to = "ID", values_to = "dem", names_transform = list(ID = as.factor)) %>% dplyr::arrange(ID)
 ```
 where we are using `starts_with` to gather all the columns that start with the "I1" string. The result is identical:
 ```{r}
@@ -143,7 +144,8 @@ identical(longDat2, longDat3)
 ```
 As an exercise, you might want to think about what the following code does:
 ```{r}
-strange <- wideDat %>% gather(I1002, I1003, key = "ID", value = "dem", factor_key = TRUE)
+strange <- wideDat %>% pivot_longer(cols = c(I1002, I1003), names_to = "ID", values_to = "dem", names_transform = list(ID = as.factor))
+strange
 ```
 Is the `strange` dataframe likely to be useful in practice?
 
@@ -160,11 +162,11 @@ Here we have, among others, the built year of the building, the type of heating 
 extra <- as_tibble( Irish$extra )
 head(extra)
 ```
-In particular, we have some standard variables indicating the time of year, temperature and time of day (see `?Irish`). 
+In particular, we have some standard variables indicating the time of year, temperature and time of day (see `?Irish`).
 
 Now, for the purpose of modelling and of producing `ggplot2`-based visualizations, it makes sense to try to merge the dataframes on individual consumption (`indCons`), household information (`survey`) and other variables (`extra`) in a single dataframe. Joining `indCons` with `extra` is quite simple:
 ```{r}
-allDat <- longDat %>% cbind(extra) #left_join(extra, by = NULL) 
+allDat <- longDat %>% cbind(extra) #left_join(extra, by = NULL)
 head(allDat)
 ```
 in fact `cbind` will bind the columns of `longDat` with 100 copies of `extra` (one copy for each customer). Hence now we can, for instance, look at the consumption of the first 3 customers as a function of the time of day `tod`, while distiguishing between working days and weekends:
@@ -172,58 +174,58 @@ in fact `cbind` will bind the columns of `longDat` with 100 copies of `extra` (o
 allDat %>% filter(ID %in% levels(ID)[c(5, 10, 15)]) %>%
            mutate(weekend = dow %in% c("Sat", "Sun")) %>%
            ggplot(aes(x = tod, y = dem, group = ID, color = ID)) +
-           geom_smooth() + 
+           geom_smooth() +
            facet_wrap(~ weekend)
 ```
 As you can see, customer `I1024` is probably at home during afternoon weekends, hence his consumption is higher than during working days.
 
 Now, how to add also the information in `survey` to `allDat`? The way to do it is:
 ```{r}
-allDat %<>% left_join(survey, by = "ID") %>% 
+allDat %<>% left_join(survey, by = "ID") %>%
             as_tibble()
 head(allDat)
 ```
-where we used `left_join` to do the merging and `as_tibble` to convert the `data.frame` to a `tibble` (simply because it prints out more nicely). In `left_join` we set `by = "ID"`, because `ID` is the common variable that we use to the matching between the demand data in `allDat` and the household information data in `survey`. In this case `ID` is said to be a primary key of the `survey` dataframe because it uniquely identifies each of its rows. It is also a foreign key because it allows to associate each row of `allDat` to one of the rows of `survey`. Having added the survey information, we can, for example, check how the distribution of the total per-customer yearly consumption changes with the number of appliances: 
+where we used `left_join` to do the merging and `as_tibble` to convert the `data.frame` to a `tibble` (simply because it prints out more nicely). In `left_join` we set `by = "ID"`, because `ID` is the common variable that we use to the matching between the demand data in `allDat` and the household information data in `survey`. In this case `ID` is said to be a primary key of the `survey` dataframe because it uniquely identifies each of its rows. It is also a foreign key because it allows to associate each row of `allDat` to one of the rows of `survey`. Having added the survey information, we can, for example, check how the distribution of the total per-customer yearly consumption changes with the number of appliances:
 ```{r, fig.width = 8, fig.height = 6, fig.align = 'center', message = FALSE}
 allDat %>% group_by(ID) %>%
-   summarise(dem = sum(dem), 
+   summarise(dem = sum(dem),
              appli = first(HOME.APPLIANCE..White.goods.)) %>%
    ggplot(aes(x = dem, group = appli, colour = appli)) +
    geom_density()
 ```
 Hence, it seems that the (total, per customer) consumption increases with the number of white goods (this becomes clearer if you consider the whole data set rather than a subset of 100 customers, as done here).
 
-There are different types of "mutating" joins: 
+There are different types of "mutating" joins:
 
    - `left_join(d1, d2)` preserves all the observations in `d1`, even if there is no corresponding row in `d2` (the missing values will be filled with NAs). The rows in `d2` whose key values does not match any row in `d1` will be discarded. For example:
 ```{r, message = FALSE}
-d1 <- data.frame(key = factor(c("A", "A", "B", "B"), levels = c("A", "B", "C")), 
+d1 <- data.frame(key = factor(c("A", "A", "B", "B"), levels = c("A", "B", "C")),
                  x1 = 1:4)
-d2 <- data.frame(key = factor(c("A", "C"), levels = c("A", "B", "C")), 
+d2 <- data.frame(key = factor(c("A", "C"), levels = c("A", "B", "C")),
                  x2 = c(TRUE, FALSE))
 
 left_join(d1, d2)
-``` 
+```
    - `right_join(d1, d2)` preserves all the observations in `d2`:
 ```{r, message = FALSE}
 right_join(d1, d2)
-``` 
+```
    - `full_join(d1, d2)` preserves all the rows in both `d1` and `d2`, for example:
 ```{r, message = FALSE}
 full_join(d1, d2)
-``` 
+```
    - `inner_join(d1, d2)` preserves only the row whose key appears in both data sets, for example:
 ```{r, message = FALSE}
 inner_join(d1, d2)
-``` 
+```
 There are also "filtering" joins, such as the `semi_join`:
 ```{r, message = FALSE}
 semi_join(x = d2, y = d1)
-``` 
-which keeps all the rows of its `x` argument that have matching key values in `y`. The main difference with an `inner_join` is that in the `semi_join` the rows of `x` are never duplicated in the presence of multiple matches (for example the first value of `key` in `d2` matches the values of `key` in the first and second row of `d1`, hence `inner_join` produces two rows). The complement of the output of `semi_join` is obtained using the `anti_join`: 
+```
+which keeps all the rows of its `x` argument that have matching key values in `y`. The main difference with an `inner_join` is that in the `semi_join` the rows of `x` are never duplicated in the presence of multiple matches (for example the first value of `key` in `d2` matches the values of `key` in the first and second row of `d1`, hence `inner_join` produces two rows). The complement of the output of `semi_join` is obtained using the `anti_join`:
 ```{r, message = FALSE}
 anti_join(x = d2, y = d1)
-``` 
+```
 which returns the rows of `x` which **do not** have a match in `y`.
 
 Going back to our electricity demand data, it is interesting to quantify what is the memory cost of building our long `data.frame` containing all the variables (`allDat`). The sizes of the original data sets are:
@@ -251,12 +253,5 @@ Specific "Tidyverse" packages for data cleaning/manipulation that we have not co
    - `stringr` for handling strings;
    - `lubridate` for handling dates and times;
    - `forcats` for handling factor variables.
-   
+
 You might also be interested in looking at the "tidy" functional programming tools provided by the `purrr`. If, instead, you feel that you are getting excessively excited about the Tidyverse, you could try to curb your enthusiasm by reading [this](https://github.com/matloff/TidyverseSkeptic).
-   
-
-
-   
-   
-   
-   
