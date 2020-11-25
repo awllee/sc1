@@ -124,14 +124,12 @@ x %<>% sort
 x
 ```
 What happened? Here the assignment pipe `%<>%` is a shortcut for `x <- x %>% sort`. That is, it performs the pipelined operations and then it stores the result in `x`. Importantly, `%<>%` can only be the first pipe in a pipeline, so that:
-```{r, message = FALSE}
+```{r, eval = FALSE, message = FALSE}
 x <- c(5, 1, 7, 9, 3)
 
 x %>% sort %<>% sort(decreasing = TRUE)
-
-x
 ```
-does not work, in the sense that `x` is not modified. Instead:
+generates an error. Instead:
 ```{r, message = FALSE}
 x <- c(5, 1, 7, 9, 3)
 
