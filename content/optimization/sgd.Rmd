@@ -1,5 +1,5 @@
 ---
-title: "Gradient Descent and Stochastic Gradient Descent"
+title: Gradient Descent and Stochastic Gradient Descent
 weight: 3
 ---
   
@@ -8,7 +8,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 # Gradient descent implementation
-We try to solve the prvious nonlinear least squares problem using gradient descent. The difference in magnitudes of optimal parameter values for $b$ in this example causes gradient descent algorithm to converge very slowly, if at all (have a try yourself). To illustrate the working of the gradient descent algorithm, we scale $b_3$ by 100 in the code below so that the optimal values of $b$ are of roughly the same magnitude.
+We try to solve the previous nonlinear least squares problem using gradient descent. The difference in magnitudes of optimal parameter values for $b$ in this example causes gradient descent algorithm to converge very slowly, if at all (have a try yourself). To illustrate the working of the gradient descent algorithm, we scale $b_3$ by 100 in the code below so that the optimal values of $b$ are of roughly the same magnitude.
 
 Below we define the function to be minimised $f$ as well as the residue function for a single sample $r_1$, for which we take advantage of the symbolic differentiation functionality of `R` (this is not a very efficient implementation as we also need to differentiate with respect to variables $x$ and $y$ in $r_1$, for which there is no need in reality).
 

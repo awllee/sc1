@@ -1,9 +1,9 @@
 ---
-title: "R Optimisation Functions"
+title: R Optimisation Functions
 weight: 2
 ---
-
-  ```{r setup, include=FALSE}
+  
+```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
@@ -75,7 +75,7 @@ Simulated annealing certainly does not get stuck in the local minimum close to i
 
 # A Nonlinear Least Squares Example
 
-We use a dataset from the `nlmrt` function help file. A plot of the data as well as the fitted logistic model is shown below. We first use `R` functions that are specifically designed to solve nonlinear least squares problems, `nls` (part of `R` core) which uses the Gauss-Markov algorithm by default, and `nlsLM` (part of `minpack.lm` package) which uses the Levenberg-Marquardt algorithm.
+We use a dataset from the `nlmrt` function help file. A plot of the data as well as the fitted logistic model is shown below. We first use `R` functions that are specifically designed to solve nonlinear least squares problems, `nls` (part of base `R`) which uses the Gauss-Newton algorithm by default, and `nlsLM` (part of `minpack.lm` package) which uses the Levenberg-Marquardt algorithm.
 
 ```{R, warning=FALSE}
 ydat = c(5.308, 7.24, 9.638, 12.866, 17.069, 23.192, 31.443, 38.558, 50.156, 62.948, 75.995, 91.972)
@@ -92,7 +92,7 @@ lines(tdat, out_lm$m$fitted(), pch=1, col='blue', type='b', lty=2)
 legend(1, 95, legend=c('data', 'fitted model'), col=c('red', 'blue'), pch=c(18,1))
 ```
 
-We see that the Gauss-Markov algorithm actually fails for this slightly tricky dataset and model due to singular gradients, but the Levenberg-Marquardt algorithm, which can handle singuar gradients, has no problem finding a good fit for the data.
+We see that the Gauss-Newton algorithm actually fails for this slightly tricky dataset and model due to singular gradients, but the Levenberg-Marquardt algorithm, which can handle singuar gradients, has no problem finding a good fit for the data.
 
 Next we define the residue function explicitly as the objective function and uses general-purpose optimisation functions for this nonlinear least squares problem.
 

@@ -1,5 +1,5 @@
 ---
-title: "Numerical Optimisation"
+title: Numerical Optimisation
 weight: 1
 ---
 
@@ -32,28 +32,29 @@ curve(f, from=0, to=2*pi)
 
 ## The `optimize` function
 
-We apply the `R` core function `optimize`, which only works on functions of one variable, to this function:
+We apply the base `R` function `optimize`, which only works on functions of one variable, to this function:
 
 ```{R}
-optimize(f, interval=c(0,2*pi))
+optimize(f, interval=c(0, 2*pi))
 ```
 
-We see that the `optimize` function finds a local minimum at 2.95, but not the global minimum between 0 and $2\pi$ at 1.65. If we change the search interval to $(0,\pi)$, however, `optimize` does find the global minimum at 1.65, even though the local minimum at 2.94 is in $(0,\pi)$.
+We see that the `optimize` function finds a local minimum at 3.82, but not the global minimum between 0 and $2\pi$ at 1.65. If we change the search interval to $(0,1.5\pi)$, however, `optimize` does find the global minimum at 1.65, even though 3.82 is in $(0,1.5\pi)$.
 
 ```{R}
-optimize(f, interval=c(0,pi))
+optimize(f, interval=c(0, 1.5*pi))
 ```
-It seems using `optimize` is a hit or miss affair even with a simple function as above. What algorithm is behind this function? According to the documentation, the method is based on golden section search, which is know to work well for a uni-modal function where the minimum is within the search interval. If the search interval contains multiple extrema, the golden search algorithm will converge to one of these extrema. But a plus is that no evaluation of derivatives is necessary.
+
+It seems using `optimize` is a hit or miss affair even with a simple function as above. What algorithm is behind this function? According to the documentation, the method is based on golden section search, which is known to work well for a uni-modal function where the minimum is within the search interval. If the search interval contains multiple extrema, the golden search algorithm will converge to one of these extrema. But a plus is that no evaluation of derivatives is necessary.
 
 We can also specify a paramter `tol` for `optimize`, which will stop the search once tolerance is reached.
 
 ```{R}
-optimize(f, interval=c(0,2*pi), tol=1e-2)
+optimize(f, interval=c(0,1.5*pi), tol=1e-2)
 ```
 
 ## Newton's Method
 
-Also know as the Newton-Raphson method, Newton's method aims to find the root of a function $g$. If we assume $g$ has a Taylor expansion at $x_0$, then
+Also known as the Newton-Raphson method, Newton's method aims to find the root of a function $g$. If we assume $g$ has a Taylor expansion at $x_0$, then
 $$ g(x) \approx g(x_0) + g'(x_0) (x-x_0). $$
 Setting this to 0 yields
 $$ 0 = g(x_0) + g'(x_0) (x-x_0) \\
@@ -106,19 +107,19 @@ Also known as the downhill simplex method, the Nelder-Mead algorithm is the most
 
 ## Gradient type methods
 
-The most well known gradient type method is the steepest descent (also known as gradient descent) algorithm. In order to minimise a differentiable multi-variable function $f(x)$, $x\in\mathbb{R}^n$, we iteratively take $$x \leftarrow x - \gamma \nabla f(x)$$ where $\gamma$ is small, i.e. we take a small step in the direction where the value of $f$ is decreasing the fastest. We can choose $\gamma$ by conducting a line-search to ensure the value of $f$ is decreasing as fast as possible.
+The most well known gradient type method is the steepest descent (also known as gradient descent) algorithm. In order to minimise a differentiable multi-variable function $f(x)$, $x\in\mathbb{R}^n$, we iteratively take $$x \leftarrow x - \gamma \nabla f(x)$$ where $\gamma$ is small, i.e. we take a small step where the value of $f$ is decreasing the fastest. We can choose $\gamma$ by conducting a line-search to ensure the value of $f$ is decreasing as fast as possible.
 
 This relatively simple (both conceptually and in terms of ease of programming) method is known to relatively slow and can [zigzag](https://en.wikipedia.org/wiki/Gradient_descent#Examples) (if applied to e.g. the Rosenbrock function). Neither `optim` nor `nlm` uses the steepest descent algorithm.
 
-A well-known improved gradient type method is the conjugate gradient (CG) algorithm. The main idea is that the search direction at each step should be conjugate toward search directions at previous step, so one avoids zigzag of classic steepest descent. In fact, if the function to be minimised is quadratic, then the conjugate gradient algorithm is guaranteed to reach the minimum in exactly $n$ steps if the input to the function is $n$-dimensional (ignoring numerical errors). The conjugate gradient algorithm tends to perform better than the classical steepest descent even on general nonlinear functions, but not as well as Newton type methods.
+A well-known improved gradient type method is the conjugate gradient (CG) algorithm. The main idea is that the search direction at each step should be conjugate toward search directions at previous step, so one avoids zigzag of classic steepest descent. In fact, if the function to be minimised is quadratic, then the conjugate gradient algorithm is guaranteed to reach the minimum in exactly $n$ steps if the input to the function is $n$-dimensional (ignoring numerical errors). The conjugate gradient tend to perform better than the classical steepest descent even on general nonlinear functions, but not as well as Newton type methods.
 
 ## Newton type methods
 
-Recall that with Newton's method for one-dimensional functions, we need the first two derivatives of the function we try to minimize. For multi-dimensional function, Newton's method becomes $$x \leftarrow x - [Hf(x)]^{-1} \nabla f(x),$$ where we need to compute the matrix inverse of the Hessian, which can be expensive for multi-dimensional problems since the Hessian matrix may be very large. Quasi-Newton methods aim to replace the inverse Hessian matrix by a reasonable estimate.
+Recall that with Newton's method for one-dimensional functions, we need the first two derivatives of the function we try to minimize. For multi-dimensional function, Newton's method becomes $$x \leftarrow x - [Hf(x)]^{-1} \nabla f(x),$$ where we need to compute the matrix inverse of the Hessian, which can be expensive for multi-dimensional problems since the Hessian matrix may be very large. Numerically computing the inverse of the Hessian matrix is in any case undesirable. Quasi-Newton methods aim to replace the inverse Hessian matrix by a reasonable estimate.
 
 The most common quasi-Newton method is BFGS and its close relative L-BFGS. Details regarding the BFGS algorithm can be found on [wikipedia](https://en.wikipedia.org/wiki/Broyden%E2%80%93Fletcher%E2%80%93Goldfarb%E2%80%93Shanno_algorithm), where $B_k$ is an approximation to the Hessian matrix and its inverse is never computed. Rather, $B_{k+1}^{-1}$ is computed using $B_k^{-1}$, without performing an explicit matrix inversion.
 
-The BFGS algorithm will store both $B_k$ and $B_k^{-1}$, which are likely to be dense matrices. This causes memory problems when the dimension is higher than say 1000. The limited memory version of BFGS, L-BFGS, solves this problem by storing a few vectors (rather than the full approximate Hessian matrix and its inverse) that represents $B_k$.
+The BFGS algorithm will store both $B_k$ and $B_k^{-1}$, which are likely to be dense matrices. This causes memory problems when the dimension is higher than say 1000. The low memory version of BFGS, L-BFGS, solves this problem by storing a few vectors (rather than the full approximate Hessian matrix and its inverse) that represents $B_k$.
 
 ## Simulated Annealing
 
@@ -130,9 +131,9 @@ Generally speaking, Newton type methods perform better than gradient type method
 
 Assume we have a dataset $(x_1,y_1),(x_2,y_2), \ldots, (x_m,y_m)$ and a model $y=f(x,\beta)$ where $\beta=(\beta_1,\beta_2,\ldots,\beta_n)$ are parameters of the model $f$. We define residuals to be $$r_i(\beta) = y_i - f(x_i,\beta).$$ In a nonlinear least squares problem, we aim to find $\beta$ such that the sum of squares of residuals is minimised: $$\arg\min_\beta \sum_{i=1}^m r_i^2 = \arg\min_\beta \sum_{i=1}^m (y_i - f(x_i,\beta))^2.$$ A subclass of optimisation algorithms work just for nonlinear least squares problems. We briefly discuss the two most famous examples: the Gauss-Newton algorithm and the Levenberg-Marquardt algorithm.
 
-The Gauss-Newton algorithm is a closely related to Newton's method for general optimisation problems. The difference (improvement) is that the Gauss-newton algorithm approximates the Hessian matrix of the objective function $\sum_{i=1}^m (y_i - f(x_i,\beta))^2$ using Jacobian matrix $J_r$ of the residue function, i.e. it pretends the Hessian matrix is $2J_r^t J_r$, which may or may not be singular: $$ \beta \leftarrow \beta - (J_r^t J_r)^{-1} J_r^t r(\beta).$$ This works well in practice but is not guaranteed to converge (at least theoretically). As we will see in `R` examples a bit later, a singular $J_r$ may cause the `R` function `nls`, which implements the Gauss-Markov algorith, to throw an error.
+The Gauss-Newton algorithm is a closely related to Newton's method for general optimisation problems. The difference (improvement) is that the Gauss-newton algorithm approximates the Hessian matrix of the objective function $\sum_{i=1}^m (y_i - f(x_i,\beta))^2$ using Jacobian matrix $J_r$ of the residue function, i.e. it pretends the Hessian matrix is $2J_t^t J_r$, which may or may not be invertible: $$ \beta \leftarrow \beta - (J_r^t J_r)^{-1} J_r^t r(\beta).$$ This works well in practice but is not guaranteed to converge (at least theoretically).
 
-The Levenberg-Marquardt algorithm address this problem by damping. It pretends the Hessian matrix is $2(J_r^t J_r + \lambda I)$, where $\lambda$ is a small damping parameter and $I$ is the identity matrix: $$\beta \leftarrow \beta - (J_r^t J_r + \lambda I)^{-1} J_r^t r(\beta).$$ We note that if $\lambda=0$ then we obtain the Gauss-Markov algorithm. But if $\lambda$ is large, then we obtain the steepest descent algorithm. Therefore we would like to use a $\lambda$ that is as small as possible but does not cause numerical stability issues. A useful strategy is to reduce $\lambda$ at every iteration as long as the squared residue is decreased, but increasing $\lambda$ sufficiently to ensure the sqaured residue does not increase.  The matrix $J_r^t J_r + \lambda I$ is guaranteed to be invertible for at least some $\lambda$.
+The Levenberg-Marquardt algorithm address this problem by damping. It pretends the Hessian matrix is $2(J_r^t J_r + \lambda I)$, where $\lambda$ is a small damping parameter and $I$ is the identity matrix: $$\beta \leftarrow \beta - (J_r^t J_r + \lambda I)^{-1} J_r^t r(\beta).$$ We note that if $\lambda=0$ then we obtain the Gauss-Newton algorithm. But if $\lambda$ is large, then we obtain the steepest descent algorithm. Therefore we would like to use a $\lambda$ that is as small as possible but does not cause numerical stability issues. A useful strategy is to reduce $\lambda$ at every iteration as long as the squared residue is decreased, but increasing $\lambda$ sufficiently to ensure the squared residue does not increase.  The matrix $J_r^t J_r + \lambda I$ is guaranteed to be invertible for at least some $\lambda$.
 
 # Stochastic Gradient Descent
 
