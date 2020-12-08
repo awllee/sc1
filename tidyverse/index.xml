@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Welcome to the Tidyverse on SC1</title>
+    <link>https://awllee.github.io/sc1/tidyverse/</link>
+    <description>Recent content in Welcome to the Tidyverse on SC1</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language><atom:link href="https://awllee.github.io/sc1/tidyverse/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>1. A very short introduction to pipes</title>
+      <link>https://awllee.github.io/sc1/tidyverse/intro_to_pipes/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://awllee.github.io/sc1/tidyverse/intro_to_pipes/</guid>
+      <description>body { text-align: justify}  Here we introduce the pipe operator, which is provided by the magrittr R package. This introduction is extremely short, and we refer to R for Data Science for details. We start by explaining what pipes are, how they work and then we will give examples of when they are useful.
+Pipes basic The pipe operator %&amp;gt;% is quite simple, but very useful in certain situations.</description>
+    </item>
+    
+    <item>
+      <title>2. Layered visualizations with ggplot2</title>
+      <link>https://awllee.github.io/sc1/tidyverse/intro_to_ggplot2/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://awllee.github.io/sc1/tidyverse/intro_to_ggplot2/</guid>
+      <description>body { text-align: justify}  Here we introduce the main features of the ggplot2 R package, but we refer to “The Layered Grammar of Graphics” and to the relevant chapter of “R for Data Science” for more details.
+Intro to ggplot2 Let us start by considering a very simple example:
+library(MASS) data(mcycle) head(mcycle) ## times accel ## 1 2.4 0.0 ## 2 2.6 -1.3 ## 3 3.2 -2.</description>
+    </item>
+    
+    <item>
+      <title>3. A ggplot2 case study: the mgcViz package</title>
+      <link>https://awllee.github.io/sc1/tidyverse/mgcviz_case_study/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://awllee.github.io/sc1/tidyverse/mgcviz_case_study/</guid>
+      <description>body { text-align: justify}  As we said before, ggplot2 provides a powerful framework for building visualization libraries. The best way to see why this is the case, might be to examine a real example. Here we consider the mgcViz package, with provides a layered framework for visualizing Generalized Additive Models (GAMs) using ggplot2. You might have heard about GAMs before but, if you didn’t, don’t worry because background knowledge on GAMs is not necessary to understand this section.</description>
+    </item>
+    
+    <item>
+      <title>4. Data transformation with dplyr</title>
+      <link>https://awllee.github.io/sc1/tidyverse/data_transformation_dplyr/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://awllee.github.io/sc1/tidyverse/data_transformation_dplyr/</guid>
+      <description>body { text-align: justify}  The previous two sections focussed on data visualization using ggplot2. ggplot2 assumes that your data is stored in a data.frame, so here we explain how to transform your data.frame to get it in the right format for plotting and modelling. In particular, the following section focuses on the dplyr package, which provides some convenient tools for manipulating data stored in a tabular format (i.</description>
+    </item>
+    
+    <item>
+      <title>5. Data reshaping with dplyr and tidyr</title>
+      <link>https://awllee.github.io/sc1/tidyverse/data_reshaping_tidyr/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://awllee.github.io/sc1/tidyverse/data_reshaping_tidyr/</guid>
+      <description>body { text-align: justify}  This section is the natural continuation of the previous one, which focussed on data transformation with dplyr. Here we show how to use the tidyr package, which provides tools for reshaping your data for the purpose of modelling and visualization, and we will illustrate more features of dplyr. As for the previous sections, here we cover the basics and we refer to the relevant chapter of “R for Data Science” for more details.</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <title>Quadrature - SC1</title>
+    <meta property="og:title" content="Quadrature - SC1">
+    
+    <meta name="twitter:card" content="summary">
+
+    
+      
+    
+
+    
+      
+      <meta property="description" content="Error analysis is the tithe that intelligence demands of action, but it is rarely paid.
+– Davis &amp;amp; Rabinowitz, Methods of Numerical Integration (1975), p. 208.
+[&amp;hellip;] “Quadrature rules” are &amp;hellip;">
+      <meta property="og:description" content="Error analysis is the tithe that intelligence demands of action, but it is rarely paid.
+– Davis &amp;amp; Rabinowitz, Methods of Numerical Integration (1975), p. 208.
+[&amp;hellip;] “Quadrature rules” are &amp;hellip;">
+      
+    
+
+    
+    
+
+    
+
+    
+    
+
+
+<link href='//cdn.bootcss.com/highlight.js/9.12.0/styles/github.min.css' rel='stylesheet' type='text/css' />
+
+
+
+    <link rel="stylesheet" href="/sc1/css/style.css" />
+    <link rel="stylesheet" href="/sc1/css/fonts.css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Arvo">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Marcellus">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Code+Pro">
+
+<link rel="stylesheet" href="/sc1/css/custom.css" />
+
+<link rel="icon" href="/sc1/favicon.ico" type="image/x-icon" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<nav class="breadcrumbs">
+    
+        <a href="https://awllee.github.io/sc1/">home / </a>
+    
+        <a href="https://awllee.github.io/sc1/integration/">integration / </a>
+    
+        <a href="https://awllee.github.io/sc1/integration/quadrature/">quadrature / </a>
+    
+</nav>
+
+  </head>
+
+  
+  <body class="sc1">
+    <header class="masthead">
+      <h1><a href="/sc1/">SC1</a></h1>
+
+<p class="tagline">Statistical Computing 1</p>
+
+      <nav class="menu">
+  <input id="menu-check" type="checkbox" />
+  <label id="menu-label" for="menu-check" class="unselectable">
+    <span class="icon close-icon">✕</span>
+    <span class="icon open-icon">☰</span>
+    <span class="text">Menu</span>
+  </label>
+  <ul>
+  
+  
+  <li><a href="/sc1/">Home</a></li>
+  
+  <li><a href="/sc1/intro-r/">Intro to R</a></li>
+  
+  <li><a href="/sc1/reproducibility/">Reproducibility</a></li>
+  
+  <li><a href="/sc1/common-r/">Common R</a></li>
+  
+  <li><a href="/sc1/tidyverse/">Tidyverse</a></li>
+  
+  <li><a href="/sc1/packages/">Packages</a></li>
+  
+  <li><a href="/sc1/functional-oo/">Functional / OO</a></li>
+  
+  <li><a href="/sc1/profile-debug/">Performance / Bugs</a></li>
+  
+  <li><a href="/sc1/matrices/">Matrices</a></li>
+  
+  <li><a href="/sc1/optimization/">Optimization</a></li>
+  
+  <li><a href="/sc1/integration/">Integration</a></li>
+  
+  
+  </ul>
+</nav>
+
+    </header>
+
+    <article class="main">
+      <header class="title">
+      
+<h1>Quadrature</h1>
+
+<h3>
+</h3>
+<hr>
+
+
+      </header>
+
+
+
+
+<link href="/sc1/rmarkdown-libs/anchor-sections/anchor-sections.css" rel="stylesheet" />
+<script src="/sc1/rmarkdown-libs/anchor-sections/anchor-sections.js"></script>
+
+<div id="TOC">
+<ul>
+<li><a href="#polynomial-interpolation">Polynomial interpolation</a><ul>
+<li><a href="#lagrange-polynomials">Lagrange polynomials</a></li>
+<li><a href="#polynomial-interpolation-error">Polynomial interpolation error</a></li>
+<li><a href="#composite-polynomial-interpolation">Composite polynomial interpolation</a></li>
+<li><a href="#other-polynomial-interpolation-schemes">Other polynomial interpolation schemes</a></li>
+</ul></li>
+<li><a href="#polynomial-integration">Polynomial integration</a><ul>
+<li><a href="#changing-the-limits-of-integration">Changing the limits of integration</a></li>
+<li><a href="#integrating-the-interpolating-polynomial-approximation">Integrating the interpolating polynomial approximation</a></li>
+<li><a href="#newtoncotes-rules">Newton–Cotes rules</a></li>
+<li><a href="#composite-rules">Composite rules</a></li>
+<li><a href="#gaussian-quadrature">Gaussian quadrature</a></li>
+<li><a href="#practical-algorithms">Practical algorithms</a></li>
+<li><a href="#multiple-integrals">Multiple integrals</a><ul>
+<li><a href="#recursive-algorithm">Recursive algorithm</a></li>
+<li><a href="#the-curse-of-dimensionality">The curse of dimensionality</a></li>
+</ul></li>
+</ul></li>
+</ul>
+</div>
+
+<blockquote>
+<p>Error analysis is the tithe that intelligence demands of action, but it is rarely paid.</p>
+<p>– Davis &amp; Rabinowitz, Methods of Numerical Integration (1975), p. 208.</p>
+</blockquote>
+<p>“Quadrature rules” are basically integral approximations using a finite number of function evaluations. All of the quadrature rules we will consider involve approximating a function using interpolating polynomials.</p>
+<p>To focus on the main ideas, we will restrict our attention to numerically approximating the definite integral of a function <span class="math inline">\(f\)</span> over a finite interval <span class="math inline">\([a,b]\)</span>. Extensions to semi-infinite and infinite intervals will be discussed briefly, as will extensions to multiple integrals.</p>
+<p>In practice, for one dimensional integrals you can use R’s <code>integrate</code> function. For multiple integrals, the <a href="https://bnaras.github.io/cubature/"><code>cubature</code> package</a> can be used. Unlike the basics covered here, these functions will produce error estimates and should be more robust.</p>
+<div id="polynomial-interpolation" class="section level1">
+<h1>Polynomial interpolation</h1>
+<p>We consider approximation of a continuous function <span class="math inline">\(f\)</span> on <span class="math inline">\([a,b]\)</span>, i.e. <span class="math inline">\(f \in C^0([a,b])\)</span> using a polynomial function <span class="math inline">\(p\)</span>. One practical motivation is that polynomials can be integrated exactly. A theoretical, high-level motivation is the Weierstrass Approximation Theorem.</p>
+<p><strong>Weierstrass Approximation Theorem</strong>. Let <span class="math inline">\(f \in C^0([a,b])\)</span>. There exists a sequence of polynomials <span class="math inline">\((p_n)\)</span> that converges uniformly to <span class="math inline">\(f\)</span> on <span class="math inline">\([a,b]\)</span>. That is,
+<span class="math display">\[\Vert f - p_n \Vert_\infty = \max_{x \in [a,b]} | f(x) - p_n(x) | \to 0.\]</span></p>
+<p>This suggests that for any given tolerance, there exists a polynomial that can be used to approximate a given <span class="math inline">\(C^0([a,b])\)</span> function <span class="math inline">\(f\)</span>. However it does not indicate exactly how to construct such polynomials or, more importantly, how to do so in a computationally efficient manner without much knowledge of <span class="math inline">\(f\)</span>. <a href="https://en.wikipedia.org/wiki/Bernstein_polynomial">Bernstein polynomials</a> are used in a constructive proof of the theorem, but are not widely used to define polynomial approximations.</p>
+<div id="lagrange-polynomials" class="section level2">
+<h2>Lagrange polynomials</h2>
+<p>One way to devise an approximation is to first consider approximating <span class="math inline">\(f\)</span> using an interpolating polynomial with, say, <span class="math inline">\(k\)</span> points <span class="math inline">\(\{(x_i,f(x_i))\}_{i=1}^k\)</span>. The interpolating polynomial is unique, has degree at most <span class="math inline">\(k-1\)</span>, and it is convenient to express it as a Lagrange polynomial:</p>
+<p><span class="math display">\[p_{k-1}(x) := \sum_{i=1}^k \ell_i(x) f(x_i),\]</span></p>
+<p>where the Lagrange basis polynomials are</p>
+<p><span class="math display">\[\ell_i(x) = \prod_{j=1,j\neq i}^k \frac{x-x_j}{x_i-x_j} \qquad i \in \{1,\ldots,k\}.\]</span></p>
+<p>For a given 3rd degree polynomial <span class="math inline">\(f\)</span>, we plot polynomial approximations for <span class="math inline">\(k \in \{2,3,4\}\)</span> and specific choices of <span class="math inline">\(x_1,\ldots,x_4\)</span>.</p>
+<pre class="r"><code>construct.interpolating.polynomial &lt;- function(f, xs) {
+  k &lt;- length(xs)
+  fxs &lt;- f(xs)
+  p &lt;- function(x) {
+    value &lt;- 0
+    for (i in 1:k) {
+      fi &lt;- fxs[i]
+      zs &lt;- xs[setdiff(1:k,i)]
+      li &lt;- prod((x-zs)/(xs[i]-zs))
+      value &lt;- value + fi*li
+    }
+    return(value)
+  }
+  return(p)
+}
+
+plot.polynomial.approximation &lt;- function(f, xs, a, b) {
+  p &lt;- construct.interpolating.polynomial(f, xs)
+  vs &lt;- seq(a, b, length.out=500)
+  plot(vs, f(vs), type=&#39;l&#39;, xlab=&quot;x&quot;, ylab=&quot;black: f(x), red: p(x)&quot;)
+  points(xs, f(xs), pch=20)
+  lines(vs, vapply(vs, p, 0), col=&quot;red&quot;)
+}
+
+a &lt;- -4
+b &lt;- 4
+
+f &lt;- function(x) {
+  return(-x^3 + 3*x^2 - 4*x + 1)
+}
+
+plot.polynomial.approximation(f, c(-2, 2), a, b)</code></pre>
+<p><img src="/sc1/integration/quadrature_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
+<pre class="r"><code>plot.polynomial.approximation(f, c(-2, 0, 2), a, b)</code></pre>
+<p><img src="/sc1/integration/quadrature_files/figure-html/unnamed-chunk-2-2.png" width="672" /></p>
+<pre class="r"><code>plot.polynomial.approximation(f, c(-2, 0, 2, 4), a, b)</code></pre>
+<p><img src="/sc1/integration/quadrature_files/figure-html/unnamed-chunk-2-3.png" width="672" /></p>
+<p>Of course, one might instead want a different representation of the polynomial, e.g. as sums of monomials with appropriate coefficients.</p>
+<p><span class="math display">\[p(x) = \sum_{i=1}^k a_i x^{i-1}.\]</span></p>
+<p>This can be accomplished in principle by solving a linear system. In practice, this representation is often avoided for large <span class="math inline">\(k\)</span> as solving the linear system is numerically unstable.</p>
+<pre class="r"><code>construct.vandermonde.matrix &lt;- function(xs) {
+  k &lt;- length(xs)
+  A &lt;- matrix(0, k, k)
+  for (i in 1:k) {
+    A[i,] &lt;- xs[i]^(0:(k-1))
+  }
+  return(A)
+}
+
+compute.monomial.coefficients &lt;- function(f, xs) {
+  fxs &lt;- f(xs)
+  A &lt;- construct.vandermonde.matrix(xs)
+  coefficients &lt;- solve(A, fxs)
+  return(coefficients)
+}
+
+construct.polynomial &lt;- function(coefficients) {
+  k &lt;- length(coefficients)
+  p &lt;- function(x) {
+    return(sum(coefficients*x^(0:(k-1))))
+  }
+  return(p)
+}
+
+xs &lt;- c(-2,0,2)
+p &lt;- construct.polynomial(compute.monomial.coefficients(f, xs))
+plot.polynomial.approximation(f, xs, a, b)
+vs &lt;- seq(-4, 4, length.out=100)
+lines(vs, vapply(vs, p, 0), col=&quot;blue&quot;, lty=&quot;dashed&quot;)</code></pre>
+<p><img src="/sc1/integration/quadrature_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+</div>
+<div id="polynomial-interpolation-error" class="section level2">
+<h2>Polynomial interpolation error</h2>
+<p>It is clear that by choosing <span class="math inline">\(k\)</span> large enough, one can approximate any polynomial. On the other hand, one is typically interested in approximating functions that are <em>not</em> polynomials.</p>
+<p><strong>Interpolation Error Theorem</strong>. Let <span class="math inline">\(f \in C^{k}[a,b]\)</span>, i.e. <span class="math inline">\(f : [a,b] \to \mathbb{R}\)</span> has <span class="math inline">\(k\)</span> continuous derivatives, and <span class="math inline">\(p_{k-1}\)</span> be the polynomial interpolating <span class="math inline">\(f\)</span> at the <span class="math inline">\(k\)</span> points <span class="math inline">\(x_1,\ldots,x_k\)</span>. Then for any <span class="math inline">\(x \in [a,b]\)</span> there exists <span class="math inline">\(\xi \in (a,b)\)</span> such that
+<span class="math display" id="eq:interpolation-error">\[\begin{equation}
+\tag{1}
+f(x)-p_{k-1}(x) = \frac{1}{k!} f^{(k)}(\xi) \prod_{i=1}^k (x-x_i).
+\end{equation}\]</span></p>
+<p>The Interpolation Error Theorem is encouraging, but it does not provide immediately any guarantee that an obvious sequence of interpolating polynomials will converge uniformly or even pointwise to <span class="math inline">\(f\)</span>. In fact, there is a sequence of interpolation points that guarantees uniform convergence.</p>
+<p><strong>Theorem</strong>. Let <span class="math inline">\(f \in C^{0}[a,b]\)</span>. There exists a sequence of sets of interpolation points <span class="math inline">\(X_1, X_2, \ldots\)</span> such that the corresponding sequence of interpolating polynomials converges uniformly to <span class="math inline">\(f\)</span> on <span class="math inline">\([a,b]\)</span>.</p>
+<p>This theorem does not quite follow from the Weierstrass Approximation Theorem, since that theorem made no mention that the polynomials can be interpolating polynomials. One might wonder if it is possible to define a universal sequence of sets of interpolating points <span class="math inline">\(X_1,X_2,\ldots\)</span> that does not depend on the function <span class="math inline">\(f\)</span> while retaining (uniform) convergence. Unfortunately this is not possible: for any fixed sequence of sets of interpolation points there exists a continuous function <span class="math inline">\(f\)</span> for which the sequence of interpolating polynomials diverges.</p>
+<p>An example of a fixed sequence of sets of interpolation points is to let <span class="math inline">\(X_k\)</span> be the set of <span class="math inline">\(k\)</span> uniformly spaced points including <span class="math inline">\(a\)</span>, and <span class="math inline">\(b\)</span> if <span class="math inline">\(k&gt;1\)</span>. This sequence of sets may work well for many functions, such as <span class="math inline">\(\log\)</span> on <span class="math inline">\([1,2]\)</span>.</p>
+<pre class="r"><code>construct.uniform.point.set &lt;- function(a, b, k) {
+  if (k==1) return(a)
+  return(seq(a, b, length.out=k))
+}
+
+a &lt;- 1
+b &lt;- 2
+plot.polynomial.approximation(log, construct.uniform.point.set(a, b, 10), a, b)</code></pre>
+<p><img src="/sc1/integration/quadrature_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<p>However, there are functions for which uniformly spaced points are not suitable. A famous example is the Runge function <span class="math inline">\(x \mapsto 1/(1+25x^2)\)</span> on <span class="math inline">\([-1,1]\)</span>. For <span class="math inline">\(k=50\)</span>, the polynomial approximation is very poor close to the ends of the interval, and the situation does not improve by increasing <span class="math inline">\(k\)</span>.</p>
+<pre class="r"><code>a &lt;- -1
+b &lt;- 1
+f &lt;- function(x) return(1/(1+25*x^2))
+plot.polynomial.approximation(f, construct.uniform.point.set(a,b,50), a, b)</code></pre>
+<p><img src="/sc1/integration/quadrature_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<p>This does not contradict the Interpolation Error Theorem because the maximum over <span class="math inline">\([-1,1]\)</span> of the <span class="math inline">\(k\)</span>th derivative of the Runge function grows very quickly with <span class="math inline">\(k\)</span>, and in particular more quickly than the product term decreases with <span class="math inline">\(k\)</span>.</p>
+<p>Another example is to take the function <span class="math inline">\(x \mapsto |x|\)</span> on <span class="math inline">\([-1,1]\)</span>.</p>
+<pre class="r"><code>a &lt;- -1
+b &lt;- 1
+plot.polynomial.approximation(abs, construct.uniform.point.set(a,b,50), a, b)</code></pre>
+<p><img src="/sc1/integration/quadrature_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<p>This does not contradict the Interpolation Error Theorem because <span class="math inline">\(x \mapsto |x|\)</span> is not differentiable at <span class="math inline">\(0\)</span>.</p>
+<p>It is possible to mitigate this issue to some extent by choosing the interpolation points more carefully. For example, one can choose the points for each <span class="math inline">\(k\)</span> so as to minimize the maximum absolute value of the product term in <a href="#eq:interpolation-error">(1)</a>, which gives the Chebyshev points. Specifically, for a given <span class="math inline">\(k\)</span>, one chooses the points
+<span class="math display">\[\cos \left (\frac{2i-1}{2k}\pi \right ),\qquad i\in \{1,\ldots,k\},\]</span>
+and the absolute value of the product term is then bounded above by <span class="math inline">\(2^{1-k}\)</span>.</p>
+<p>These points do not minimize the overall error, because <span class="math inline">\(\xi\)</span> implicitly depends on the interpolation points as well. For the Runge and absolute value functions, these points lead to a very good approximation using 50 points.</p>
+<pre class="r"><code>construct.chebyshev.point.set &lt;- function(k) {
+  return(cos((2*(1:k)-1)/2/k*pi))
+}
+
+plot.polynomial.approximation(f, construct.chebyshev.point.set(50), a, b)</code></pre>
+<p><img src="/sc1/integration/quadrature_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+<pre class="r"><code>plot.polynomial.approximation(abs, construct.chebyshev.point.set(50), a, b)</code></pre>
+<p><img src="/sc1/integration/quadrature_files/figure-html/unnamed-chunk-7-2.png" width="672" /></p>
+<p>You may notice that these points are clustered around <span class="math inline">\(-1\)</span> and <span class="math inline">\(1\)</span>.</p>
+<pre class="r"><code>hist(construct.chebyshev.point.set(10000))</code></pre>
+<p><img src="/sc1/integration/quadrature_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+<p>This is not a complete solution: there exist functions for which the interpolating polynomial obtained using Chebyshev points diverges, but these are usually quite complicated. Moreover, the reduction in absolute value of the product term in the error expression is not sufficient to explain the improved performance for the Runge function, and the Interpolation Error Theorem says nothing about functions that are not differentiable such as <span class="math inline">\(x \mapsto |x|\)</span>.</p>
+</div>
+<div id="composite-polynomial-interpolation" class="section level2">
+<h2>Composite polynomial interpolation</h2>
+<p>An alternative to using many interpolation points to fit a high-degree polynomial is to approximate the function with different polynomials in a number of subintervals of the domain. This results in a piecewise polynomial approximation that is not necessarily continuous.</p>
+<p>We consider a simple scheme where <span class="math inline">\([a,b]\)</span> is partitioned into a number of equal length subintervals, and within each subinterval <span class="math inline">\(k\)</span> interpolation points are used to define an approximating polynomial. To keep things simple, we consider only two possible ways to specify the <span class="math inline">\(k\)</span> interpolation points within each subinterval. In both cases the points are evenly spaced and evenly spaced from the endpoints of the interval. However, when the scheme is “closed”, the endpoints of the interval are included, while when the scheme is “open”, the endpoints are not included. For a closed scheme with <span class="math inline">\(k=1\)</span>, we opt to include the left endpoint.</p>
+<pre class="r"><code># get the endpoints of the subintervals
+get.subinterval.points &lt;- function(a, b, nintervals) {
+  return(seq(a, b, length.out=nintervals+1))
+}
+
+# returns which subinterval a point x is in
+get.subinterval &lt;- function(x, a, b, nintervals) {
+  h &lt;- (b-a)/nintervals
+  return(min(max(1,ceiling((x-a)/h)),nintervals))
+}
+
+# get the k interpolation points in the interval
+# this depends on the whether the scheme is open or closed
+get.within.subinterval.points &lt;- function(a, b, k, closed) {
+  if (closed) {
+    return(seq(a, b, length.out=k))
+  } else {
+    h &lt;- (b-a)/(k+1)
+    return(seq(a+h,b-h,h))
+  }
+}
+
+construct.piecewise.polynomial.approximation &lt;- function(f, a, b, nintervals, k, closed) {
+  ps &lt;- vector(&quot;list&quot;, nintervals)
+  subinterval.points &lt;- get.subinterval.points(a, b, nintervals)
+  for (i in 1:nintervals) {
+    left &lt;- subinterval.points[i]
+    right &lt;- subinterval.points[i+1]
+    points &lt;- get.within.subinterval.points(left, right, k, closed)
+    p &lt;- construct.interpolating.polynomial(f, points)
+    ps[[i]] &lt;- p
+  }
+  p &lt;- function(x) {
+    return(ps[[get.subinterval(x, a, b, nintervals)]](x))
+  }
+  return(p)
+}
+
+plot.piecewise.polynomial.approximation &lt;- function(f, a, b, nintervals, k, closed) {
+  p &lt;- construct.piecewise.polynomial.approximation(f, a, b, nintervals, k, closed)
+  vs &lt;- seq(a, b, length.out=500)
+  plot(vs, f(vs), type=&#39;l&#39;, xlab=&quot;x&quot;, ylab=&quot;black: f(x), red: p(x)&quot;)
+  lines(vs, vapply(vs, p, 0), col=&quot;red&quot;)
+  subinterval.points &lt;- get.subinterval.points(a, b, nintervals)
+  for (i in 1:nintervals) {
+    left &lt;- subinterval.points[i]
+    right &lt;- subinterval.points[i+1]
+    pts &lt;- get.within.subinterval.points(left, right, k, closed)
+    points(pts, f(pts), pch=20, col=&quot;blue&quot;)
+  }
+  abline(v = subinterval.points)
+}</code></pre>
+<pre class="r"><code>plot.piecewise.polynomial.approximation(sin, 0, 10, 5, 1, TRUE)</code></pre>
+<p><img src="/sc1/integration/quadrature_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
+<pre class="r"><code>plot.piecewise.polynomial.approximation(sin, 0, 10, 5, 2, TRUE)</code></pre>
+<p><img src="/sc1/integration/quadrature_files/figure-html/unnamed-chunk-10-2.png" width="672" /></p>
+<pre class="r"><code>plot.piecewise.polynomial.approximation(sin, 0, 10, 5, 2, FALSE)</code></pre>
+<p><img src="/sc1/integration/quadrature_files/figure-html/unnamed-chunk-10-3.png" width="672" /></p>
+<pre class="r"><code>plot.piecewise.polynomial.approximation(sin, 0, 10, 5, 3, TRUE)</code></pre>
+<p><img src="/sc1/integration/quadrature_files/figure-html/unnamed-chunk-10-4.png" width="672" /></p>
+<pre class="r"><code>plot.piecewise.polynomial.approximation(sin, 0, 10, 20, 1, TRUE)</code></pre>
+<p><img src="/sc1/integration/quadrature_files/figure-html/unnamed-chunk-10-5.png" width="672" /></p>
+<pre class="r"><code>plot.piecewise.polynomial.approximation(sin, 0, 10, 20, 1, FALSE)</code></pre>
+<p><img src="/sc1/integration/quadrature_files/figure-html/unnamed-chunk-10-6.png" width="672" /></p>
+<p>The error associated with the approximation can be obtained using the Interpolation Error Theorem. In particular, one can see that for a large number of subintervals the product term in <a href="#eq:interpolation-error">(1)</a> can be made arbitrarily small in absolute value. If one chooses, say, <span class="math inline">\(k=1\)</span> (resp. <span class="math inline">\(k=2\)</span>) and the function is almost constant (resp. linear) on small intervals, the approximation error can then be made very small.</p>
+</div>
+<div id="other-polynomial-interpolation-schemes" class="section level2">
+<h2>Other polynomial interpolation schemes</h2>
+<p>There are other polynomial interpolation schemes. For example, one might fit a polynomial using derivatives of <span class="math inline">\(f\)</span> as well as <span class="math inline">\(f\)</span> itself, which is known as <a href="https://en.wikipedia.org/wiki/Hermite_interpolation">Hermite interpolation</a>. The idea of incorporating derivatives into piecewise polynomial interpolation, e.g. by matching derivatives at the boundaries of the subintervals is known as <a href="https://en.wikipedia.org/wiki/Spline_interpolation">spline interpolation</a>. This ensures that the piecewise polynomial approximation has a certain number of continuous derivatives.</p>
+<p>In addition, there are a number of different function approximation schemes that use more complicated approximating functions and do not necessarily involve interpolation. For example, <a href="https://en.wikipedia.org/wiki/Artificial_neural_network">artificial neural networks</a> are used to approximate high-dimensional functions. However, it may not be easy to integrate complicated approximating functions.</p>
+</div>
+</div>
+<div id="polynomial-integration" class="section level1">
+<h1>Polynomial integration</h1>
+<p>We now consider approximating the integral</p>
+<p><span class="math display">\[I(f) := \int_a^b f(x) {\rm d}x,\]</span></p>
+<p>where <span class="math inline">\(f \in C^0([a,b])\)</span>.</p>
+<p>All of the approximations we will consider here involve computing integrals associated with the polynomial approximations. The approximations themselves are often referred to as <em>quadrature rules</em>.</p>
+<div id="changing-the-limits-of-integration" class="section level2">
+<h2>Changing the limits of integration</h2>
+<p>For constants <span class="math inline">\(a&lt;b\)</span> and <span class="math inline">\(c&lt;d\)</span>, we can accommodate a change of finite interval via</p>
+<p><span class="math display">\[\int_a^b f(x) {\rm d}x = \int_c^d g(y) {\rm d}y,\]</span></p>
+<p>by defining</p>
+<p><span class="math display">\[g(y) := \frac{b-a}{d-c}g \left (a+\frac{b-a}{d-c}(y-c) \right ).\]</span></p>
+<p>Examples of common intervals are <span class="math inline">\([-1,1]\)</span> and <span class="math inline">\([0,1]\)</span>.</p>
+<pre class="r"><code>change.domain &lt;- function(f, a, b, c, d) {
+  g &lt;- function(y) {
+    return((b-a)/(d-c)*f(a + (b-a)/(d-c)*(y-c)))
+  }
+  return(g)
+}
+
+# test out the function using R&#39;s integrate function
+integrate(sin, 0, 10)</code></pre>
+<pre><code>## 1.839072 with absolute error &lt; 9.9e-12</code></pre>
+<pre class="r"><code>g = change.domain(sin, 0, 10, -1, 1)
+integrate(g, -1, 1)</code></pre>
+<pre><code>## 1.839072 with absolute error &lt; 9.9e-12</code></pre>
+<p>One can also accommodate a semi-infinite interval by a similar change of variables. One example is</p>
+<p><span class="math display">\[\int_a^\infty f(x) {\rm d}x = \int_0^1 g(y) {\rm d}y, \qquad g(y) := \frac{1}{(1-y)^2} f \left ( a + \frac{y}{1-y} \right ).\]</span></p>
+<p>Similarly, one can transform an integral over <span class="math inline">\(\mathbb{R}\)</span> to one over <span class="math inline">\([-1,1]\)</span></p>
+<p><span class="math display">\[\int_{-\infty}^\infty f(x) {\rm d}x = \int_{-1}^1 g(t) {\rm d}t, \qquad g(t) := \frac{1+t^2}{(1-t^2)^2} f \left ( \frac{t}{1-t^2} \right ).\]</span></p>
+<p>We will only consider finite intervals here.</p>
+</div>
+<div id="integrating-the-interpolating-polynomial-approximation" class="section level2">
+<h2>Integrating the interpolating polynomial approximation</h2>
+<p>Consider integrating a Lagrange polynomial <span class="math inline">\(p_{k-1}\)</span> over <span class="math inline">\([a,b]\)</span>. We have
+<span class="math display">\[\begin{align}
+I(p_{k-1}) &amp;= \int_a^b p_{k-1}(x) {\rm d}x \\
+  &amp;= \int_a^b \sum_{i=1}^k \ell_i(x) f(x_i) {\rm d}x \\
+  &amp;= \sum_{i=1}^k f(x_i) \int_a^b \ell_i(x) {\rm d}x \\
+  &amp;= \sum_{i=1}^k w_i f(x_i),
+\end{align}\]</span>
+where for <span class="math inline">\(i \in \{1,\ldots,k\}\)</span>, <span class="math inline">\(w_i := \int_a^b \ell_i(x) {\rm d}x\)</span> and we recall that <span class="math inline">\(\ell_i(x) = \prod_{j=1,j\neq i}^k \frac{x-x_j}{x_i-x_j}\)</span>.</p>
+<p>The approximation of <span class="math inline">\(I(f)\)</span> is <span class="math inline">\(\hat{I}(f) = I(p_{k-1})\)</span>, where <span class="math inline">\(p_{k-1}\)</span> depends only on the choice of interpolating points <span class="math inline">\(x_1,\ldots,x_k\)</span>.</p>
+<p>The functions <span class="math inline">\(\ell_i\)</span> can be a bit complicated, but certainly can be integrated by hand quite easily for small values of <span class="math inline">\(k\)</span>. For example, with <span class="math inline">\(k=1\)</span> we have <span class="math inline">\(\ell_1 \equiv 1\)</span>, so the integral <span class="math inline">\(\int_a^b \ell_1(x) {\rm d}x = b-a\)</span>. For <span class="math inline">\(k=2\)</span> we have <span class="math inline">\(\ell_1(x) = (x-x_2)/(x_1-x_2)\)</span>, yielding
+<span class="math display">\[\int_a^b \ell_1(x) {\rm d}x = \frac{b-a}{2(x_1-x_2)}(b+a-2x_2),\]</span>
+and similarly <span class="math inline">\(\ell_2(x) = (x-x_1)/(x_2-x_1)\)</span>, so
+<span class="math display">\[\int_a^b \ell_2(x) {\rm d}x = \frac{b-a}{2(x_2-x_1)}(b+a-2x_1).\]</span></p>
+</div>
+<div id="newtoncotes-rules" class="section level2">
+<h2>Newton–Cotes rules</h2>
+<p>The <em>rectangular rule</em> corresponds to a closed scheme with <span class="math inline">\(k=1\)</span>:</p>
+<p><span class="math display">\[\hat{I}_{\rm rectangular}(f) = (b-a) f(a).\]</span></p>
+<p>The <em>midpoint rule</em> corresponds to an open scheme with <span class="math inline">\(k=1\)</span>:</p>
+<p><span class="math display">\[\hat{I}_{\rm midpoint}(f) = (b-a) f \left ( \frac{a+b}{2} \right).\]</span></p>
+<p>The <em>trapezoidal rule</em> corresponds to a closed scheme with <span class="math inline">\(k=2\)</span>. Since <span class="math inline">\((x_1,x_2) = (a,b)\)</span>, we obtain <span class="math inline">\(\int_a^b \ell_1(x) {\rm d}x = (b-a)/2\)</span> and</p>
+<p><span class="math display">\[\hat{I}_{\rm trapezoidal}(f) = \frac{b-a}{2} \{ f(a)+f(b) \}.\]</span></p>
+<p><em>Simpson’s rule</em> corresponds to a closed scheme with <span class="math inline">\(k=3\)</span>. After some calculations, we obtain</p>
+<p><span class="math display">\[\hat{I}_{\rm Simpson}(f) = \frac{b-a}{6} \left \{ f(a) + 4 f \left ( \frac{a+b}{2} \right) + f(b) \right \}.\]</span></p>
+<p>We can obtain a very crude bound on the error of integration using any sequence of interpolation points.</p>
+<p><strong>Theorem</strong>. Let <span class="math inline">\(f \in C^k([a,b])\)</span>. Then the integration error for interpolation points <span class="math inline">\(x_1,\ldots,x_k\)</span> satisfies
+<span class="math display">\[| \hat{I}(f) - I(f) | \leq \max_{\xi \in [a,b]} |f^{(k)}(\xi)| \frac{(b-a)^{k+1}}{k!}.\]</span></p>
+<p><em>Proof</em>. We have, with <span class="math inline">\(\xi(x) \in (a,b)\)</span> for each <span class="math inline">\(x\)</span>,
+<span class="math display">\[\begin{align}
+| \hat{I}(f) - I(f) | &amp;= \left | \int_a^b p_{k-1}(x) - f(x) {\rm d}x \right | \\
+  &amp;\leq  \int_a^b \left | p_{k-1}(x) - f(x) \right | {\rm d}x \\
+  &amp;= \int_a^b \left | \frac{1}{k!} f^{(k)}(\xi(x)) \prod_{i=1}^k (x-x_i) \right | {\rm d}x \\
+  &amp;= \frac{1}{k!} \int_a^b \left |f^{(k)}(\xi(x))\right | \prod_{i=1}^k |x-x_i| {\rm d}x \\
+  &amp; \leq \max_{\xi \in [a,b]} \left |f^{(k)}(\xi)\right | \frac{(b-a)^{k+1}}{k!}.
+\end{align}\]</span></p>
+<p>The theorem can only really be used to justify low error estimates when <span class="math inline">\(b-a\)</span> is small or <span class="math inline">\(f\)</span> is a polynomial of degree <span class="math inline">\(k\)</span>.</p>
+<p>The crude nature of the bound does mean that it misses some interesting subtleties. A more refined treatment of the error can show the following.</p>
+<table>
+<thead>
+<tr class="header">
+<th>rule</th>
+<th><span class="math inline">\(\hat{I}(f) - I(f)\)</span>, with <span class="math inline">\(\xi \in (a,b)\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>rectangular</td>
+<td><span class="math inline">\(-\frac{1}{2}(b-a)^2 f&#39;(\xi)\)</span></td>
+</tr>
+<tr class="even">
+<td>midpoint</td>
+<td><span class="math inline">\(-\frac{1}{24}(b-a)^3 f^{(2)}(\xi)\)</span></td>
+</tr>
+<tr class="odd">
+<td>trapezoidal</td>
+<td><span class="math inline">\(\frac{1}{12}(b-a)^3 f^{(2)}(\xi)\)</span></td>
+</tr>
+<tr class="even">
+<td>Simpson</td>
+<td><span class="math inline">\(\frac{1}{2880}(b-a)^5 f^{(4)}(\xi)\)</span></td>
+</tr>
+</tbody>
+</table>
+<p>This indicates that the midpoint rule, which uses only one point, is often better than the trapezoidal rule, which uses 2. These are both significantly worse than Simpson’s rule, which uses 3 points. One might think that using large numbers of points is beneficial, but this is not always the case since the interpolating polynomial may become quite poor when using equally spaced points as seen before. We also see that the rectangular and trapezoidal rules are exact for constant functions, the midpoint rule is exact for linear functions, and Simpson’s rule is exact for polynomials of degree up to 3.</p>
+<pre class="r"><code>newton.cotes &lt;- function(f, a, b, k, closed) {
+  if (k == 1) {
+    if (closed) {
+      return((b-a)*f(a))
+    } else {
+      return((b-a)*f((a+b)/2))
+    }
+  }
+  if (k == 2 &amp;&amp; closed) {
+    return((b-a)/2*(f(a)+f(b)))
+  }
+  if (k == 3 &amp;&amp; closed) {
+    return((b-a)/6*(f(a)+4*f((a+b)/2)+f(b)))
+  }
+  stop(&quot;not implemented&quot;)
+}
+
+nc.example &lt;- function(f, name, value) {
+  df &lt;- data.frame(f=character(), rule=character(), error=numeric())
+  df &lt;- rbind(df, data.frame(f=name, rule=&quot;Rectangular&quot;, error=newton.cotes(f,0,1,1,TRUE)-value))
+  df &lt;- rbind(df, data.frame(f=name, rule=&quot;Midpoint&quot;, error=newton.cotes(f,0,1,1,FALSE)-value))
+  df &lt;- rbind(df, data.frame(f=name, rule=&quot;Trapezoidal&quot;, error=newton.cotes(f,0,1,2,TRUE)-value))
+  df &lt;- rbind(df, data.frame(f=name, rule=&quot;Simpson&#39;s&quot;, error=newton.cotes(f,0,1,3,TRUE)-value))
+  return(df)
+}
+
+df &lt;- nc.example(function(x) x, &quot;x&quot;, 1/2)
+df &lt;- rbind(df, nc.example(function(x) x^2, &quot;x^2&quot;, 1/3))
+df &lt;- rbind(df, nc.example(function(x) x^3, &quot;x^3&quot;, 1/4))
+df &lt;- rbind(df, nc.example(function(x) x^4, &quot;x^4&quot;, 1/5))
+
+ggplot(df, aes(fill=rule, y=error, x=f)) + geom_bar(position=&quot;dodge&quot;, stat=&quot;identity&quot;)</code></pre>
+<p><img src="/sc1/integration/quadrature_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
+</div>
+<div id="composite-rules" class="section level2">
+<h2>Composite rules</h2>
+<p>When a composite polynomial interpolation approximation is used, the integral of the approximation is simply the sum of the integrals associated with each subinterval. Hence, a composite Newton–Cotes rule is obtained by splitting the interval <span class="math inline">\([a,b]\)</span> into <span class="math inline">\(m\)</span> subintervals and summing the approximate integrals from the Newton–Cotes rule for each subinterval.
+<span class="math display">\[\hat{I}^m_{\rm rule}(f) = \sum_{i=1}^m \hat{I}_{\rm rule}(f_i),\]</span>
+where <span class="math inline">\(f_i\)</span> is <span class="math inline">\(f\)</span> restricted to <span class="math inline">\([a+(i-1)h, a+ih]\)</span> and <span class="math inline">\(h=(b-a)/m\)</span>.</p>
+<pre class="r"><code>composite.rule &lt;- function(f, a, b, subintervals, rule) {
+  subinterval.points &lt;- get.subinterval.points(a, b, subintervals)
+  s &lt;- 0
+  for (i in 1:subintervals) {
+    left &lt;- subinterval.points[i]
+    right &lt;- subinterval.points[i+1]
+    s &lt;- s + rule(f, left, right)
+  }
+  return(s)
+}
+
+# composite Newton--Cotes
+composite.nc &lt;- function(f, a, b, subintervals, k, closed) {
+  rule &lt;- function(f, left, right) {
+    newton.cotes(f, left, right, k, closed)
+  }
+  return(composite.rule(f, a, b, subintervals, rule))
+}</code></pre>
+<p><strong>Proposition</strong>. Let <span class="math inline">\([a,b]\)</span> be split into <span class="math inline">\(m\)</span> subintervals of length <span class="math inline">\(h = (b-a)/m\)</span>. Assume that the quadrature rule used in each subinterval has error <span class="math inline">\(C h^r f^{(s)}(\xi)\)</span> for some <span class="math inline">\(r, s \in \mathbb{N}\)</span>. Then the error for the composite rule is
+<span class="math display">\[C \frac{(b-a)^r}{m^{r-1}} f^{(s)}(\xi),\]</span>
+where <span class="math inline">\(\xi \in (a,b)\)</span>.</p>
+<p><em>Proof</em>. We have, with <span class="math inline">\(\xi_i\)</span> in the <span class="math inline">\(i\)</span>th subinterval,
+<span class="math display">\[\begin{align}
+\hat{I}^m(f) - I(f) &amp;= \sum_{i=1}^m \hat{I}(f_i) - I(f_i) \\
+  &amp;= \sum^m_{i=1} C h^r f^{(s)}(\xi_i) \\
+  &amp;= C \frac{(b-a)^r}{m^{r-1}} \frac{1}{m} \sum^m_{i=1} f^{(s)}(\xi_i) \\
+  &amp;= C \frac{(b-a)^r}{m^{r-1}} f^{(s)}(\xi).
+\end{align}\]</span></p>
+<p>We obtain the following composite errors, in which the dependence on <span class="math inline">\(m\)</span> is of particular interest.</p>
+<table>
+<thead>
+<tr class="header">
+<th>rule</th>
+<th><span class="math inline">\(\hat{I}^m(f) - I(f)\)</span>, with <span class="math inline">\(\xi \in (a,b)\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>rectangular</td>
+<td><span class="math inline">\(-\frac{1}{2m}(b-a)^2 f&#39;(\xi)\)</span></td>
+</tr>
+<tr class="even">
+<td>midpoint</td>
+<td><span class="math inline">\(-\frac{1}{24m^2}(b-a)^3 f^{(2)}(\xi)\)</span></td>
+</tr>
+<tr class="odd">
+<td>trapezoidal</td>
+<td><span class="math inline">\(\frac{1}{12m^2}(b-a)^3 f^{(2)}(\xi)\)</span></td>
+</tr>
+<tr class="even">
+<td>Simpson</td>
+<td><span class="math inline">\(\frac{1}{2880m^4}(b-a)^5 f^{(4)}(\xi)\)</span></td>
+</tr>
+</tbody>
+</table>
+<p>We plot the errors against their theoretical values for <span class="math inline">\(f = \sin\)</span>, <span class="math inline">\((a,b) = (0,10)\)</span> and different numbers of subintervals, <span class="math inline">\(m\)</span>. We replace <span class="math inline">\(f^{(s)}(\xi)\)</span> in the theoretical expression with <span class="math inline">\((b-a)^{-1} \int_a^b f^{(s)}(x) {\rm d}x\)</span>, which should be accurate for large values of <span class="math inline">\(m\)</span>.</p>
+<pre class="r"><code>ms &lt;- c(10:19, seq(20, 500, 10))
+
+composite.rectangular &lt;- vapply(ms, function(m) composite.nc(sin, 0, 10, m, 1, TRUE), 0)
+
+composite.midpoints &lt;- vapply(ms, function(m) composite.nc(sin, 0, 10, m, 1, FALSE), 0)
+
+composite.trapezoidal &lt;- vapply(ms, function(m) composite.nc(sin, 0, 10, m, 2, TRUE), 0)
+
+composite.simpsons &lt;- vapply(ms, function(m) composite.nc(sin, 0, 10, m, 3, TRUE), 0)
+
+val &lt;- 1-cos(10) # integral of sin(x) for x=0..10
+v1 &lt;- -sin(10)/10 # integral of sin&#39;(x)/10 for x=0..10
+v2 &lt;- val/10 # integral of sin(x)/10 for x=0..10
+
+tr &lt;- tibble(m=ms, rule=&quot;rectangular&quot;, log.error=log(composite.rectangular - val),
+             theory=log(v1*1/2*10^2/ms))
+tt &lt;- tibble(m=ms, rule=&quot;trapezoidal&quot;, log.error=log(val - composite.trapezoidal),
+             theory=log(v2*1/12*10^3/ms^2))
+tm &lt;- tibble(m=ms, rule=&quot;midpoints&quot;, log.error=log(composite.midpoints - val),
+            theory=log(v2*1/24*10^3/ms^2))
+ts &lt;- tibble(m=ms, rule=&quot;simpsons&quot;, log.error=log(composite.simpsons - val),
+            theory=log(v2*1/2880*10^5/ms^4))
+tib &lt;- bind_rows(tr, tt, tm, ts)
+ggplot(tib, aes(x=m, colour=rule)) + geom_point(aes(y=log.error)) + geom_line(aes(y=theory))</code></pre>
+<p><img src="/sc1/integration/quadrature_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
+</div>
+<div id="gaussian-quadrature" class="section level2">
+<h2>Gaussian quadrature</h2>
+<p>We have seen that when approximating a non-polynomial function by an interpolating polynomial, it can be advantageous to use Chebyshev points rather than uniformly spaced points. We pursue here a related but different approach, specific to quadrature. We again wish to exploit the freedom to choose interpolation points but instead of trying to reduce <span class="math inline">\(\Vert f - p_{k-1} \Vert_\infty\)</span> we want to reduce the error of the approximate integral.</p>
+<p>We consider a weighted integral
+<span class="math display">\[I = \int_a^b f(x) w(x) {\rm d} x,\]</span>
+where <span class="math inline">\(w\)</span> is continuous and positive on <span class="math inline">\((a,b)\)</span> and for every <span class="math inline">\(n \in \mathbb{N}\)</span>, <span class="math inline">\(\int_a^b x^n w(x) {\rm d}x\)</span> is finite. For intuition, and for easy comparison with the techniques discussed so far one can consider the case <span class="math inline">\(w \equiv 1\)</span>.</p>
+<p>Two functions <span class="math inline">\(f\)</span> and <span class="math inline">\(g\)</span> are orthogonal on the function space
+<span class="math display">\[L^2_w([a,b]) := \left \{ f: \int_a^b f(x)^2 w(x) {\rm d}x &lt; \infty \right \},\]</span>
+if
+<span class="math display">\[\langle f,g \rangle_{L^2_w([a,b])} = \int_a^b f(x)g(x)w(x) {\rm d}x = 0.\]</span>
+There exists a unique sequence of orthogonal polynomials <span class="math inline">\(p_0,p_1,\ldots\)</span> in <span class="math inline">\(L^2_w([a,b])\)</span> that are monic, i.e. the degree of <span class="math inline">\(p_k\)</span> is <span class="math inline">\(k\)</span> and the leading coefficient is <span class="math inline">\(1\)</span>. These can be constructed by the <a href="https://en.wikipedia.org/wiki/Gram%E2%80%93Schmidt_process">Gram–Schmidt process</a> using the initial functions <span class="math inline">\(1,x,x^2,\ldots\)</span>, renormalizing to make the polynomials monic. For example, with <span class="math inline">\((a,b) = (-1,1)\)</span> and <span class="math inline">\(w \equiv 1\)</span> this procedure generates the (monic) <a href="https://en.wikipedia.org/wiki/Legendre_polynomials">Legendre polynomials</a>: the corresponding quadrature rule is called Gauss–Legendre quadrature.</p>
+<p>In addition to existing and being unique up to scaling, each orthogonal polynomial of degree <span class="math inline">\(n\)</span> has <span class="math inline">\(n\)</span> distinct roots that lie in <span class="math inline">\((a,b)\)</span>. In fact, the <span class="math inline">\(k\)</span> roots of <span class="math inline">\(p_k\)</span> are the interpolation points for a Gaussian quadrature rule.</p>
+<p><strong>Theorem</strong>. Let <span class="math inline">\(p_k\)</span> be the <span class="math inline">\(k\)</span>th orthogonal polynomial in <span class="math inline">\(L^2_w([a,b])\)</span> and <span class="math inline">\(x_1,\ldots,x_k\)</span> its roots. Let <span class="math inline">\(\hat{I}(f) = \sum_{i=1}^k w_i f(x_i)\)</span>, where <span class="math inline">\(w_i = \int_a^b w(x) \ell_i(x) {\rm d}x\)</span>. Then if <span class="math inline">\(f\)</span> is a degree <span class="math inline">\(2k-1\)</span> polynomial, <span class="math inline">\(\hat{I}(f) = I(f) = \int_a^b f(x) w(x) {\rm d}x\)</span>.</p>
+<p><em>Proof</em>. We can write <span class="math inline">\(f = p_k q + r\)</span>, where <span class="math inline">\(q\)</span> and <span class="math inline">\(r\)</span> are both polynomials of degree less than or equal to <span class="math inline">\(k-1\)</span>. It follows that
+<span class="math display">\[I(f) = \int_a^b \{ p_k(x)q(x) + r(x) \} w(x) {\rm d}x = \int_a^b r(x) w(x) {\rm d}x = I(r),\]</span>
+since <span class="math inline">\(q\)</span> is a linear combination of <span class="math inline">\(p_0,\ldots,p_{k-1}\)</span>, which are all orthogonal to <span class="math inline">\(p_k\)</span> in <span class="math inline">\(L^2_w([a,b])\)</span>. Moreover,
+<span class="math display">\[\hat{I}(f) = \sum_{i=1}^k w_i \{ p_k(x_i) q(x_i) + r(x_i) \} = \sum_{i=1}^k w_i r(x_i) = \hat{I}(r),\]</span>
+since <span class="math inline">\(p_k(x_i) = 0\)</span> for each <span class="math inline">\(i \in \{1,\ldots,k\}\)</span>.
+Therefore, <span class="math inline">\(\hat{I}(f) = \hat{I}(r)\)</span> approximating <span class="math inline">\(I(f) = I(r)\)</span> is a <span class="math inline">\(k\)</span>-point interpolating polynomial quadrature rule where <span class="math inline">\(r\)</span> is a polynomial of degree less than or equal to <span class="math inline">\(k-1\)</span>, and hence <span class="math inline">\(\hat{I}(f) = \hat{I}(r) = I(r) = I(f)\)</span>.</p>
+<p>We consider a simple example with a degree 5 polynomial <span class="math inline">\(f(x) = x^5 + x^4 + x^3 + x^2 + x + 1\)</span>, <span class="math inline">\(w \equiv 1\)</span>, and we use the roots of <span class="math inline">\(p_3(x) = x^3 - 0.6x\)</span> as the 3 interpolation points. It is straightforward to plot <span class="math inline">\(f\)</span> and the interpolating polynomial, and clearly the approximation is not exact.</p>
+<pre class="r"><code>pts &lt;- c(-sqrt(3/5), 0, sqrt(3/5))
+f &lt;- function(x) 1 + x + x^2 + x^3 + x^4 + x^5
+plot.polynomial.approximation(f, pts, -1, 1)</code></pre>
+<p><img src="/sc1/integration/quadrature_files/figure-html/unnamed-chunk-15-1.png" width="672" /></p>
+<p>For this function, the quotient polynomial <span class="math inline">\(f/p_3\)</span> is <span class="math inline">\(q(x) = x^2+x+1.6\)</span> and the remainder polynomial is <span class="math inline">\(r(x) = 1.6x^2+1.96x+1\)</span>. For intuition, we can plot the polynomial approximation of <span class="math inline">\(f - r = p_3 q\)</span>.</p>
+<pre class="r"><code>p3 &lt;- function(x) x^3 - 0.6*x
+q &lt;- function(x) x^2+x+1.6
+r &lt;- function(x) 1.6*x^2+1.96*x+1
+
+p3q &lt;- function(x) p3(x)*q(x)
+plot.polynomial.approximation(p3q, pts, -1, 1)</code></pre>
+<p><img src="/sc1/integration/quadrature_files/figure-html/unnamed-chunk-16-1.png" width="672" /></p>
+<p>The approximating polynomial is the zero polynomial, simply because <span class="math inline">\(p_3\)</span> is <span class="math inline">\(0\)</span> at the interpolation points by construction. While this is a poor approximation of the function, the integral of <span class="math inline">\(p_3 q\)</span> over <span class="math inline">\([-1,1]\)</span> is <span class="math inline">\(0\)</span> so their integrals are the same. Finally, we can superimpose the function <span class="math inline">\(r\)</span> over the polynomial approximation of <span class="math inline">\(f\)</span>, and we see that indeed the polynomial approximation is exactly <span class="math inline">\(r\)</span>.</p>
+<pre class="r"><code>plot.polynomial.approximation(f, pts, -1, 1)
+vs &lt;- seq(-1,1,0.01)
+lines(vs, r(vs), col=&quot;blue&quot;, lty=&quot;dashed&quot;)</code></pre>
+<p><img src="/sc1/integration/quadrature_files/figure-html/unnamed-chunk-17-1.png" width="672" /></p>
+<p>In the case where <span class="math inline">\(w \equiv 1\)</span>, for a given <span class="math inline">\(k\)</span> one has
+<span class="math display">\[\hat{I}_{\rm Gauss-Legendre}(f) = \frac{(b-a)^{2k+1}(k!)^4}{(2k+1)\{(2k)!\}^3} f^{(2k)}(\xi),\]</span>
+for some <span class="math inline">\(\xi \in (a,b)\)</span>. For a composite Gauss–Legendre rule, one obtains
+<span class="math display">\[\hat{I}^m_{\rm Gauss-Legendre}(f) = \frac{(b-a)^{2k+1}(k!)^4}{m^{2k}(2k+1)\{(2k)!\}^3} f^{(2k)}(\xi),\]</span></p>
+<p>We can now add the errors for composite Gauss–Legendre quadrature (<span class="math inline">\(k \in \{3,4,5\}\)</span>) to the previous plot for composite Newton–Cotes rules, with <span class="math inline">\(f=\sin\)</span> and <span class="math inline">\((a,b) = (0,10)\)</span>. When the mathematical error for these rules is close to or less than <span class="math inline">\(10^{-15}\)</span>, the numerical error starts to be dominated by roundoff error, and so the results are not plotted.</p>
+<pre class="r"><code>gauss.legendre.canonical &lt;- function(f, k) {
+  if (k == 1) {
+    return(2*f(0))
+  }
+  if (k == 2) {
+    return(f(-1/sqrt(3)) + f(1/sqrt(3)))
+  }
+  if (k == 3) {
+    return(5/9*f(-sqrt(3/5)) + 8/9*f(0) + 5/9*f(sqrt(3/5)))
+  }
+  if (k == 4) {
+    tmp &lt;- 2/7*sqrt(6/5)
+    xs &lt;- rep(0, 4)
+    xs[1] &lt;- sqrt(3/7 - tmp)
+    xs[2] &lt;- -sqrt(3/7 - tmp)
+    xs[3] &lt;- sqrt(3/7 + tmp)
+    xs[4] &lt;- -sqrt(3/7 + tmp)
+    ws &lt;- rep(0, 4)
+    ws[1] &lt;- ws[2] &lt;- (18+sqrt(30))/36
+    ws[3] &lt;- ws[4] &lt;- (18-sqrt(30))/36
+    return(sum(ws*vapply(xs, f, 0)))
+  }
+  if (k == 5) {
+    tmp &lt;- 2*sqrt(10/7)
+    xs &lt;- rep(0, 4)
+    xs[1] &lt;- 0
+    xs[2] &lt;- 1/3*sqrt(5 - tmp)
+    xs[3] &lt;- -1/3*sqrt(5 - tmp)
+    xs[4] &lt;- 1/3*sqrt(5 + tmp)
+    xs[5] &lt;- -1/3*sqrt(5 + tmp)
+    ws &lt;- rep(0, 5)
+    ws[1] &lt;- 128/225
+    ws[2] &lt;- ws[3] &lt;- (322 + 13*sqrt(70))/900
+    ws[4] &lt;- ws[5] &lt;- (322 - 13*sqrt(70))/900
+    return(sum(ws*vapply(xs, f, 0)))
+  }
+  stop(&quot;not implemented&quot;)
+}
+
+gauss.legendre &lt;- function(f, a, b, k) {
+  g &lt;- change.domain(f, a, b, -1, 1)  
+  gauss.legendre.canonical(g, k)
+}</code></pre>
+<pre class="r"><code>composite.gauss.legendre &lt;- function(f, a, b, subintervals, k) {
+  rule &lt;- function(f, left, right) {
+    gauss.legendre(f, left, right, k)
+  }
+  return(composite.rule(f, a, b, subintervals, rule))
+}
+
+composite.gl.3 &lt;- vapply(ms, function(m) composite.gauss.legendre(sin, 0, 10, m, 3), 0)
+composite.gl.3[log(abs(composite.gl.3 - val)) &lt; -33] &lt;- NA
+
+composite.gl.4 &lt;- vapply(ms, function(m) composite.gauss.legendre(sin, 0, 10, m, 4), 0)
+composite.gl.4[log(abs(composite.gl.4 - val)) &lt; -33] &lt;- NA
+
+composite.gl.5 &lt;- vapply(ms, function(m) composite.gauss.legendre(sin, 0, 10, m, 5), 0)
+composite.gl.5[log(abs(composite.gl.5 - val)) &lt; -33] &lt;- NA
+
+tg3 &lt;- tibble(m=ms, rule=&quot;gauss-legendre 3&quot;, log.error=log(abs(composite.gl.3- val)),
+            theory=log(0.18*factorial(3)^4/factorial(2*3)^3/(2*3+1)*10^7/ms^6))
+tg4 &lt;- tibble(m=ms, rule=&quot;gauss-legendre 4&quot;, log.error=log(abs(composite.gl.4- val)),
+            theory=log(0.18*factorial(4)^4/factorial(2*4)^3/(2*4+1)*10^9/ms^8))
+tg5 &lt;- tibble(m=ms, rule=&quot;gauss-legendre 5&quot;, log.error=log(abs(composite.gl.5- val)),
+            theory=log(0.18*factorial(5)^4/factorial(2*5)^3/(2*5+1)*10^11/ms^10))
+tib &lt;- bind_rows(tr, tt, tm, ts, tg3, tg4, tg5)
+ggplot(tib, aes(x=m, colour=rule)) + geom_point(aes(y=log.error), na.rm=TRUE) + geom_line(aes(y=theory))</code></pre>
+<p><img src="/sc1/integration/quadrature_files/figure-html/unnamed-chunk-19-1.png" width="672" /></p>
+<p>The Gauss–Legendre rule for <span class="math inline">\(k=1\)</span> is equivalent to the midpoint rule, and the Gauss–Legendre rule for <span class="math inline">\(k=2\)</span> is very similar to Simpson’s rule in terms of error. However, with <span class="math inline">\(k=3\)</span> we begin to see a dramatic improvement due to the much faster rate of convergence.</p>
+</div>
+<div id="practical-algorithms" class="section level2">
+<h2>Practical algorithms</h2>
+<p>We have a seen a few simple numerical integration rules that all arise by integrating an interpolating polynomial defined by specific interpolation points. In practice, these types of rules are popular, but are enhanced by various types of adaptation and practical error estimation.</p>
+<p>Specifically, algorithms are designed to provide an approximation of any integral to a given precision. In order to do this effectively, estimates or bounds on the error need to be computed. In order to reduce overall computational cost, it is also sensible to define algorithms that spend relatively more computational effort in subintervals where the integral is estimated poorly. Similarly, defining a robust algorithm can also involve specifying appropriate change of variables formulas for dealing with semi-infinite and infinite intervals, and techniques for dealing with singularities. One can also obtain performance improvements though the choice of weight function in the general weighted integration problem <span class="math inline">\(I(f) = I_w(g) = \int g(x) w(x) {\rm d}x\)</span>: by choosing an easily integrable <span class="math inline">\(w\)</span> appropriately, <span class="math inline">\(g\)</span> may be better approximated by a polynomial.</p>
+</div>
+<div id="multiple-integrals" class="section level2">
+<h2>Multiple integrals</h2>
+<p>We have seen that one-dimensional integrals of sufficiently smooth functions on a finite domain <span class="math inline">\([a,b]\)</span> can be approximated to arbitrary accuracy with relatively small computational cost. We consider now only a very simple approach to multiple integrals. Consider an integral over <span class="math inline">\(D = [a_1,b_1] \times \cdots \times [a_d,b_d]\)</span>.</p>
+<p><span class="math display">\[I(f) = \int_D f(x_1,\ldots,x_d) {\rm d}(x_1,\ldots,x_d).\]</span></p>
+<p>Appealing to Fubini’s Theorem, and letting <span class="math inline">\(D&#39; = [a_2,b_2] \times \cdots \times [a_d,b_d]\)</span> we can often rewrite <span class="math inline">\(I(f)\)</span> as an iterated integral</p>
+<p><span class="math display">\[I(f) = \int_{a_1}^{b_1} \int_{D&#39;} f(x_1,\ldots,x_d) {\rm d}(x_2,\ldots,x_d) {\rm d}x_1 = \int_{a_1}^{b_1} g(x_1) {\rm d}x_1,\]</span>
+where taking <span class="math inline">\(h_{x_1}(x_2,\ldots,x_d) = f(x_1,\ldots,x_d)\)</span> we have
+<span class="math display">\[g(x_1) = I(h_{x_1}) = \int_{D&#39;} h_{x_1}(x_2,\ldots,x_d) {\rm d}(x_2,\ldots,x_d).\]</span></p>
+<div id="recursive-algorithm" class="section level3">
+<h3>Recursive algorithm</h3>
+<p>It is natural to define a recursive algorithm whereby one uses an approximation of <span class="math inline">\(g\)</span> obtained by numerical integration to approximate <span class="math inline">\(I(f)\)</span>. That is, we use the one-dimensional quadrature rule</p>
+<p><span class="math display">\[\hat{I}(f) = \sum_{i=1}^k \hat{g}(x_1^{(i)}) \int_{a_1}^{b_1} \ell_i(x_1) {\rm d}x_1,\]</span></p>
+<p>where <span class="math inline">\(\hat{g}(x_1) = \hat{I}(h_{x_1})\)</span>.</p>
+<p>We implement this recursive algorithm in R, using the Gauss–Legendre (k=5) rule for every one-dimensional integral.</p>
+<pre class="r"><code># approximates multiple integrals using nested composite Gauss--Legendre (k=5)
+# f should take a vector of length d as input, and as and bs should be the lower
+# and upper limits of integration
+my.integrate &lt;- function(f, as, bs, subintervals) {
+  stopifnot(length(as) == length(bs))
+  d &lt;- length(as) # dimension is length of limit vectors
+  if (d == 1) {
+    # just integrate the 1D function
+    return(composite.gauss.legendre(f, as, bs, subintervals, 5))
+  } else {
+    # define a 1D function obtained by (approximately) integrating x_2,...,x_d
+    g.hat &lt;- function(x) {
+      my.integrate(function(y) f(c(x,y)), as[2:d], bs[2:d], subintervals)
+    }
+    # integrate g.hat
+    return(composite.gauss.legendre(g.hat, as[1], bs[1], subintervals, 5))
+  }
+}</code></pre>
+<p>We can test out the algorithm on a slightly challenging three-dimensional integral. Specifically, the <span class="math inline">\(\sin\)</span> function cannot be approximated well by a degree 9 polynomial over <span class="math inline">\([0, 8\pi + 3\pi/2]\)</span>, so a few subintervals are required to give accurate answers.</p>
+<pre class="r"><code>f &lt;- function(x) {
+  sin(sum(x))
+}
+
+# actual value is 2
+vapply(1:7, function(m) my.integrate(f, rep(0,3), rep(8*pi+3*pi/2,3), m), 0)</code></pre>
+<pre><code>## [1] 705.074761   7.045259   1.932086   1.993652   2.002155   2.000079   2.000011</code></pre>
+</div>
+<div id="the-curse-of-dimensionality" class="section level3">
+<h3>The curse of dimensionality</h3>
+<p>As in the one-dimensional case, numerical integration via polynomial interpolation can in principle provide very accurate approximations for sufficiently smooth functions. However, the computational cost of the algorithm grows rapidly with dimension.</p>
+<p>Although we have defined the multiple integral algorithm recursively, to take advantage of existing functions, one can also see that its multiple integral, or “cubature”, rule is of the form
+<span class="math display">\[\hat{I}(f) = \sum_{i=1}^{n} w_i f(x_i),\]</span>
+where the points <span class="math inline">\(x_1,\ldots,x_n\)</span> are arranged in <span class="math inline">\(d\)</span>-dimensional space. The <code>my.integrate</code> function arranges <span class="math inline">\(n = (mk)^d\)</span> points in a regular grid. One can clearly see that for fixed <span class="math inline">\((m,k)\)</span>, the computational cost is exponential in <span class="math inline">\(d\)</span> and so quickly becomes prohibitive as <span class="math inline">\(d\)</span> increases.</p>
+<p>One may wonder if the curse of dimensionality is specific to regular grids, as indeed there are better rules that use irregular grids. However, there are certainly classes of functions that require exponential in <span class="math inline">\(d\)</span> computational time; see, e.g. a <a href="https://link.springer.com/content/pdf/10.1007%2F978-3-319-33507-0_6.pdf">recent survey of complexity results</a>.</p>
+<p>It is clear that the smoothness of <span class="math inline">\(f\)</span> is important for the quadrature rules that we have considered. From the survey linked above, we can see that for <span class="math inline">\(r \in \mathbb{N}\)</span>, the class of <span class="math inline">\(C^r([0,1]^d)\)</span> functions with all partial derivatives bounded by 1 does suffer from the curse. However, an outstanding open problem is whether the class of <span class="math inline">\(C^\infty([0,1]^d)\)</span> functions with all partial derivatives bounded by 1 suffers from the curse. For a smaller class of infinitely differentiable functions, <a href="https://doi.org/10.1016/j.jat.2014.03.012">the curse does not hold</a>.</p>
+<p>When one requires an approximation of a high-dimensional integral in many statistical applications, one often resorts to Monte Carlo methods as they do not suffer from the curse of dimensionality in the same way as the quadrature rules we have seen here.</p>
+</div>
+</div>
+</div>
+
+
+  <footer>
+  
+
+<script src="//yihui.name/js/math-code.js"></script>
+<script async src="//mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+<script async src="//yihui.name/js/center-img.js"></script>
+
+
+<script type="text/javascript">
+var sc_project=12110974;
+var sc_invisible=1;
+var sc_security="9b171880";
+</script>
+<script type="text/javascript"
+src="https://www.statcounter.com/counter/counter.js"
+async></script>
+<noscript><div class="statcounter"><a title="Web Analytics"
+href="https://statcounter.com/" target="_blank"><img
+class="statcounter"
+src="https://c.statcounter.com/12110974/0/9b171880/1/"
+alt="Web Analytics"></a></div></noscript>
+
+
+
+
+
+
+
+
+  
+
+
+<p align=right>
+
+<a href='https://github.com/awllee/sc1/blob/master/content/integration/quadrature.Rmd'>View source</a>
+
+|
+
+<a href='https://github.com/awllee/sc1/edit/master/content/integration/quadrature.Rmd'>Edit source</a>
+
+</p>
+
+
+
+
+
+<script src="https://utteranc.es/client.js"
+        repo="awllee/sc1"
+        issue-term="pathname"
+        label="utterance"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script>
+
+
+
+  
+
+
+
+<script src="//cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+
+
+
+<script src="//cdn.bootcss.com/highlight.js/9.12.0/languages/r.min.js"></script>
+<script src="//cdn.bootcss.com/highlight.js/9.12.0/languages/yaml.min.js"></script>
+<script src="//cdn.bootcss.com/highlight.js/9.12.0/languages/tex.min.js"></script>
+<script>hljs.configure({languages: []}); hljs.initHighlightingOnLoad();</script>
+
+
+
+  
+  <hr>
+  <div class="copyright">© 2020 <a href="https://sites.google.com/view/anthonylee">Anthony Lee</a>, <a href="http://www.bristol.ac.uk/maths/people/feng-yu/index.html">Feng Yu</a>, <a href="https://people.maths.bris.ac.uk/~tk18582/">Tobias Kley</a>, <a href="https://mfasiolo.github.io/">Matteo Fasiolo</a></div>
+  
+  </footer>
+  </article>
+  
+  </body>
+</html>
+

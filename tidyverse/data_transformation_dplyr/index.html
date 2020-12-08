@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <title>4. Data transformation with dplyr - SC1</title>
+    <meta property="og:title" content="4. Data transformation with dplyr - SC1">
+    
+    <meta name="twitter:card" content="summary">
+
+    
+      
+    
+
+    
+      
+      <meta property="description" content="The previous two sections focussed on data visualization using ggplot2. ggplot2 assumes that your data is stored in a data.frame, so here we explain how to transform your data.frame to get it in the &amp;hellip;">
+      <meta property="og:description" content="The previous two sections focussed on data visualization using ggplot2. ggplot2 assumes that your data is stored in a data.frame, so here we explain how to transform your data.frame to get it in the &amp;hellip;">
+      
+    
+
+    
+    
+
+    
+
+    
+    
+
+
+<link href='//cdn.bootcss.com/highlight.js/9.12.0/styles/github.min.css' rel='stylesheet' type='text/css' />
+
+
+
+    <link rel="stylesheet" href="/sc1/css/style.css" />
+    <link rel="stylesheet" href="/sc1/css/fonts.css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Arvo">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Marcellus">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Code+Pro">
+
+<link rel="stylesheet" href="/sc1/css/custom.css" />
+
+<link rel="icon" href="/sc1/favicon.ico" type="image/x-icon" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<nav class="breadcrumbs">
+    
+        <a href="https://awllee.github.io/sc1/">home / </a>
+    
+        <a href="https://awllee.github.io/sc1/tidyverse/">tidyverse / </a>
+    
+        <a href="https://awllee.github.io/sc1/tidyverse/data_transformation_dplyr/">data_transformation_dplyr / </a>
+    
+</nav>
+
+  </head>
+
+  
+  <body class="sc1">
+    <header class="masthead">
+      <h1><a href="/sc1/">SC1</a></h1>
+
+<p class="tagline">Statistical Computing 1</p>
+
+      <nav class="menu">
+  <input id="menu-check" type="checkbox" />
+  <label id="menu-label" for="menu-check" class="unselectable">
+    <span class="icon close-icon">✕</span>
+    <span class="icon open-icon">☰</span>
+    <span class="text">Menu</span>
+  </label>
+  <ul>
+  
+  
+  <li><a href="/sc1/">Home</a></li>
+  
+  <li><a href="/sc1/intro-r/">Intro to R</a></li>
+  
+  <li><a href="/sc1/reproducibility/">Reproducibility</a></li>
+  
+  <li><a href="/sc1/common-r/">Common R</a></li>
+  
+  <li><a href="/sc1/tidyverse/">Tidyverse</a></li>
+  
+  <li><a href="/sc1/packages/">Packages</a></li>
+  
+  <li><a href="/sc1/functional-oo/">Functional / OO</a></li>
+  
+  <li><a href="/sc1/profile-debug/">Performance / Bugs</a></li>
+  
+  <li><a href="/sc1/matrices/">Matrices</a></li>
+  
+  <li><a href="/sc1/optimization/">Optimization</a></li>
+  
+  <li><a href="/sc1/integration/">Integration</a></li>
+  
+  
+  </ul>
+</nav>
+
+    </header>
+
+    <article class="main">
+      <header class="title">
+      
+<h1>4. Data transformation with dplyr</h1>
+
+<h3>
+</h3>
+<hr>
+
+
+      </header>
+
+
+
+
+<link href="/sc1/rmarkdown-libs/anchor-sections/anchor-sections.css" rel="stylesheet" />
+<script src="/sc1/rmarkdown-libs/anchor-sections/anchor-sections.js"></script>
+
+
+<style>
+body {
+text-align: justify}
+</style>
+<p>The previous two sections focussed on data visualization using <code>ggplot2</code>. <code>ggplot2</code> assumes that your data is stored in a <code>data.frame</code>, so here we explain how to transform your <code>data.frame</code> to get it in the right format for plotting and modelling. In particular, the following section focuses on the <code>dplyr</code> package, which provides some convenient tools for manipulating data stored in a tabular format (i.e. <code>data.frames</code>). Below we demonstrate some of its most commonly used features, and we refer to the <a href="https://r4ds.had.co.nz/transform.html">relevant chapter</a> of “R for Data Science” for more details.</p>
+<div id="basic-dplyr-functions" class="section level2">
+<h2>Basic <code>dplyr</code> functions</h2>
+<p>To illustrate the tools provided by <code>dplyr</code>, lets us consider again the UK electricity demand data set we used before:</p>
+<pre class="r"><code>library(qgam)
+data(UKload)
+head(UKload)</code></pre>
+<pre><code>##     NetDemand       wM   wM_s95       Posan      Dow      Trend NetDemand.48
+## 25      38353 6.046364 5.558800 0.001369941   samedi 1293879600        38353
+## 73      41192 2.803969 3.230582 0.004109824 dimanche 1293966000        38353
+## 121     43442 2.097259 1.858198 0.006849706    lundi 1294052400        41192
+## 169     50736 3.444187 2.310408 0.009589588    mardi 1294138800        43442
+## 217     50438 5.958674 4.724961 0.012329471 mercredi 1294225200        50736
+## 265     50064 4.124248 4.589470 0.015069353    jeudi 1294311600        50438
+##     Holy Year                Date
+## 25     1 2011 2011-01-01 12:00:00
+## 73     0 2011 2011-01-02 12:00:00
+## 121    0 2011 2011-01-03 12:00:00
+## 169    0 2011 2011-01-04 12:00:00
+## 217    0 2011 2011-01-05 12:00:00
+## 265    0 2011 2011-01-06 12:00:00</code></pre>
+<p>One of the simplest functions provided by <code>dplyr</code> is <code>select</code>, which allows you to select one or more columns of a <code>data.frame</code>. For example:</p>
+<pre class="r"><code>library(dplyr)
+library(magrittr)
+library(GGally)
+UKload %&gt;% select(NetDemand, wM, Posan) %&gt;% 
+           ggpairs()</code></pre>
+<p><img src="/sc1/tidyverse/data_transformation_dplyr_files/figure-html/unnamed-chunk-2-1.png" width="672" style="display: block; margin: auto;" />
+where <code>GGally::ggpairs</code> is the <code>ggplot2</code> version of <code>graphics::pairs</code>, so the code above is similar to:</p>
+<pre class="r"><code>pairs( UKload[ , c(&quot;NetDemand&quot;, &quot;wM&quot;, &quot;Posan&quot;)] )</code></pre>
+<p><img src="/sc1/tidyverse/data_transformation_dplyr_files/figure-html/unnamed-chunk-3-1.png" width="672" style="display: block; margin: auto;" />
+We can also remove variables, for instance:</p>
+<pre class="r"><code>UKload %&lt;&gt;% select(-Date)</code></pre>
+<p>removes the <code>Date</code> variable from the data set (notice that we are over-writing <code>UKload</code> by using the assignment pipe <code>%&lt;&gt;%</code>).</p>
+<p>Another useful function is <code>filter</code>, which allows you to subset your data using logical conditions, for instance:</p>
+<pre class="r"><code>coldMondays &lt;- UKload %&gt;% filter(wM &lt; 5 &amp; Dow == &quot;lundi&quot;) %T&gt;% 
+                          {print(head(.), digits = 2)}</code></pre>
+<pre><code>##   NetDemand  wM wM_s95  Posan   Dow   Trend NetDemand.48 Holy Year
+## 1     43442 2.1    1.9 0.0068 lundi 1.3e+09        41192    0 2011
+## 2     51282 2.9    1.5 0.0836 lundi 1.3e+09        44845    0 2011
+## 3     50163 5.0    4.3 0.1411 lundi 1.3e+09        42856    0 2011
+## 4     48403 4.5    4.8 0.1603 lundi 1.3e+09        40709    0 2011
+## 5     50950 3.9    1.8 0.9658 lundi 1.3e+09        43257    0 2011
+## 6     48653 3.7    1.4 0.0424 lundi 1.3e+09        42238    0 2012</code></pre>
+<p>Here we are selecting only the Mondays (“Lundi” in French) where the temperature is below 5 degrees Celsius. We are also printing the first and last few rows of the data by exploiting the <code>%T&gt;%</code> pipe (by the way, why do we need the curly brackets <code>{}</code> around <code>print</code>?). <strong>Warning</strong>: notice that the following would not work:</p>
+<pre class="r"><code>coldMondays &lt;- UKload %&gt;% filter(wM &lt; 5 &amp;&amp; Dow == &quot;lundi&quot;) %T&gt;% 
+                          {print(head(.), digits = 2)}</code></pre>
+<pre><code>## [1] NetDemand    wM           wM_s95       Posan        Dow         
+## [6] Trend        NetDemand.48 Holy         Year        
+## &lt;0 rows&gt; (or 0-length row.names)</code></pre>
+<p>because we need to use <code>&amp;</code>, which performs elementwise comparisons, not <code>&amp;&amp;</code>, which is typically used for programming control-flow (e.g. in if-else statements). Same for <code>|</code> and <code>||</code>.</p>
+<p>You might also find useful the <code>arrange</code> function, which allows you to sort the rows of the data using one of more variable:</p>
+<pre class="r"><code>UKload %&lt;&gt;% arrange(Dow, desc(wM)) %T&gt;% 
+            {print(head(.), digits = 2)} %T&gt;% 
+            {print(tail(.), digits = 2)}</code></pre>
+<pre><code>##   NetDemand wM wM_s95 Posan      Dow   Trend NetDemand.48 Holy Year
+## 1     34061 25     21  0.63 dimanche 1.3e+09        34780    0 2012
+## 2     33680 24     19  0.51 dimanche 1.4e+09        34566    0 2013
+## 3     33811 23     20  0.53 dimanche 1.4e+09        34890    0 2013
+## 4     33127 23     18  0.40 dimanche 1.3e+09        34191    1 2012
+## 5     34237 22     17  0.75 dimanche 1.3e+09        34608    0 2011
+## 6     34039 22     17  0.48 dimanche 1.3e+09        35170    0 2011
+##      NetDemand    wM wM_s95 Posan      Dow   Trend NetDemand.48 Holy Year
+## 2003     49958  1.46  1.032 0.144 vendredi 1.4e+09        49316    0 2013
+## 2004     50771  1.42  1.425 0.075 vendredi 1.3e+09        51130    0 2011
+## 2005     50054  1.29  1.873 0.056 vendredi 1.3e+09        50110    0 2011
+## 2006     51593  1.06  0.548 0.111 vendredi 1.3e+09        51827    0 2012
+## 2007     50188  0.32 -1.520 0.092 vendredi 1.3e+09        50334    0 2012
+## 2008     52233 -1.43  0.026 0.048 vendredi 1.4e+09        51702    0 2013</code></pre>
+<p>Above we are modifying the <code>UKload</code> dataframe by sorting its rows by day of the week (<code>Dow</code>) and by descending temperature (<code>wM</code>) (see, <code>?desc</code>). More precisely, <code>arrange</code> takes a set of column names or expressions and uses the first to order the rows, the second to break the ties in the first, the third to break the ties in the second and so on. It is slightly annoying that the <code>Dow</code> factor does not have the order we would have liked (e.g. Monday to Sunday), instead it is alphabetical:</p>
+<pre class="r"><code>levels(UKload$Dow) # sun, thur, mon, tue, wed, sat, frid</code></pre>
+<pre><code>## [1] &quot;dimanche&quot; &quot;jeudi&quot;    &quot;lundi&quot;    &quot;mardi&quot;    &quot;mercredi&quot; &quot;samedi&quot;   &quot;vendredi&quot;</code></pre>
+<p>This gives us the opportunity to illustrate the <code>mutate</code> function, which allows us to modify one or more variables of the <code>data.frame</code>:</p>
+<pre class="r"><code>UKload %&lt;&gt;% mutate(Dow = factor(Dow, levels(Dow)[c(3, 4, 5, 2, 7, 6, 1)])) %&gt;% 
+            arrange(Dow) %T&gt;% 
+            {print(head(.), digits = 2)} %T&gt;% 
+            {print(tail(.), digits = 2)}</code></pre>
+<pre><code>##   NetDemand wM wM_s95 Posan   Dow   Trend NetDemand.48 Holy Year
+## 1     42185 27     22  0.49 lundi 1.3e+09        34039    0 2011
+## 2     40404 24     20  0.54 lundi 1.4e+09        33811    0 2013
+## 3     40663 23     19  0.55 lundi 1.4e+09        33097    0 2013
+## 4     39546 23     19  0.58 lundi 1.3e+09        32422    0 2011
+## 5     40259 23     18  0.41 lundi 1.3e+09        33127    1 2012
+## 6     40316 22     18  0.51 lundi 1.3e+09        33166    0 2011
+##      NetDemand    wM wM_s95 Posan      Dow   Trend NetDemand.48 Holy Year
+## 2003     45234  2.19  -0.23 0.116 dimanche 1.3e+09        45395    0 2012
+## 2004     43164  2.18   2.13 0.034 dimanche 1.4e+09        43509    0 2013
+## 2005     43395  1.97   1.51 0.045 dimanche 1.5e+09        43380    0 2016
+## 2006     45359  1.55   0.39 0.097 dimanche 1.3e+09        47236    0 2012
+## 2007     45487  0.42   0.59 0.226 dimanche 1.4e+09        45425    0 2013
+## 2008     46566 -0.26  -0.13 0.053 dimanche 1.4e+09        46997    0 2013</code></pre>
+<p>Above we are mutating the <code>Dow</code> factor variable by rearranging the order of its levels, in fact:</p>
+<pre class="r"><code>levels(UKload$Dow) # mon, tue, wed, thur, fri, sat, sun</code></pre>
+<pre><code>## [1] &quot;lundi&quot;    &quot;mardi&quot;    &quot;mercredi&quot; &quot;jeudi&quot;    &quot;vendredi&quot; &quot;samedi&quot;   &quot;dimanche&quot;</code></pre>
+<p>so that the rows of <code>UKload</code> are now in order we want (Monday to Sunday).</p>
+<p>Notice that the functions described so far have a similar set of arguments, for instance:</p>
+<pre class="r"><code>args(arrange)</code></pre>
+<pre><code>## function (.data, ..., .by_group = FALSE) 
+## NULL</code></pre>
+<pre class="r"><code>args(select)</code></pre>
+<pre><code>## function (.data, ...) 
+## NULL</code></pre>
+<pre class="r"><code>args(mutate)</code></pre>
+<pre><code>## function (.data, ...) 
+## NULL</code></pre>
+<p>Hence, the first argument is always a <code>data.frame</code> and the <code>...</code> contains a variable number of arguments which determine what needs to be done with the data (e.g. in <code>select(UKload, wM, Posan)</code> both <code>wM</code> and <code>Posan</code> end up in the <code>...</code>). The fact that the first argument is a <code>data.frame</code> is important, because it makes so that pipes work smoothly with <code>dplyr</code>.</p>
+</div>
+<div id="grouping-and-summarizing-data.frames" class="section level2">
+<h2>Grouping and summarizing data.frames</h2>
+<p>The <code>dplyr</code> package offers also some very convenient tools for grouping and summarizing data frames. To illustrate these, let us load a fresh version of our electricity demand data:</p>
+<pre class="r"><code>data(UKload)</code></pre>
+<p>The <code>summarise</code> function allows you to reduce a data frame to a set of scalar variables, for instance:</p>
+<pre class="r"><code>UKload %&gt;% summarise(maxDem = max(NetDemand), 
+                     meanTemp = mean(wM), 
+                     nHoly = sum(Holy == &quot;1&quot;))</code></pre>
+<pre><code>##   maxDem meanTemp nHoly
+## 1  52596 12.20725    56</code></pre>
+<p>Above we are reducing the whole data set to a vector containing the maximum electricity demand, the mean temperature and the total number of holidays, calculated across the whole <code>data.frame</code>. Using <code>summarise</code> in this simple way can be handy sometimes, but we could do the same thing quite easily in base <code>R</code>. It is more interesting to use <code>summarise</code> in conjunction <code>group_by</code>, as the following example illustrates.</p>
+<p>Recall that the <code>UKload</code> data set contains daily electricity demand observations (<code>NetDemand</code>), representing the total demand in the UK between 11:30am and 12am (minus embedded production, e.g. from solar panels). Now, suppose that we want to model the total demand during a week, using some of the other variables. To do this it is useful to exploit the <code>group_by</code> function, which takes as input a <code>data.frame</code> and groups its rows using one or more variables. For example:</p>
+<pre class="r"><code>library(lubridate)
+UKweek &lt;- UKload %&gt;% mutate(wk = week(Date)) %&gt;% 
+                     group_by(Year, wk)
+UKweek</code></pre>
+<pre><code>## # A tibble: 2,008 x 11
+## # Groups:   Year, wk [291]
+##    NetDemand    wM wM_s95   Posan Dow    Trend NetDemand.48 Holy   Year
+##        &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt; &lt;fct&gt;  &lt;dbl&gt;        &lt;dbl&gt; &lt;fct&gt; &lt;int&gt;
+##  1     38353  6.05   5.56 0.00137 same… 1.29e9        38353 1      2011
+##  2     41192  2.80   3.23 0.00411 dima… 1.29e9        38353 0      2011
+##  3     43442  2.10   1.86 0.00685 lundi 1.29e9        41192 0      2011
+##  4     50736  3.44   2.31 0.00959 mardi 1.29e9        43442 0      2011
+##  5     50438  5.96   4.72 0.0123  merc… 1.29e9        50736 0      2011
+##  6     50064  4.12   4.59 0.0151  jeudi 1.29e9        50438 0      2011
+##  7     51698  3.08   2.45 0.0178  vend… 1.29e9        50064 0      2011
+##  8     43988  7.08   7.25 0.0205  same… 1.29e9        51698 0      2011
+##  9     43340  4.89   3.53 0.0233  dima… 1.29e9        43988 0      2011
+## 10     50645  6.33   3.47 0.0260  lundi 1.29e9        43340 0      2011
+## # … with 1,998 more rows, and 2 more variables: Date &lt;dttm&gt;, wk &lt;dbl&gt;</code></pre>
+<p>Here we are using <code>mutate</code> and <code>lubridate::week</code> to create a new variable, <code>wk</code> <span class="math inline">\(\in \{1, 2, \dots, 53\}\)</span>, indicating the week to which each observation belongs and then we are grouping the data by year and week. As you can see, the output of <code>group_by</code> is not just a <code>data.frame</code> but a tibble, which is a “tidy” version of a <code>data.frame</code>. Without going too much into details, tibbles inherits the <code>data.frame</code> class:</p>
+<pre class="r"><code>class(UKweek)</code></pre>
+<pre><code>## [1] &quot;grouped_df&quot; &quot;tbl_df&quot;     &quot;tbl&quot;        &quot;data.frame&quot;</code></pre>
+<p>so we can use them pretty much as if they were just <code>data.frames</code>. Notice that the structure of the <code>UKweek</code> tibble is printed nicely on the console, in fact we can see its size, the class of each variable (e.g. <code>wM</code> is a double <code>&lt;dbl&gt;</code> and <code>Dow</code> is a factor <code>&lt;fct&gt;</code>) and we can also see that it has been grouped by year and week (<code>Groups: Year, wk [1]</code>).</p>
+<p>The fact that the <code>UKweek</code> has been grouped by week and year, makes so that if we perform <code>dplyr</code>-based operations to it, these will be applied by group. For instance, here:</p>
+<pre class="r"><code>UKweek %&lt;&gt;% summarise(TotDemand = sum(NetDemand),
+                      tempMax = max(wM), 
+                      tempMin = min(wM),
+                      Posan = mean(Posan), 
+                      nHoly = factor(sum(Holy == &quot;1&quot;)))</code></pre>
+<pre><code>## `summarise()` regrouping output by &#39;Year&#39; (override with `.groups` argument)</code></pre>
+<pre class="r"><code>UKweek</code></pre>
+<pre><code>## # A tibble: 291 x 7
+## # Groups:   Year [6]
+##     Year    wk TotDemand tempMax tempMin   Posan nHoly
+##    &lt;int&gt; &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt; &lt;fct&gt;
+##  1  2011     1    325923    6.05   2.10  0.00959 1    
+##  2  2011     2    332107   12.5    4.89  0.0288  0    
+##  3  2011     3    329419   12.2    1.29  0.0479  0    
+##  4  2011     4    340075    7.63   1.42  0.0671  0    
+##  5  2011     5    339415   11.3    0.968 0.0863  0    
+##  6  2011     6    319443   11.5    7.05  0.105   0    
+##  7  2011     7    320058    8.85   6.01  0.125   0    
+##  8  2011     8    323699   13.0    4.46  0.144   0    
+##  9  2011     9    321129    8.28   3.07  0.163   0    
+## 10  2011    10    314010   10.8    4.83  0.182   0    
+## # … with 281 more rows</code></pre>
+<p>we are calculating the <strong>weekly</strong> total demand, max and min temperature, the mean position along the year (<code>Posan</code>) and the total number of holidays (ranging from 0 to 7). Now we have a weekly demand data set but, before starting modelling it, we discard the last two weeks and the first week of the year by doing:</p>
+<pre class="r"><code>UKweek %&lt;&gt;% filter(wk &lt; 52 &amp; wk &gt; 1)</code></pre>
+<p>The reason for this is that the Christmas and New Year period is quite special in terms of electricity demand dynamics, hence we prefer to discard it here.</p>
+<p>A simple GAM model for weekly total demand might be <span class="math inline">\(D_w \sim N(\mu_w, \sigma)\)</span> where
+<span class="math display">\[
+\mu_w = \mathbb{E}(D_w) = \psi_{N_w} + f_1(T^{max}_w) + f_2(T^{min}_w) + f_3(\text{Posan}_w), 
+\]</span>
+<span class="math inline">\(\psi_{N_t}\)</span> is a parametric effect, whose value depends on the number of holidays taking place during the <span class="math inline">\(w\)</span>-th week, while <span class="math inline">\(f_1, f_2\)</span> and <span class="math inline">\(f_3\)</span> are smooth effects (see a previous section for an intro to GAMs, but a deep understanding of GAMs is unnecessary here, as we just want to illustrate the utility of <code>dplyr</code> in day-to-day modelling). We fit the model as follows:</p>
+<pre class="r"><code>library(mgcViz)
+fit &lt;- gamV(TotDemand ~ nHoly + s(tempMax) + s(tempMin) + s(Posan), data = UKweek)</code></pre>
+<p>and we then plot the effects:</p>
+<pre class="r"><code>print(plot(fit, allTerms = TRUE), pages = 1)</code></pre>
+<p><img src="/sc1/tidyverse/data_transformation_dplyr_files/figure-html/unnamed-chunk-19-1.png" width="768" style="display: block; margin: auto;" />
+We can see a strong heating effect depending on the minimal weekly temperature, but little cooling effect (recall that this is UK data!). As expected consumption is higher in the winter than in the summer, and weeks containing holidays have a lower total consumption.</p>
+<p>This section showed how to use the basic tools provided by <code>dplyr</code> to transform <code>data.frames</code>. To appreciate the practical utility of such tools, you are encouraged to try to transform <code>UKload</code> into <code>UKweek</code> using only the tools provided by base <code>R</code> (that is, without using <code>group_by</code> and <code>summarise</code>). You are also encouraged to issue a pull request including your solutions, as it would be cool to see how base <code>R</code> solutions to this problem look, relative to the <code>dplyr</code>-based solution above.</p>
+</div>
+
+
+  <footer>
+  
+
+<script src="//yihui.name/js/math-code.js"></script>
+<script async src="//mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+<script async src="//yihui.name/js/center-img.js"></script>
+
+
+<script type="text/javascript">
+var sc_project=12110974;
+var sc_invisible=1;
+var sc_security="9b171880";
+</script>
+<script type="text/javascript"
+src="https://www.statcounter.com/counter/counter.js"
+async></script>
+<noscript><div class="statcounter"><a title="Web Analytics"
+href="https://statcounter.com/" target="_blank"><img
+class="statcounter"
+src="https://c.statcounter.com/12110974/0/9b171880/1/"
+alt="Web Analytics"></a></div></noscript>
+
+
+
+
+
+
+
+
+  
+
+
+<p align=right>
+
+<a href='https://github.com/awllee/sc1/blob/master/content/tidyverse/data_transformation_dplyr.Rmd'>View source</a>
+
+|
+
+<a href='https://github.com/awllee/sc1/edit/master/content/tidyverse/data_transformation_dplyr.Rmd'>Edit source</a>
+
+</p>
+
+
+
+
+
+<script src="https://utteranc.es/client.js"
+        repo="awllee/sc1"
+        issue-term="pathname"
+        label="utterance"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script>
+
+
+
+  
+
+
+
+<script src="//cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+
+
+
+<script src="//cdn.bootcss.com/highlight.js/9.12.0/languages/r.min.js"></script>
+<script src="//cdn.bootcss.com/highlight.js/9.12.0/languages/yaml.min.js"></script>
+<script src="//cdn.bootcss.com/highlight.js/9.12.0/languages/tex.min.js"></script>
+<script>hljs.configure({languages: []}); hljs.initHighlightingOnLoad();</script>
+
+
+
+  
+  <hr>
+  <div class="copyright">© 2020 <a href="https://sites.google.com/view/anthonylee">Anthony Lee</a>, <a href="http://www.bristol.ac.uk/maths/people/feng-yu/index.html">Feng Yu</a>, <a href="https://people.maths.bris.ac.uk/~tk18582/">Tobias Kley</a>, <a href="https://mfasiolo.github.io/">Matteo Fasiolo</a></div>
+  
+  </footer>
+  </article>
+  
+  </body>
+</html>
+

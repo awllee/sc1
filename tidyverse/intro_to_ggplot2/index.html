@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <title>2. Layered visualizations with ggplot2 - SC1</title>
+    <meta property="og:title" content="2. Layered visualizations with ggplot2 - SC1">
+    
+    <meta name="twitter:card" content="summary">
+
+    
+      
+    
+
+    
+      
+      <meta property="description" content="Here we introduce the main features of the ggplot2 R package, but we refer to “The Layered Grammar of Graphics” and to the relevant chapter of “R for Data Science” for more details.
+[&amp;hellip;] Let us &amp;hellip;">
+      <meta property="og:description" content="Here we introduce the main features of the ggplot2 R package, but we refer to “The Layered Grammar of Graphics” and to the relevant chapter of “R for Data Science” for more details.
+[&amp;hellip;] Let us &amp;hellip;">
+      
+    
+
+    
+    
+
+    
+
+    
+    
+
+
+<link href='//cdn.bootcss.com/highlight.js/9.12.0/styles/github.min.css' rel='stylesheet' type='text/css' />
+
+
+
+    <link rel="stylesheet" href="/sc1/css/style.css" />
+    <link rel="stylesheet" href="/sc1/css/fonts.css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Arvo">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Marcellus">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Code+Pro">
+
+<link rel="stylesheet" href="/sc1/css/custom.css" />
+
+<link rel="icon" href="/sc1/favicon.ico" type="image/x-icon" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<nav class="breadcrumbs">
+    
+        <a href="https://awllee.github.io/sc1/">home / </a>
+    
+        <a href="https://awllee.github.io/sc1/tidyverse/">tidyverse / </a>
+    
+        <a href="https://awllee.github.io/sc1/tidyverse/intro_to_ggplot2/">intro_to_ggplot2 / </a>
+    
+</nav>
+
+  </head>
+
+  
+  <body class="sc1">
+    <header class="masthead">
+      <h1><a href="/sc1/">SC1</a></h1>
+
+<p class="tagline">Statistical Computing 1</p>
+
+      <nav class="menu">
+  <input id="menu-check" type="checkbox" />
+  <label id="menu-label" for="menu-check" class="unselectable">
+    <span class="icon close-icon">✕</span>
+    <span class="icon open-icon">☰</span>
+    <span class="text">Menu</span>
+  </label>
+  <ul>
+  
+  
+  <li><a href="/sc1/">Home</a></li>
+  
+  <li><a href="/sc1/intro-r/">Intro to R</a></li>
+  
+  <li><a href="/sc1/reproducibility/">Reproducibility</a></li>
+  
+  <li><a href="/sc1/common-r/">Common R</a></li>
+  
+  <li><a href="/sc1/tidyverse/">Tidyverse</a></li>
+  
+  <li><a href="/sc1/packages/">Packages</a></li>
+  
+  <li><a href="/sc1/functional-oo/">Functional / OO</a></li>
+  
+  <li><a href="/sc1/profile-debug/">Performance / Bugs</a></li>
+  
+  <li><a href="/sc1/matrices/">Matrices</a></li>
+  
+  <li><a href="/sc1/optimization/">Optimization</a></li>
+  
+  <li><a href="/sc1/integration/">Integration</a></li>
+  
+  
+  </ul>
+</nav>
+
+    </header>
+
+    <article class="main">
+      <header class="title">
+      
+<h1>2. Layered visualizations with ggplot2</h1>
+
+<h3>
+</h3>
+<hr>
+
+
+      </header>
+
+
+
+
+<link href="/sc1/rmarkdown-libs/anchor-sections/anchor-sections.css" rel="stylesheet" />
+<script src="/sc1/rmarkdown-libs/anchor-sections/anchor-sections.js"></script>
+
+
+<style>
+body {
+text-align: justify}
+</style>
+<p>Here we introduce the main features of the <a href="https://cran.r-project.org/web/packages/ggplot2/"><code>ggplot2</code></a> <code>R</code> package, but we refer to <a href="http://vita.had.co.nz/papers/layered-grammar.pdf">“The Layered Grammar of Graphics”</a> and to the <a href="https://r4ds.had.co.nz/data-visualisation.html">relevant chapter</a> of “R for Data Science” for more details.</p>
+<div id="intro-to-ggplot2" class="section level2">
+<h2>Intro to <code>ggplot2</code></h2>
+<p>Let us start by considering a very simple example:</p>
+<pre class="r"><code>library(MASS)
+data(mcycle)
+head(mcycle)</code></pre>
+<pre><code>##   times accel
+## 1   2.4   0.0
+## 2   2.6  -1.3
+## 3   3.2  -2.7
+## 4   3.6   0.0
+## 5   4.0  -2.7
+## 6   6.2  -2.7</code></pre>
+<p>The data set contains only two variables: acceleration and the time at which it was measured during a simulated motorcycle accident (see <code>?mcycle</code> for more info). This is a classic example where we would like to visualize the data using a scatterplot, which can done quite easily using base <code>R</code> plotting methods (more precisely, <code>plot.default</code> from the <code>graphics</code> package):</p>
+<pre class="r"><code>plot(x = mcycle$times, y = mcycle$accel)</code></pre>
+<p><img src="/sc1/tidyverse/Intro_to_ggplot2_files/figure-html/unnamed-chunk-2-1.png" width="480" style="display: block; margin: auto;" />
+Base R plots are generally called for their side effects, rather than for their returned value. For example, the <code>R</code> code executed within <code>plot.default</code> renders the scatterplot shown above, but this function does not return anything useful:</p>
+<pre class="r"><code>tmp &lt;- plot(x = mcycle$times, y = mcycle$accel)</code></pre>
+<pre class="r"><code>tmp</code></pre>
+<pre><code>## NULL</code></pre>
+<p>To obtain a similar plot with <code>ggplot2</code> we first create a <code>ggplot</code> object:</p>
+<pre class="r"><code>library(ggplot2)
+pl &lt;- ggplot(data = mcycle)
+class(pl)</code></pre>
+<pre><code>## [1] &quot;gg&quot;     &quot;ggplot&quot;</code></pre>
+<p>As you can see, nothing has been plotted so far, the plot is rendered upon evaluation on the console:</p>
+<pre class="r"><code>pl</code></pre>
+<p><img src="/sc1/tidyverse/Intro_to_ggplot2_files/figure-html/unnamed-chunk-5-1.png" width="480" style="display: block; margin: auto;" />
+but the plot is empty, so there nothing to see! This is because we haven’t added any graphical layer to the plot. To get a scatterplot we must add the <code>geom_point</code> layer from <code>ggplot2</code> as follows:</p>
+<pre class="r"><code>pl &lt;- pl + geom_point(mapping = aes(x = times, y = accel)) </code></pre>
+<p>We’ll explain how the <code>mapping</code> argument works in minute. To render the plot, we do:</p>
+<pre class="r"><code>pl</code></pre>
+<p><img src="/sc1/tidyverse/Intro_to_ggplot2_files/figure-html/unnamed-chunk-7-1.png" width="480" style="display: block; margin: auto;" />
+Remember that evaluating an object, <code>pl</code> in this case, on the <code>R</code> console triggers a call to the generic <code>print</code> function. Given that <code>pl</code> has class <code>ggplot</code>, this dispatches to the <code>print.ggplot</code> method (not exported by <code>ggplot2</code>, but you can see its code by doing <code>ggplot2:::print.ggplot</code>). Of course, we can do the whole thing in one step and get the same result (not shown):</p>
+<pre class="r"><code>ggplot(data = mcycle) + geom_point(mapping = aes(x = times, y = accel))</code></pre>
+<p>The code above shows that the first difference between <code>ggplot2</code> and <code>graphics</code> plotting methods is that <code>ggplot2</code> explicitly separates the plot-building phase (initial plot creation using <code>ggplot</code>, followed by addition of layers such as <code>geom_point</code>) from the rendering phase (performed by <code>print</code>). <code>ggplot2</code> also distinguishes the <code>data.frame</code> that contains the variables to be used in the plot (<code>mcycle</code> in this example, which is passed to the initial <code>ggplot</code> function) from the variables names that are specified when calling the specific layers (<code>accel</code> and <code>times</code>, which are passed to <code>geom_point</code>). A generic <code>ggplot2</code> template might look something like this:</p>
+<pre class="r"><code>ggplot(data = &lt;data.frame&gt;) +
+  &lt;geom_layer&gt;(mapping = aes(&lt;variables_map&gt;))</code></pre>
+<p>where:</p>
+<ul>
+<li><code>ggplot</code> creates the initial <code>ggplot</code> object, containing no graphical layers. The main argument here is a <code>data.frame</code>.</li>
+<li><code>+</code> is an overloaded operator which will dispatch to <code>+.gg</code> (see <code>?&quot;+.gg&quot;</code>) when its l.h.s. is an object of class <code>gg</code>.
+The r.h.s. can be a graphical layer (denoted by the <code>geom_</code> prefix in <code>ggplot2</code>) or another function that modifies the
+plot (e.g. see <code>?theme</code>). The result of the call to <code>+.gg</code> is that the plot on the l.h.s. is modified using the r.h.s.
+and returned.</li>
+<li><code>geom_layer</code> is a graphical layer, such as <code>geom_point</code> in the example above. Each layer needs a mapping, for example
+<code>geom_point</code> needs to know which variables (among those contained in the initial <code>data.frame</code>) must be plotted on the <span class="math inline">\(x\)</span>
+and <span class="math inline">\(y\)</span> axis. This is specified using the <code>aes</code> function.</li>
+</ul>
+<p>To illustrate some slightly more advanced features of <code>ggplot2</code>, we consider the following data set on electricity demand:</p>
+<pre class="r"><code>library(qgam)
+data(UKload)
+head(UKload)</code></pre>
+<pre><code>##     NetDemand       wM   wM_s95       Posan      Dow      Trend NetDemand.48
+## 25      38353 6.046364 5.558800 0.001369941   samedi 1293879600        38353
+## 73      41192 2.803969 3.230582 0.004109824 dimanche 1293966000        38353
+## 121     43442 2.097259 1.858198 0.006849706    lundi 1294052400        41192
+## 169     50736 3.444187 2.310408 0.009589588    mardi 1294138800        43442
+## 217     50438 5.958674 4.724961 0.012329471 mercredi 1294225200        50736
+## 265     50064 4.124248 4.589470 0.015069353    jeudi 1294311600        50438
+##     Holy Year                Date
+## 25     1 2011 2011-01-01 12:00:00
+## 73     0 2011 2011-01-02 12:00:00
+## 121    0 2011 2011-01-03 12:00:00
+## 169    0 2011 2011-01-04 12:00:00
+## 217    0 2011 2011-01-05 12:00:00
+## 265    0 2011 2011-01-06 12:00:00</code></pre>
+<p>See <code>?UKload</code> for details. We start by plotting electrity demand vs temperature (<code>wM</code>), but we colour the data depending on whether it belongs to a “winter” period (Oct to Mar) or a “summer” (Apr to Sept) period:</p>
+<pre class="r"><code>library(magrittr)
+UKload$Period &lt;- UKload %$% factor(Posan &lt; 0.25 | Posan &gt; 0.75, 
+                                   labels = c(&quot;Summer&quot;, &quot;Winter&quot;))  
+UKload %&gt;% ggplot(mapping = aes(x = wM, y = NetDemand, col = Period)) +
+           geom_point(alpha = 0.6) + 
+           theme_bw()</code></pre>
+<p><img src="/sc1/tidyverse/Intro_to_ggplot2_files/figure-html/unnamed-chunk-11-1.png" width="480" style="display: block; margin: auto;" />
+In the first line we loaded the <code>magrittr</code> package, because we want to illustrate that <code>ggplot2</code> is compatible with pipes, while the second line creates the <code>Period</code> factor variable. Notice that the mapping now contains also the <code>col</code> argument. Argument <code>alpha</code> is used to make the points semi-transparent, which is useful because there is quite a lot of overlap between the points here. <code>theme_bm()</code> is not a layer, but a function that modifies the graphical appearance of the whole plot. The code above illustrates that the main workflow is based on getting the main <code>data.frame</code> ready beforehand and passing it to the <code>ggplot</code> function. Notice that the mapping between the variables in the <code>data.frame</code> and some of the characteristics of the plot (here the <code>x</code> and <code>y</code> axis, and the colour <code>col</code>) can be specified either in the initial call to <code>ggplot</code>, or in the specific layers (as in a previous example).</p>
+<p>The last plot shows that, unsurprisingly, temperatures are lower in the summer than in the winter period (as defined above) and that at low temperatures the demand decreases almost linearly with temperature, while in the warmer perior the relation between demand and temperature is more complex. We also see that, in both periods, there are two vertically shifted modes of the joint distribution of demand and temperature. Investigating the origin of these modes gives us an opportunity to illustrate the faceting facilites offered by <code>ggplot2</code>. In particular, consider the following code:</p>
+<pre class="r"><code>UKload$DayType &lt;- UKload %$% factor(as.logical(Dow %in% c(&quot;dimanche&quot;, &quot;samedi&quot;)) | 
+                                    as.numeric(as.character(Holy)), 
+                                    labels = c(&quot;Workday&quot;, &quot;Holiday&quot;))
+UKload %&gt;% ggplot(mapping = aes(x = wM, y = NetDemand, col = Period)) +
+           geom_point(alpha = 0.6) + 
+           theme_bw() + 
+           facet_wrap(~ DayType)</code></pre>
+<p><img src="/sc1/tidyverse/Intro_to_ggplot2_files/figure-html/unnamed-chunk-12-1.png" width="672" style="display: block; margin: auto;" />
+In the first three lines of code we are simply creating a new factor variable (<code>Daytype</code>) which takes value <code>&quot;Holiday&quot;</code> on weekends and holidays (e.g. Christmas day) and <code>&quot;Workday&quot;</code> on the remaining days. Then we are creating the same <code>ggplot</code> as before, with the difference that we are adding <code>facet_wrap</code> to create a sequence of plots which depends on the value of <code>Daytype</code>. The faceted plot show that the two modes we identified before roughly correspond to the working days and holidays/weekends, the demand being lower during the latter.</p>
+<p>It is quite simple to understand how faceting works. The main argument of the faceting function is a formula (which is a data structure in <code>R</code>, not necessarily representing an equation) containing the <strong>discrete</strong> variable(s) along which the faceting is performed. We can do faceting along two variables using the <code>facet_grid</code> function, for example:</p>
+<pre class="r"><code>UKload %&gt;% ggplot(mapping = aes(x = wM, y = NetDemand)) +
+           geom_point(alpha = 0.6) + 
+           theme_bw() + 
+           facet_grid(Period ~ DayType)</code></pre>
+<p><img src="/sc1/tidyverse/Intro_to_ggplot2_files/figure-html/unnamed-chunk-13-1.png" width="576" style="display: block; margin: auto;" /></p>
+<p>This section illustrated how <code>ggplot2</code> works, using basic examples. Hopefully it should be clear by now that using <code>ggplot2</code> requires having created the “right” <code>data.frame</code> before starting the visualization process. Here we used readymade data.frames (<code>mcycle</code> and <code>UKload</code>) and we limited ourselves to adding a couple of variables (<code>Period</code> and <code>DayType</code>). However, the Tidyverse provides some packages (mainly <code>dplyr</code> and <code>tidyr</code>) which make <code>data.frame</code> preparation and transformation easier, relative to base <code>R</code>. Such packages will be described in a later section. Before doing that, we’ll go through a <code>ggplot2</code> case study, namely the <code>mgcViz</code> package. The reason is that, while this section illustrates how <code>ggplot2</code> tidily breaks down the visualization process into an layered object-oriented framework of smaller steps and components (e.g., creating the main plot using <code>ggplot</code>, adding layers, dividing the plot into facets and finally rendering it on the screen), you might be wondering: “Why bother?”. Indeed, if you just want to construct a standard scatterplot or histogram, you might be better off using base <code>R</code> (i.e. the <code>graphics</code> package). However, by going through a detailed case study, the next section should convince you that <code>ggplot2</code> might be preferable to base <code>R</code> for the purpose of constructing a tidy visualization library for a specific class of statistical models.</p>
+</div>
+
+
+  <footer>
+  
+
+<script src="//yihui.name/js/math-code.js"></script>
+<script async src="//mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+<script async src="//yihui.name/js/center-img.js"></script>
+
+
+<script type="text/javascript">
+var sc_project=12110974;
+var sc_invisible=1;
+var sc_security="9b171880";
+</script>
+<script type="text/javascript"
+src="https://www.statcounter.com/counter/counter.js"
+async></script>
+<noscript><div class="statcounter"><a title="Web Analytics"
+href="https://statcounter.com/" target="_blank"><img
+class="statcounter"
+src="https://c.statcounter.com/12110974/0/9b171880/1/"
+alt="Web Analytics"></a></div></noscript>
+
+
+
+
+
+
+
+
+  
+
+
+<p align=right>
+
+<a href='https://github.com/awllee/sc1/blob/master/content/tidyverse/Intro_to_ggplot2.Rmd'>View source</a>
+
+|
+
+<a href='https://github.com/awllee/sc1/edit/master/content/tidyverse/Intro_to_ggplot2.Rmd'>Edit source</a>
+
+</p>
+
+
+
+
+
+<script src="https://utteranc.es/client.js"
+        repo="awllee/sc1"
+        issue-term="pathname"
+        label="utterance"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script>
+
+
+
+  
+
+
+
+<script src="//cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+
+
+
+<script src="//cdn.bootcss.com/highlight.js/9.12.0/languages/r.min.js"></script>
+<script src="//cdn.bootcss.com/highlight.js/9.12.0/languages/yaml.min.js"></script>
+<script src="//cdn.bootcss.com/highlight.js/9.12.0/languages/tex.min.js"></script>
+<script>hljs.configure({languages: []}); hljs.initHighlightingOnLoad();</script>
+
+
+
+  
+  <hr>
+  <div class="copyright">© 2020 <a href="https://sites.google.com/view/anthonylee">Anthony Lee</a>, <a href="http://www.bristol.ac.uk/maths/people/feng-yu/index.html">Feng Yu</a>, <a href="https://people.maths.bris.ac.uk/~tk18582/">Tobias Kley</a>, <a href="https://mfasiolo.github.io/">Matteo Fasiolo</a></div>
+  
+  </footer>
+  </article>
+  
+  </body>
+</html>
+

@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <title>Debugging - SC1</title>
+    <meta property="og:title" content="Debugging - SC1">
+    
+    <meta name="twitter:card" content="summary">
+
+    
+      
+    
+
+    
+      
+      <meta property="description" content="It is almost impossible to write non-trivial code without bugs, where a “bug” is any flaw that leads to a computation producing an unintended result or causing an error to be thrown. There are many &amp;hellip;">
+      <meta property="og:description" content="It is almost impossible to write non-trivial code without bugs, where a “bug” is any flaw that leads to a computation producing an unintended result or causing an error to be thrown. There are many &amp;hellip;">
+      
+    
+
+    
+    
+
+    
+
+    
+    
+
+
+<link href='//cdn.bootcss.com/highlight.js/9.12.0/styles/github.min.css' rel='stylesheet' type='text/css' />
+
+
+
+    <link rel="stylesheet" href="/sc1/css/style.css" />
+    <link rel="stylesheet" href="/sc1/css/fonts.css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Arvo">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Marcellus">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Code+Pro">
+
+<link rel="stylesheet" href="/sc1/css/custom.css" />
+
+<link rel="icon" href="/sc1/favicon.ico" type="image/x-icon" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<nav class="breadcrumbs">
+    
+        <a href="https://awllee.github.io/sc1/">home / </a>
+    
+        <a href="https://awllee.github.io/sc1/profile-debug/">profile-debug / </a>
+    
+        <a href="https://awllee.github.io/sc1/profile-debug/debug/">debug / </a>
+    
+</nav>
+
+  </head>
+
+  
+  <body class="sc1">
+    <header class="masthead">
+      <h1><a href="/sc1/">SC1</a></h1>
+
+<p class="tagline">Statistical Computing 1</p>
+
+      <nav class="menu">
+  <input id="menu-check" type="checkbox" />
+  <label id="menu-label" for="menu-check" class="unselectable">
+    <span class="icon close-icon">✕</span>
+    <span class="icon open-icon">☰</span>
+    <span class="text">Menu</span>
+  </label>
+  <ul>
+  
+  
+  <li><a href="/sc1/">Home</a></li>
+  
+  <li><a href="/sc1/intro-r/">Intro to R</a></li>
+  
+  <li><a href="/sc1/reproducibility/">Reproducibility</a></li>
+  
+  <li><a href="/sc1/common-r/">Common R</a></li>
+  
+  <li><a href="/sc1/tidyverse/">Tidyverse</a></li>
+  
+  <li><a href="/sc1/packages/">Packages</a></li>
+  
+  <li><a href="/sc1/functional-oo/">Functional / OO</a></li>
+  
+  <li><a href="/sc1/profile-debug/">Performance / Bugs</a></li>
+  
+  <li><a href="/sc1/matrices/">Matrices</a></li>
+  
+  <li><a href="/sc1/optimization/">Optimization</a></li>
+  
+  <li><a href="/sc1/integration/">Integration</a></li>
+  
+  
+  </ul>
+</nav>
+
+    </header>
+
+    <article class="main">
+      <header class="title">
+      
+<h1>Debugging</h1>
+
+<h3>
+</h3>
+<hr>
+
+
+      </header>
+
+
+
+
+<link href="/sc1/rmarkdown-libs/anchor-sections/anchor-sections.css" rel="stylesheet" />
+<script src="/sc1/rmarkdown-libs/anchor-sections/anchor-sections.js"></script>
+
+<div id="TOC">
+<ul>
+<li><a href="#general-tips">General tips</a></li>
+<li><a href="#an-example-of-debugging-in-r">An example of debugging in R</a></li>
+</ul>
+</div>
+
+<p>It is almost impossible to write non-trivial code without bugs, where a “bug” is any flaw that leads to a computation producing an unintended result or causing an error to be thrown. There are many types of bugs: from simple spelling mistakes to logical flaws. In some cases, the source of a bug is obvious and in others a bug arises from misunderstanding something very subtle and it can be difficult to identify the root cause of the problem.</p>
+<div id="general-tips" class="section level2">
+<h2>General tips</h2>
+<p>There are several tips online, that are language-agnostic for the most part. For example, in <a href="https://adv-r.hadley.nz/debugging.html#debugging-strategy">Advanced R</a>.</p>
+<p>Many people view debugging as essentially a specific application of the scientific method. One should try to understand the phenomena by performing experiments and testing hypotheses, often from the perspective of what “should happen” if everything was working correctly.</p>
+<ul>
+<li><p>Try to understand precisely what the error is or the unintended result. Note that some error messages are cryptic and may not immediately indicate what the real problem is: the obvious symptom of the problem may not identify the source of the problem. Nevertheless, it is often good to start from a definite error and try to work backwards to find its source.</p></li>
+<li><p>Try to produce a reproducible, <a href="https://en.wikipedia.org/wiki/Minimal_working_example">minimal working example</a> of the unintended behaviour. This can greatly reduce the size of the debugging problem at hand, as irrelevant complexity in the original problem can be ignored. To make it reproducible, one may need to consider some specific inputs or fix the seed of a pseudo-random number generator.</p></li>
+<li><p>Identify the actual issue. This is clearly easier said than done. There is not much general guidance one can give except that it is often good to be systematic when eliminating hypotheses about the source of the bug, rather than optimistically changing bits of code because you have a “hunch”. Or at least switch to a systematic analysis if your first few guesses at the source of the problem are incorrect.</p></li>
+<li><p>Fix the bug, and add tests to ensure that the bug is not reintroduced later. The idea here is that the bug was presumably not detected by an existing test, so some cases were not being tested.</p></li>
+</ul>
+<p>Creating a minimal working example is also the point at which you could submit a bug report, if the bug is not in your own code but in someone else’s, e.g. a package developer. Developers often cannot fix a bug if you provide a long example of unexpected behaviour in your own code; they want to see a MWE of unexpected behaviour for functions in their own package.</p>
+<p>Finally, many people have strong opinions on debugging. There are many approaches that work, and are used by various people. It is not uncommon to spend many hours debugging a specific issue on occasion. However, if you routinely find that it takes many hours to fix bugs, you may want to reconsider your approach.</p>
+<p>The advice in <a href="https://adv-r.hadley.nz/debugging.html">Advanced R</a> is also helpful:</p>
+<blockquote>
+<p>You shouldn’t need to use these tools when writing new functions. If you find yourself using them frequently with new code, reconsider your approach. Instead of trying to write one big function all at once, work interactively on small pieces. If you start small, you can quickly identify why something doesn’t work, and don’t need sophisticated debugging tools.</p>
+</blockquote>
+</div>
+<div id="an-example-of-debugging-in-r" class="section level2">
+<h2>An example of debugging in R</h2>
+<p>Here we start with an implementation of a function that takes arguments <code>x</code> and <code>array</code>, and returns the first (i.e. smallest) index of the array <code>i</code> such that <code>array[i] = x</code>. This is a problematic implementation for a few reasons, but let’s go with it. We can’t all write perfect code all the time.</p>
+<pre class="r"><code>find.first &lt;- function(x, array) {
+  i &lt;- 1
+  while (TRUE) {
+    if (array[i] == x) return(i)
+    i &lt;- i + 1
+  }
+}</code></pre>
+<p>Perhaps an existing test checked whether the function works on a simple example.</p>
+<pre class="r"><code>3 == find.first(2, c(1,3,2,4,5))</code></pre>
+<pre><code>## [1] TRUE</code></pre>
+<p>However, now the code is being used in some other function <code>foo</code> that finds the index of the first occurrence of <code>1</code> in an array. This function <code>foo</code> is not called directly, but instead is called by some other function <code>bar</code>.</p>
+<pre class="r"><code>foo &lt;- function(array) {
+  return(find.first(1, array))
+}
+
+bar &lt;- function() {
+  x &lt;- sample(100, 99)
+  foo(x)
+}</code></pre>
+<pre class="r"><code>for (j in 1:100) {
+  bar()  
+}</code></pre>
+<pre><code>## Error in if (array[i] == x) return(i): missing value where TRUE/FALSE needed</code></pre>
+<p>It is clear that there is a bug in the code, but the error message is not very informative unless you know exactly how <code>bar</code> works. It is not even obvious which function has thrown the error. To get more information it is useful to use R’s <code>traceback()</code> function, which is also sometimes accessible graphically in RStudio.</p>
+<p>If you call <code>traceback()</code>, you should see information such as:</p>
+<pre><code>3. find.first(1, array)
+2. foo(x)
+1. bar()</code></pre>
+<p>possibly also with some line numbers. This gives you the call stack that led to the error. At least now we know that the error was thrown by <code>find.first</code>.</p>
+<p>We may not realize yet why the error was thrown, except that it seems that <code>array[i] == x</code> did not evaluate to <code>TRUE</code> or <code>FALSE</code> for some <code>i</code>. To try to determine more, we can first try to find a specific random seed that leads to the error.</p>
+<p>It is not difficult to find a specific situation in which the error occurs.</p>
+<pre class="r"><code>set.seed(15)
+for (j in 1:100) {
+  print(j)
+  bar()  
+}</code></pre>
+<pre><code>## [1] 1
+## [1] 2
+## [1] 3
+## [1] 4
+## [1] 5
+## [1] 6
+## [1] 7
+## [1] 8
+## [1] 9
+## [1] 10
+## [1] 11
+## [1] 12
+## [1] 13
+## [1] 14
+## [1] 15
+## [1] 16
+## [1] 17
+## [1] 18
+## [1] 19
+## [1] 20
+## [1] 21
+## [1] 22
+## [1] 23
+## [1] 24
+## [1] 25
+## [1] 26
+## [1] 27
+## [1] 28
+## [1] 29
+## [1] 30
+## [1] 31
+## [1] 32
+## [1] 33
+## [1] 34
+## [1] 35
+## [1] 36
+## [1] 37</code></pre>
+<pre><code>## Error in if (array[i] == x) return(i): missing value where TRUE/FALSE needed</code></pre>
+<p>So we have an error on one of the iterations of the for loop, with a seed of 15. Annoyingly, the exact iteration does seem to depend on the version of R that is used. To get more detail, we can start R’s debugger on that iteration.</p>
+<pre class="r"><code>set.seed(15)
+for (j in 1:100) {
+  if (j == &lt;whatever the index is&gt;) browser()
+  bar()  
+}</code></pre>
+<p>The <code>browser()</code> call opens an interactive debugging environment where you can type</p>
+<ul>
+<li>‘n’ : evaluate the next statement, stepping over function calls;</li>
+<li>‘s’ : evaluate the next statement, stepping into function calls;</li>
+<li>‘f’ : finish execution of the current loop or function;</li>
+<li>‘where’ : print a stack trace of all active function calls;</li>
+<li>‘c’ : exit the browser and continue execution at the next statement;</li>
+<li>‘Q’ : exit the browser and the current evaluation and return to the top-level prompt.</li>
+</ul>
+<p>Typically, you will use a combination of ‘n’, ‘s’ and typing variable names to inspect their values, in order to locate a problem.</p>
+<p>For example, with the code above, you can use these commands to eventually find that the <code>array</code> in the call to <code>find.first</code> does not include the value <code>1</code>, which ultimately causes the while loop to query <code>array</code> at an index larger than its length.</p>
+<p>This is certainly a bug, but the specific mistake made depends on what the purpose of the <code>find.first</code> function really is. If it is expected that the input <code>x</code> is a member of the array <code>array</code> then it would make sense to throw a more informative error when <code>x</code> is not in <code>array</code>, e.g. by checking before the while loop, or by throwing the error when <code>i</code> exceeds <code>length(array)</code>. Alternatively, it may be the case that <code>find.first</code> should return <code>NA</code> or <code>NULL</code> or <code>0</code> when <code>x</code> is not in the array.</p>
+<p>Once the bug is fixed, one can add appropriate tests to ensure that the same mistake is not made again, e.g. if one refactors the code.</p>
+</div>
+
+
+  <footer>
+  
+
+<script src="//yihui.name/js/math-code.js"></script>
+<script async src="//mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+<script async src="//yihui.name/js/center-img.js"></script>
+
+
+<script type="text/javascript">
+var sc_project=12110974;
+var sc_invisible=1;
+var sc_security="9b171880";
+</script>
+<script type="text/javascript"
+src="https://www.statcounter.com/counter/counter.js"
+async></script>
+<noscript><div class="statcounter"><a title="Web Analytics"
+href="https://statcounter.com/" target="_blank"><img
+class="statcounter"
+src="https://c.statcounter.com/12110974/0/9b171880/1/"
+alt="Web Analytics"></a></div></noscript>
+
+
+
+
+
+
+
+
+  
+
+
+<p align=right>
+
+<a href='https://github.com/awllee/sc1/blob/master/content/profile-debug/debug.Rmd'>View source</a>
+
+|
+
+<a href='https://github.com/awllee/sc1/edit/master/content/profile-debug/debug.Rmd'>Edit source</a>
+
+</p>
+
+
+
+
+
+<script src="https://utteranc.es/client.js"
+        repo="awllee/sc1"
+        issue-term="pathname"
+        label="utterance"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script>
+
+
+
+  
+
+
+
+<script src="//cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+
+
+
+<script src="//cdn.bootcss.com/highlight.js/9.12.0/languages/r.min.js"></script>
+<script src="//cdn.bootcss.com/highlight.js/9.12.0/languages/yaml.min.js"></script>
+<script src="//cdn.bootcss.com/highlight.js/9.12.0/languages/tex.min.js"></script>
+<script>hljs.configure({languages: []}); hljs.initHighlightingOnLoad();</script>
+
+
+
+  
+  <hr>
+  <div class="copyright">© 2020 <a href="https://sites.google.com/view/anthonylee">Anthony Lee</a>, <a href="http://www.bristol.ac.uk/maths/people/feng-yu/index.html">Feng Yu</a>, <a href="https://people.maths.bris.ac.uk/~tk18582/">Tobias Kley</a>, <a href="https://mfasiolo.github.io/">Matteo Fasiolo</a></div>
+  
+  </footer>
+  </article>
+  
+  </body>
+</html>
+

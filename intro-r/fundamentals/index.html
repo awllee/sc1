@@ -1,0 +1,985 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <title>Fundamentals - SC1</title>
+    <meta property="og:title" content="Fundamentals - SC1">
+    
+    <meta name="twitter:card" content="summary">
+
+    
+      
+    
+
+    
+      
+      <meta property="description" content="This page provides a very brief introduction to general R programming, and is sufficient to perform very complicated computations. It is certainly not comprehensive, however, and it is expected that &amp;hellip;">
+      <meta property="og:description" content="This page provides a very brief introduction to general R programming, and is sufficient to perform very complicated computations. It is certainly not comprehensive, however, and it is expected that &amp;hellip;">
+      
+    
+
+    
+    
+
+    
+
+    
+    
+
+
+<link href='//cdn.bootcss.com/highlight.js/9.12.0/styles/github.min.css' rel='stylesheet' type='text/css' />
+
+
+
+    <link rel="stylesheet" href="/sc1/css/style.css" />
+    <link rel="stylesheet" href="/sc1/css/fonts.css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Arvo">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Marcellus">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Code+Pro">
+
+<link rel="stylesheet" href="/sc1/css/custom.css" />
+
+<link rel="icon" href="/sc1/favicon.ico" type="image/x-icon" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<nav class="breadcrumbs">
+    
+        <a href="https://awllee.github.io/sc1/">home / </a>
+    
+        <a href="https://awllee.github.io/sc1/intro-r/">intro-r / </a>
+    
+        <a href="https://awllee.github.io/sc1/intro-r/fundamentals/">fundamentals / </a>
+    
+</nav>
+
+  </head>
+
+  
+  <body class="sc1">
+    <header class="masthead">
+      <h1><a href="/sc1/">SC1</a></h1>
+
+<p class="tagline">Statistical Computing 1</p>
+
+      <nav class="menu">
+  <input id="menu-check" type="checkbox" />
+  <label id="menu-label" for="menu-check" class="unselectable">
+    <span class="icon close-icon">✕</span>
+    <span class="icon open-icon">☰</span>
+    <span class="text">Menu</span>
+  </label>
+  <ul>
+  
+  
+  <li><a href="/sc1/">Home</a></li>
+  
+  <li><a href="/sc1/intro-r/">Intro to R</a></li>
+  
+  <li><a href="/sc1/reproducibility/">Reproducibility</a></li>
+  
+  <li><a href="/sc1/common-r/">Common R</a></li>
+  
+  <li><a href="/sc1/tidyverse/">Tidyverse</a></li>
+  
+  <li><a href="/sc1/packages/">Packages</a></li>
+  
+  <li><a href="/sc1/functional-oo/">Functional / OO</a></li>
+  
+  <li><a href="/sc1/profile-debug/">Performance / Bugs</a></li>
+  
+  <li><a href="/sc1/matrices/">Matrices</a></li>
+  
+  <li><a href="/sc1/optimization/">Optimization</a></li>
+  
+  <li><a href="/sc1/integration/">Integration</a></li>
+  
+  
+  </ul>
+</nav>
+
+    </header>
+
+    <article class="main">
+      <header class="title">
+      
+<h1>Fundamentals</h1>
+
+<h3>
+</h3>
+<hr>
+
+
+      </header>
+
+
+
+
+<link href="/sc1/rmarkdown-libs/anchor-sections/anchor-sections.css" rel="stylesheet" />
+<script src="/sc1/rmarkdown-libs/anchor-sections/anchor-sections.js"></script>
+
+<div id="TOC">
+<ul>
+<li><a href="#variables-and-values">Variables and values</a></li>
+<li><a href="#arithmetic">Arithmetic</a></li>
+<li><a href="#conditional-statements">Conditional statements</a></li>
+<li><a href="#relational-and-logical-operators">Relational and logical operators</a></li>
+<li><a href="#functions">Functions</a></li>
+<li><a href="#getting-help">Getting help</a></li>
+<li><a href="#vectors">Vectors</a></li>
+<li><a href="#vector-types">Vector types</a></li>
+<li><a href="#matrices">Matrices</a></li>
+<li><a href="#lists">Lists</a></li>
+<li><a href="#basic-scoping">Basic scoping</a></li>
+<li><a href="#pass-by-value-semantics">Pass by value semantics</a></li>
+<li><a href="#iteration-while-and-for-loops">Iteration: while and for loops</a></li>
+<li><a href="#recursion">Recursion</a></li>
+<li><a href="#errors-warnings-and-messages">Errors, warnings and messages</a></li>
+<li><a href="#special-values">Special values</a></li>
+</ul>
+</div>
+
+<p>This page provides a very brief introduction to general R programming, and is sufficient to perform very complicated computations. It is certainly not comprehensive, however, and it is expected that one will need to supplement the information here with other material, and some healthy experimentation.</p>
+<div id="variables-and-values" class="section level2">
+<h2>Variables and values</h2>
+<p>A value can be assigned to a variable using the assignment operator <code>&lt;-</code>. The variable is created if it doesn’t already exist.</p>
+<pre class="r"><code>x &lt;- 123</code></pre>
+<p>Creating or assigning a variable a value does not produce any output. Providing the name of the variable as input does produce its value as output.</p>
+<pre class="r"><code>x</code></pre>
+<pre><code>## [1] 123</code></pre>
+<p>One can reassign the value of <code>x</code> using <code>&lt;-</code>. The type (e.g. numeric, string) of the variable need not be the same as before.</p>
+<pre class="r"><code>x &lt;- &quot;hello&quot;
+x</code></pre>
+<pre><code>## [1] &quot;hello&quot;</code></pre>
+<p>One can use the operator <code>=</code> instead of <code>&lt;-</code>, but this is not recommended. In RStudio <strong>Alt</strong> + <strong>-</strong> is a keyboard shortcut for writing the assignment operator.</p>
+<p>A valid variable name consists of letters, numbers and the dot <code>.</code> or underscore <code>_</code> characters. Visible variable names must start with a letter.</p>
+</div>
+<div id="arithmetic" class="section level2">
+<h2>Arithmetic</h2>
+<p>As you would expect, one can add, subtract, multiply, divide and exponentiate. There are also operators for integer division and remainder (modulus).</p>
+<table>
+<thead>
+<tr class="header">
+<th align="center">Operator</th>
+<th align="center">Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="center">+</td>
+<td align="center">add</td>
+</tr>
+<tr class="even">
+<td align="center">-</td>
+<td align="center">subtract</td>
+</tr>
+<tr class="odd">
+<td align="center">*</td>
+<td align="center">multiply</td>
+</tr>
+<tr class="even">
+<td align="center">/</td>
+<td align="center">divide</td>
+</tr>
+<tr class="odd">
+<td align="center">^ or **</td>
+<td align="center">exponentiate</td>
+</tr>
+<tr class="even">
+<td align="center">%/%</td>
+<td align="center">integer division</td>
+</tr>
+<tr class="odd">
+<td align="center">%%</td>
+<td align="center">integer modulus</td>
+</tr>
+</tbody>
+</table>
+<pre class="r"><code>2^3</code></pre>
+<pre><code>## [1] 8</code></pre>
+<pre class="r"><code>7 %/% 3</code></pre>
+<pre><code>## [1] 2</code></pre>
+<pre class="r"><code>7 %% 3</code></pre>
+<pre><code>## [1] 1</code></pre>
+<p>For convenience, these operators are used the same way we write them on paper. The alternative is to surround the operator with ticks.</p>
+<pre><code>`+`(2,3)</code></pre>
+<p>While this is natural, it is necessary in some circumstances to use parentheses or curly braces to ensure operations occur in the right order.</p>
+<pre class="r"><code>2 + 3 * 5</code></pre>
+<pre><code>## [1] 17</code></pre>
+<pre class="r"><code>(2 + 3) * 5</code></pre>
+<pre><code>## [1] 25</code></pre>
+<pre class="r"><code>{2 + 3} * 5</code></pre>
+<pre><code>## [1] 25</code></pre>
+</div>
+<div id="conditional-statements" class="section level2">
+<h2>Conditional statements</h2>
+<p>Commands can be executed conditional upon a logical value (i.e. TRUE or FALSE) by using an if/else statement.</p>
+<pre class="r"><code>if (TRUE) {
+  print(&quot;this is printed&quot;)
+} else {
+  print(&quot;this is not printed&quot;)
+}</code></pre>
+<pre><code>## [1] &quot;this is printed&quot;</code></pre>
+<pre class="r"><code>if (FALSE) {
+  print(&quot;this is not printed&quot;)
+} else {
+  print(&quot;this is printed&quot;)
+}</code></pre>
+<pre><code>## [1] &quot;this is printed&quot;</code></pre>
+<p>It is not necessary to have an else statement.</p>
+<pre class="r"><code>if (TRUE) {
+  print(&quot;this is printed&quot;)
+}</code></pre>
+<pre><code>## [1] &quot;this is printed&quot;</code></pre>
+<pre class="r"><code>if (FALSE) {
+  print(&quot;this is not printed&quot;)
+}</code></pre>
+<p>One can nest if/else statements</p>
+<pre class="r"><code>if (FALSE) {
+  print(&quot;this is not printed&quot;)
+} else {
+  if (TRUE) {
+    print(&quot;this is printed&quot;)
+  }
+}</code></pre>
+<pre><code>## [1] &quot;this is printed&quot;</code></pre>
+<pre class="r"><code>if (FALSE) {
+  print(&quot;this is not printed&quot;)
+} else if (TRUE) {
+  print(&quot;this is printed&quot;)
+}</code></pre>
+<pre><code>## [1] &quot;this is printed&quot;</code></pre>
+<p>The curly braces <code>{</code> and <code>}</code> are necessary when there are multiple statements to be executed in the conditional block. For example, in the following code “1” is not printed, but “2” is (the indentation is just misleading).</p>
+<pre class="r"><code>if (FALSE)
+  print(1)
+  print(2)</code></pre>
+<pre><code>## [1] 2</code></pre>
+<p>The above snippet is equivalent to</p>
+<pre class="r"><code>if (FALSE) {
+  print(1)
+}
+print(2)</code></pre>
+<pre><code>## [1] 2</code></pre>
+<p>It is often considered good practice to use curly braces even for single-statement blocks, as it is easy to read and can be less likely to lead to bugs on modification.</p>
+<p>The <code>ifelse</code> operator can also be useful in some situations. You can <a href="https://adv-r.hadley.nz/control-flow.html#vectorised-if">read about it</a> after you are familiar with vectors in R.</p>
+</div>
+<div id="relational-and-logical-operators" class="section level2">
+<h2>Relational and logical operators</h2>
+<p>Conditional statements are often used when the logical value is computed dynamically.</p>
+<pre class="r"><code>x &lt;- 5
+if (x &lt; 10) {
+  print(&quot;x is less than 10&quot;)
+} else {
+  print(&quot;x is greater than or equal to 10&quot;)
+}</code></pre>
+<pre><code>## [1] &quot;x is less than 10&quot;</code></pre>
+<p>The relational operators are</p>
+<table>
+<thead>
+<tr class="header">
+<th align="center">Operator</th>
+<th align="center">Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="center">&lt;</td>
+<td align="center">less than</td>
+</tr>
+<tr class="even">
+<td align="center">&gt;</td>
+<td align="center">greater than</td>
+</tr>
+<tr class="odd">
+<td align="center">&lt;=</td>
+<td align="center">less than or equal to</td>
+</tr>
+<tr class="even">
+<td align="center">&gt;=</td>
+<td align="center">greater than or equal to</td>
+</tr>
+<tr class="odd">
+<td align="center">==</td>
+<td align="center">equals</td>
+</tr>
+<tr class="even">
+<td align="center">!=</td>
+<td align="center">not equals</td>
+</tr>
+</tbody>
+</table>
+<p>Logical operators are useful for combining logical values. These are</p>
+<table>
+<thead>
+<tr class="header">
+<th align="center">Operator</th>
+<th align="center">Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="center">!</td>
+<td align="center">not</td>
+</tr>
+<tr class="even">
+<td align="center">&amp;</td>
+<td align="center">and</td>
+</tr>
+<tr class="odd">
+<td align="center">|</td>
+<td align="center">or</td>
+</tr>
+<tr class="even">
+<td align="center">&amp;&amp;</td>
+<td align="center">short-circuit and</td>
+</tr>
+<tr class="odd">
+<td align="center">||</td>
+<td align="center">short-circuit or</td>
+</tr>
+</tbody>
+</table>
+<p>A short-circuit <code>&amp;&amp;</code> or <code>||</code> evaluates only those values from left to right that are required to determine if the result is <code>TRUE</code> or <code>FALSE</code>. For example, <code>FALSE &amp;&amp; x</code> evaluates to <code>FALSE</code> and <code>TRUE || x</code> evaluates to <code>TRUE</code> irrespective of the value of <code>x</code> and so <code>x</code> need not be evaluated.</p>
+<pre class="r"><code>x &lt;- TRUE
+y &lt;- FALSE
+
+if (!y) {
+  print(&quot;this is printed&quot;)
+}</code></pre>
+<pre><code>## [1] &quot;this is printed&quot;</code></pre>
+<pre class="r"><code>if (x &amp; y) {
+  print(&quot;this is not printed&quot;)
+}
+
+if (x | y) {
+  print(&quot;this is printed&quot;)
+}</code></pre>
+<pre><code>## [1] &quot;this is printed&quot;</code></pre>
+<pre class="r"><code>if (x || NA) {
+  print(&quot;this is printed even though NA is not a logical value&quot;)
+}</code></pre>
+<pre><code>## [1] &quot;this is printed even though NA is not a logical value&quot;</code></pre>
+</div>
+<div id="functions" class="section level2">
+<h2>Functions</h2>
+<p>Functions are incredibly useful building blocks for writing understandable programs, enabling code re-use and avoiding repetitions. The syntax for creating a function is</p>
+<pre class="r"><code>miles2km &lt;- function(x) {
+  # 1 mile is 1.609344 km
+  y &lt;- x * 1.609344
+  return(y)
+}</code></pre>
+<p>What is 500 miles in kilometres?</p>
+<pre class="r"><code>miles2km(500)</code></pre>
+<pre><code>## [1] 804.672</code></pre>
+<p>What is 200 miles in kilometers?</p>
+<pre class="r"><code>miles2km(200)</code></pre>
+<pre><code>## [1] 321.8688</code></pre>
+<p>Once the <code>miles2km</code> function has been written once, it can be used many times.</p>
+<p>Functions can have multiple arguments.</p>
+<pre class="r"><code>hypotenuse &lt;- function(a, b) {
+  return(sqrt(a^2 + b^2))
+}
+
+hypotenuse(3, 4)</code></pre>
+<pre><code>## [1] 5</code></pre>
+<p>There are many functions and constants that have already been defined in R’s base package. These include the constant <code>pi</code>, trigonometric functions like <code>sin</code>, <code>cos</code>, <code>tan</code>, and functions like <code>log</code>, <code>exp</code>. The <code>log</code> function has a <em>default</em> second argument.</p>
+<pre class="r"><code>log(100) # outputs natural log of 100</code></pre>
+<pre><code>## [1] 4.60517</code></pre>
+<pre class="r"><code>log(100, 10) # outputs log of 100 to base 10</code></pre>
+<pre><code>## [1] 2</code></pre>
+<pre class="r"><code>log(100, base = 10) # outputs log of 100 to base 10</code></pre>
+<pre><code>## [1] 2</code></pre>
+<p>There are advanced techniques one can use to define and use functions, which you can research on your own. For example, one can call functions using named arguments, which can help avoid mistakes.</p>
+<pre class="r"><code>foo &lt;- function(a, b) {
+  return(10*a + b)
+}
+
+foo(4, 2)</code></pre>
+<pre><code>## [1] 42</code></pre>
+<pre class="r"><code>foo(a=4, b=2)</code></pre>
+<pre><code>## [1] 42</code></pre>
+<pre class="r"><code>foo(b=2, a=4)</code></pre>
+<pre><code>## [1] 42</code></pre>
+<p>While it is often not necessary to explicitly use <code>return</code>, it is usually considered good practice. An R function will return the last evaluated statement in the function.</p>
+<pre class="r"><code>foo &lt;- function(x) {
+  x + 1
+}
+foo(22)</code></pre>
+<pre><code>## [1] 23</code></pre>
+<p>The <code>return</code> command stops execution of that function and returns.</p>
+<pre class="r"><code>foo &lt;- function(x) {
+  return(x)
+  print(&quot;this is not printed&quot;)
+}
+foo(22)</code></pre>
+<pre><code>## [1] 22</code></pre>
+<p>Only one value can be returned by an R function. However, this value can be a vector, a list, or even another function.</p>
+</div>
+<div id="getting-help" class="section level2">
+<h2>Getting help</h2>
+<p>One can access R’s help documentation by opening the Help window in RStudio. One often wants to access the documentation for a specific function. One can do this by typing “?” followed by the function name in the R console.</p>
+<pre><code>?log</code></pre>
+<p>One can perform a keyword search using “??” instead of “?”.</p>
+<pre><code>??logarithm</code></pre>
+<p>Of course, R is a popular language and there are also many resources online such as webpages, blogs and forums that can help solve problems.</p>
+</div>
+<div id="vectors" class="section level2">
+<h2>Vectors</h2>
+<p>We have focused on single values so far, for simplicity. In fact, a single number in R is a vector of size 1.</p>
+<p>One can <em>combine</em> two vectors using the <code>c</code> function.</p>
+<pre class="r"><code>x &lt;- 1
+y &lt;- 2
+z &lt;- c(x, y)
+z</code></pre>
+<pre><code>## [1] 1 2</code></pre>
+<pre class="r"><code>w &lt;- c(z, 3)
+w</code></pre>
+<pre><code>## [1] 1 2 3</code></pre>
+<p>There are a few ways to quickly specify vectors.</p>
+<pre class="r"><code>1:10</code></pre>
+<pre><code>##  [1]  1  2  3  4  5  6  7  8  9 10</code></pre>
+<pre class="r"><code>10:1</code></pre>
+<pre><code>##  [1] 10  9  8  7  6  5  4  3  2  1</code></pre>
+<pre class="r"><code>seq(1, 2, 0.1)</code></pre>
+<pre><code>##  [1] 1.0 1.1 1.2 1.3 1.4 1.5 1.6 1.7 1.8 1.9 2.0</code></pre>
+<pre class="r"><code>rep(42, 8)</code></pre>
+<pre><code>## [1] 42 42 42 42 42 42 42 42</code></pre>
+<p>Many basic R functions operate element-wise on vectors.</p>
+<pre class="r"><code>a &lt;- c(1, 3, 5, 7)
+b &lt;- c(2, 4, 6, 8)
+a + b</code></pre>
+<pre><code>## [1]  3  7 11 15</code></pre>
+<pre class="r"><code>a * b</code></pre>
+<pre><code>## [1]  2 12 30 56</code></pre>
+<pre class="r"><code>a ^ b</code></pre>
+<pre><code>## [1]       1      81   15625 5764801</code></pre>
+<pre class="r"><code>log(a)</code></pre>
+<pre><code>## [1] 0.000000 1.098612 1.609438 1.945910</code></pre>
+<p>Other functions make sense for vectors of length greater than 1.</p>
+<pre class="r"><code>x &lt;- c(5, 2, 1, 6, 4, 1, 3)
+sort(x)</code></pre>
+<pre><code>## [1] 1 1 2 3 4 5 6</code></pre>
+<pre class="r"><code>min(x)</code></pre>
+<pre><code>## [1] 1</code></pre>
+<pre class="r"><code>max(x)</code></pre>
+<pre><code>## [1] 6</code></pre>
+<pre class="r"><code>sum(x)</code></pre>
+<pre><code>## [1] 22</code></pre>
+<pre class="r"><code>mean(x)</code></pre>
+<pre><code>## [1] 3.142857</code></pre>
+<pre class="r"><code>var(x)</code></pre>
+<pre><code>## [1] 3.809524</code></pre>
+<p>Vectors can be indexed using vectors of integers (although not necessarily with integer <em>type</em>).</p>
+<pre class="r"><code>x &lt;- 1:6
+x[3]</code></pre>
+<pre><code>## [1] 3</code></pre>
+<pre class="r"><code>x[c(2, 4)]</code></pre>
+<pre><code>## [1] 2 4</code></pre>
+<pre class="r"><code>x[c(3, 5, 3)]</code></pre>
+<pre><code>## [1] 3 5 3</code></pre>
+<pre class="r"><code>x[-c(2, 4)]</code></pre>
+<pre><code>## [1] 1 3 5 6</code></pre>
+<p>They can also be indexed using vectors of logicals.</p>
+<pre class="r"><code>x &lt;- 1:6
+x[c(FALSE, TRUE, FALSE, TRUE, FALSE, FALSE)]</code></pre>
+<pre><code>## [1] 2 4</code></pre>
+<pre class="r"><code>x[x %% 2 == 0]</code></pre>
+<pre><code>## [1] 2 4 6</code></pre>
+<p>Values can be changed using assignment.</p>
+<pre class="r"><code>x &lt;- 1:6
+x[2] &lt;- 42
+x</code></pre>
+<pre><code>## [1]  1 42  3  4  5  6</code></pre>
+<pre class="r"><code>x[c(2, 3)] &lt;- c(11, 12)
+x</code></pre>
+<pre><code>## [1]  1 11 12  4  5  6</code></pre>
+</div>
+<div id="vector-types" class="section level2">
+<h2>Vector types</h2>
+<p>So far we have focused on variables that are classified as <code>numeric</code> by R. There are 6 <em>atomic</em> vector types, and each vector can only have one of these types.</p>
+<ul>
+<li>logical</li>
+<li>integer</li>
+<li>numeric / double</li>
+<li>complex</li>
+<li>character</li>
+<li>raw</li>
+</ul>
+<p>A single logical value takes either the value <code>TRUE</code> or <code>FALSE</code>.</p>
+<p>An integer is specified by appending “L” to the end of the input. It is not that common to create integer vectors in R functions: most of the time one just uses numeric (i.e. double-precision floating point) vectors even when all the elements are mathematically integers.</p>
+<pre class="r"><code>x &lt;- 123L
+typeof(x)</code></pre>
+<pre><code>## [1] &quot;integer&quot;</code></pre>
+<pre class="r"><code>x &lt;- 123
+typeof(x)</code></pre>
+<pre><code>## [1] &quot;double&quot;</code></pre>
+<p>A complex number is specified using <code>complex</code>. One can call the following functions on a complex number: <code>Re</code>, <code>Im</code>, <code>Mod</code>, <code>Arg</code>, <code>Conj</code>.</p>
+<pre class="r"><code>x &lt;- complex(real=1, imaginary=2)
+x</code></pre>
+<pre><code>## [1] 1+2i</code></pre>
+<pre class="r"><code>Conj(x)</code></pre>
+<pre><code>## [1] 1-2i</code></pre>
+<p>A variable of type character can be a string, not just a single character. In particular, a single string is a vector of length 1, not a vector of characters.</p>
+<pre class="r"><code>x &lt;- &quot;hello&quot;
+typeof(x)</code></pre>
+<pre><code>## [1] &quot;character&quot;</code></pre>
+<pre class="r"><code>x &lt;- &quot;hello world&quot;
+length(x)</code></pre>
+<pre><code>## [1] 1</code></pre>
+<pre class="r"><code>print(x)</code></pre>
+<pre><code>## [1] &quot;hello world&quot;</code></pre>
+<pre class="r"><code>x &lt;- c(&quot;hello&quot;, &quot;world&quot;)
+length(x)</code></pre>
+<pre><code>## [1] 2</code></pre>
+<pre class="r"><code>print(x)</code></pre>
+<pre><code>## [1] &quot;hello&quot; &quot;world&quot;</code></pre>
+<p>We do not discuss the raw type here: it is used to store raw bytes.</p>
+</div>
+<div id="matrices" class="section level2">
+<h2>Matrices</h2>
+<p>Matrices can be created using the <code>matrix</code> command.</p>
+<pre class="r"><code>x &lt;- matrix(1:6, 2, 3)
+x</code></pre>
+<pre><code>##      [,1] [,2] [,3]
+## [1,]    1    3    5
+## [2,]    2    4    6</code></pre>
+<p>The dimension of a matrix is given by <code>dim</code>.</p>
+<pre class="r"><code>dim(x)</code></pre>
+<pre><code>## [1] 2 3</code></pre>
+<p>They can be indexed in a similar way to vectors.</p>
+<pre class="r"><code>x[1,3]</code></pre>
+<pre><code>## [1] 5</code></pre>
+<pre class="r"><code>x[2,]</code></pre>
+<pre><code>## [1] 2 4 6</code></pre>
+<pre class="r"><code>x[2,c(TRUE, FALSE, TRUE)]</code></pre>
+<pre><code>## [1] 2 6</code></pre>
+<pre class="r"><code>x[,3]</code></pre>
+<pre><code>## [1] 5 6</code></pre>
+<p>There are many built-in R functions for matrices. One important one is <code>%*%</code> for matrix multiplication (<code>*</code> is element-wise multiplication).</p>
+<pre class="r"><code>A &lt;- matrix(c(4, 2, 2, 4), 2, 2)
+B &lt;- matrix(c(1, 2, 3, 4), 2, 2)
+A * B</code></pre>
+<pre><code>##      [,1] [,2]
+## [1,]    4    6
+## [2,]    4   16</code></pre>
+<pre class="r"><code>A %*% B</code></pre>
+<pre><code>##      [,1] [,2]
+## [1,]    8   20
+## [2,]   10   22</code></pre>
+<pre class="r"><code>t(B) # transpose</code></pre>
+<pre><code>##      [,1] [,2]
+## [1,]    1    2
+## [2,]    3    4</code></pre>
+<pre class="r"><code>eigen(B)</code></pre>
+<pre><code>## eigen() decomposition
+## $values
+## [1]  5.3722813 -0.3722813
+## 
+## $vectors
+##            [,1]       [,2]
+## [1,] -0.5657675 -0.9093767
+## [2,] -0.8245648  0.4159736</code></pre>
+<pre class="r"><code>svd(B) # singular value decomposition</code></pre>
+<pre><code>## $d
+## [1] 5.4649857 0.3659662
+## 
+## $u
+##            [,1]       [,2]
+## [1,] -0.5760484 -0.8174156
+## [2,] -0.8174156  0.5760484
+## 
+## $v
+##            [,1]       [,2]
+## [1,] -0.4045536  0.9145143
+## [2,] -0.9145143 -0.4045536</code></pre>
+<pre class="r"><code>chol(A) # cholesky decomposition</code></pre>
+<pre><code>##      [,1]     [,2]
+## [1,]    2 1.000000
+## [2,]    0 1.732051</code></pre>
+<pre class="r"><code>diag(A)</code></pre>
+<pre><code>## [1] 4 4</code></pre>
+<p>One can add a row (resp. column) to a matrix using the <code>rbind</code> (resp. <code>cbind</code>) function.</p>
+<pre class="r"><code>A &lt;- diag(1:3)
+A</code></pre>
+<pre><code>##      [,1] [,2] [,3]
+## [1,]    1    0    0
+## [2,]    0    2    0
+## [3,]    0    0    3</code></pre>
+<pre class="r"><code>rbind(A, 4:6)</code></pre>
+<pre><code>##      [,1] [,2] [,3]
+## [1,]    1    0    0
+## [2,]    0    2    0
+## [3,]    0    0    3
+## [4,]    4    5    6</code></pre>
+<pre class="r"><code>cbind(A, 4:6)</code></pre>
+<pre><code>##      [,1] [,2] [,3] [,4]
+## [1,]    1    0    0    4
+## [2,]    0    2    0    5
+## [3,]    0    0    3    6</code></pre>
+<p>An R <code>matrix</code> is equivalent a 2-dimensional <code>array</code>. One can create higher dimensional arrays.</p>
+<pre class="r"><code>v &lt;- array(1:24, c(2,3,4))
+v[1,2,3]</code></pre>
+<pre><code>## [1] 15</code></pre>
+<p>An R <code>vector</code> is similar to, but not exactly the same as, a <code>matrix</code> with one column.</p>
+<pre class="r"><code>matrix(1:2, 2, 1)</code></pre>
+<pre><code>##      [,1]
+## [1,]    1
+## [2,]    2</code></pre>
+<pre class="r"><code>1:2</code></pre>
+<pre><code>## [1] 1 2</code></pre>
+<p>One can convert between the two using the <code>as.vector</code> and <code>as.matrix</code> commands.</p>
+</div>
+<div id="lists" class="section level2">
+<h2>Lists</h2>
+<p>Vectors and matrices must contain variables of the same type. Lists are more generic data structures, and are sometimes called <em>generic</em> vectors.</p>
+<p>List elements can be given names, which can be used to index the list using <code>$</code>. Lists can also be indexed using numbers inside <code>[[</code> and <code>]]</code>. New elements can be added by name or by indexing</p>
+<pre class="r"><code>x &lt;- list(numbers = 1:5, message = &quot;hello&quot;)
+x</code></pre>
+<pre><code>## $numbers
+## [1] 1 2 3 4 5
+## 
+## $message
+## [1] &quot;hello&quot;</code></pre>
+<pre class="r"><code>x$numbers</code></pre>
+<pre><code>## [1] 1 2 3 4 5</code></pre>
+<pre class="r"><code>x$message</code></pre>
+<pre><code>## [1] &quot;hello&quot;</code></pre>
+<pre class="r"><code>x[[1]]</code></pre>
+<pre><code>## [1] 1 2 3 4 5</code></pre>
+<pre class="r"><code>x[[2]]</code></pre>
+<pre><code>## [1] &quot;hello&quot;</code></pre>
+<pre class="r"><code>x$even.numbers &lt;- x$numbers[(x$numbers %% 2) == 0]
+x[[4]] &lt;- c(1.1, 2.2)
+names(x)[[4]] &lt;- &quot;floats&quot;
+x</code></pre>
+<pre><code>## $numbers
+## [1] 1 2 3 4 5
+## 
+## $message
+## [1] &quot;hello&quot;
+## 
+## $even.numbers
+## [1] 2 4
+## 
+## $floats
+## [1] 1.1 2.2</code></pre>
+<p>Lists can contain lists or functions as elements, so they can be very rich data structures.</p>
+<pre class="r"><code>f &lt;- list()
+f$name &lt;- &quot;multiply&quot;
+f$arg.types &lt;- list(x=&quot;numeric&quot;, y=&quot;numeric&quot;)
+f$eval &lt;- function(x, y) {
+  return(x*y)
+}
+
+f$name</code></pre>
+<pre><code>## [1] &quot;multiply&quot;</code></pre>
+<pre class="r"><code>f$arg.types</code></pre>
+<pre><code>## $x
+## [1] &quot;numeric&quot;
+## 
+## $y
+## [1] &quot;numeric&quot;</code></pre>
+<pre class="r"><code>f$eval(6, 7)</code></pre>
+<pre><code>## [1] 42</code></pre>
+</div>
+<div id="basic-scoping" class="section level2">
+<h2>Basic scoping</h2>
+<p>R uses <em>lexical scoping</em>, which means that it resolves a variable name in a specific location in the code by considering where that variable is <em>defined</em> in the code. In particular, name resolution does not depend on the run time call stack of the program. We do not go into too many details here, except to show some examples that should help you become familiar with how scoping works in R.</p>
+<p>A name introduced inside a function renders irrelevant any variables with the same name outside the function body.</p>
+<pre class="r"><code>x &lt;- 1
+foo &lt;- function() {
+  x &lt;- 2
+  x
+}
+foo()</code></pre>
+<pre><code>## [1] 2</code></pre>
+<pre class="r"><code>x &lt;- 1
+foo &lt;- function(x) {
+  x
+}
+foo(2)</code></pre>
+<pre><code>## [1] 2</code></pre>
+<p>If a name cannot be resolved in the “local scope”, R will look one level up in the code.</p>
+<pre class="r"><code>x &lt;- 1
+y &lt;- 2
+foo &lt;- function() {
+  x &lt;- 3
+  c(x, y)
+}
+foo()</code></pre>
+<pre><code>## [1] 3 2</code></pre>
+<p>The scoping rule determines <em>which</em> <code>y</code> is being referred to. The <em>value</em> associated with that <code>y</code> does depend on the execution context. In the below example, the name is resolved to the <code>y</code> in global scope, whose value changes between the two invocations of <code>foo</code>.</p>
+<pre class="r"><code>x &lt;- 1
+y &lt;- 2
+foo &lt;- function() {
+  x &lt;- 3
+  c(x, y)
+}
+foo()</code></pre>
+<pre><code>## [1] 3 2</code></pre>
+<pre class="r"><code>x &lt;- 20
+y &lt;- 10
+foo()</code></pre>
+<pre><code>## [1]  3 10</code></pre>
+<p>To see what is meant by “one level up”, the following snippet may be helpful.</p>
+<pre class="r"><code>x &lt;- 1
+foo &lt;- function() {
+  x &lt;- 2
+  bar &lt;- function() {
+    x
+  }
+  bar()
+}
+foo()</code></pre>
+<pre><code>## [1] 2</code></pre>
+<p>Lexical scoping is now very common, and R’s specific scoping rules are <em>usually</em> easy to work with.</p>
+<p>A particular problem is when a programmer expects a variable to be defined locally within a function but it is not, and instead a global variable with the same name is used.</p>
+<p>Curly braces <code>{</code> and <code>}</code> do not define a new scope in R.</p>
+</div>
+<div id="pass-by-value-semantics" class="section level2">
+<h2>Pass by value semantics</h2>
+<p>In R one can think of arguments to functions as if they are passed by value. That is, when a function is called with an argument <code>x</code> it is as if <code>x</code> is copied and then passed to the function. So any modifications of <code>x</code> in the function body do not affect the variable <code>x</code> from the caller’s perspective.</p>
+<pre class="r"><code>a &lt;- c(1, 2)
+foo &lt;- function(x) {
+  x[1] &lt;- 3
+  x
+}
+foo(a)</code></pre>
+<pre><code>## [1] 3 2</code></pre>
+<pre class="r"><code>a</code></pre>
+<pre><code>## [1] 1 2</code></pre>
+<p>This is also true for assignments. If a variable <code>y</code> is assigned to take the same value that <code>x</code> takes, modifications of <code>y</code> do not affect <code>x</code>.</p>
+<pre class="r"><code>x &lt;- c(1, 2)
+y &lt;- x
+
+y[1] &lt;- 3
+y</code></pre>
+<pre><code>## [1] 3 2</code></pre>
+<pre class="r"><code>x</code></pre>
+<pre><code>## [1] 1 2</code></pre>
+<p>In the above, we have said that it is <em>as if</em> the values are copied. There are performance enhancements to make this less computationally costly in some situations, and R actually uses a <a href="https://adv-r.hadley.nz/names-values.html#copy-on-modify">copy on modify</a> strategy in the background. This is not necessary to understand to write working code, but knowledge of how R works internally can be used to improve performance.</p>
+</div>
+<div id="iteration-while-and-for-loops" class="section level2">
+<h2>Iteration: while and for loops</h2>
+<p>Iteration allows a program to execute a block of code many times. Iteration (or recursion) greatly increases the expressive power of a programming language.</p>
+<p>One way to do this is using a <code>while</code> loop, which executes a block of code until some condition is met.</p>
+<pre class="r"><code>x &lt;- 0
+while (x &lt; 3) {
+  x &lt;- x + 1
+  print(x)
+}</code></pre>
+<pre><code>## [1] 1
+## [1] 2
+## [1] 3</code></pre>
+<p>Another way is to use a <code>for</code> loop, where one executes a block of code for each element in a vector.</p>
+<pre class="r"><code>vec &lt;- c(1,4,9)
+for (x in vec) {
+  sqrt.x &lt;- sqrt(x)
+  print(sqrt.x)
+}</code></pre>
+<pre><code>## [1] 1
+## [1] 2
+## [1] 3</code></pre>
+<p>It is quite common for the vector in a for loop to be defined as <code>1:n</code> for some positive integer <code>n</code>.</p>
+<pre class="r"><code>vec &lt;- c(1,4,9)
+n &lt;- length(vec)
+for (i in 1:n) {
+  print(sqrt(vec[i]))
+}</code></pre>
+<pre><code>## [1] 1
+## [1] 2
+## [1] 3</code></pre>
+<p>Some people prefer to use loop replacements such as <code>apply</code> and <code>lapply</code>. We will consider this in more detail later.</p>
+<p>When using loops, the commands <code>break</code> and <code>next</code> are useful. The former immediately exits the loop, while the latter immediately starts the next iteration of the loop.</p>
+<pre class="r"><code>x &lt;- 1
+while (TRUE) {
+  x &lt;- x+1
+  if (x &gt;= 5) {
+    break
+  }
+}
+x</code></pre>
+<pre><code>## [1] 5</code></pre>
+<pre class="r"><code>for (i in 1:3) {
+  if (i == 2) {
+    next
+  }
+  print(i)
+}</code></pre>
+<pre><code>## [1] 1
+## [1] 3</code></pre>
+</div>
+<div id="recursion" class="section level2">
+<h2>Recursion</h2>
+<p>In some cases, defining a function recursively is natural, and R supports recursive functions. A classic example is a recursive function for computing a Fibonacci number.</p>
+<pre class="r"><code>fib &lt;- function(n) {
+  stopifnot(n %% 1 == 0 &amp;&amp; n &gt;= 0)
+  if (n == 0 || n == 1) {
+    return(n)
+  }
+  return(fib(n-2) + fib(n-1))
+}
+
+# compute and store the first 5 Fibonacci numbers
+fib.first5 &lt;- rep(0, 5)
+for (i in 1:5) {
+  fib.first5[i] &lt;- fib(i)
+}
+fib.first5</code></pre>
+<pre><code>## [1] 1 1 2 3 5</code></pre>
+<p>The recursive function/algorithm <code>fib</code> is very poor from a performance perspective. It is good to think about why, and how one might overcome the problem.</p>
+</div>
+<div id="errors-warnings-and-messages" class="section level2">
+<h2>Errors, warnings and messages</h2>
+<p>You might have noticed the use of the <code>stopifnot</code> function in <code>fib</code>, which is used there to check that the input is a non-negative integer. It will raise an error if this check fails. Checks like this are useful for ensuring that functions are used only in appropriate situations.</p>
+<p>In general, an error can be <em>thrown</em> using the <code>stop</code> command, which will stop execution and print the error message, unless the error is <em>caught</em>.</p>
+<pre><code>stop(&quot;informative error message&quot;)</code></pre>
+<pre><code>## Error: informative error message</code></pre>
+<p>A warning can be printed using the <code>warning</code> command, and a message can be printed using the <code>message</code> command. Neither warnings and messages stop execution, and the difference between them is primarily semantic: warnings are often used to indicate something unexpected has occurred, but the function was probably able to deal with it appropriately. The messages from <code>stop</code>, <code>warning</code> and <code>message</code> are sent to <a href="https://en.wikipedia.org/wiki/Standard_streams">standard error and not standard out</a>, in contrast to <code>print</code>.</p>
+<pre class="r"><code>warning(&quot;informative warning message&quot;)</code></pre>
+<pre><code>## Warning: informative warning message</code></pre>
+<pre class="r"><code>message(&quot;informative message&quot;)</code></pre>
+<pre><code>## informative message</code></pre>
+<p>Errors, warnings and messages are collectively known as <em>conditions</em>.</p>
+<p>One can <em>catch</em> a condition using <code>tryCatch</code>. <code>error</code>, <code>warning</code>, <code>message</code> and <code>finally</code> are named arguments, the first three being functions that are called when the corresponding condition is raised. <code>finally</code> is just a block of code.</p>
+<pre class="r"><code>tryCatch({
+  warning(&quot;be careful!&quot;)
+}, error = function(e) {
+  paste(&quot;there was an error:&quot;, e$message)
+}, warning = function(w) {
+  paste(&quot;there was a warning:&quot;, w$message)
+}, message = function(m) {
+  paste(&quot;there was a message:&quot;, m$message)
+}, finally = {
+  print(&quot;finished.&quot;)
+})</code></pre>
+<pre><code>## [1] &quot;finished.&quot;</code></pre>
+<pre><code>## [1] &quot;there was a warning: be careful!&quot;</code></pre>
+<p>If all you want to do is display when there is an error you can use <code>try</code>, which allows execution to continue and displays the error message.</p>
+<pre class="r"><code>try(stop(&quot;something is wrong&quot;))</code></pre>
+<pre><code>## Error in try(stop(&quot;something is wrong&quot;)) : something is wrong</code></pre>
+</div>
+<div id="special-values" class="section level2">
+<h2>Special values</h2>
+<p>R has some special values, including <code>NULL</code>, <code>NA</code>, <code>Inf</code> and <code>NaN</code>.</p>
+<p><code>NULL</code> is returned by functions with no return value, and can be thought of us an empty vector.</p>
+<pre class="r"><code>x &lt;- NULL
+x &lt;- c(x, 1)
+x &lt;- c(x, 2)
+x</code></pre>
+<pre><code>## [1] 1 2</code></pre>
+<p><code>NA</code> is “Not Available” and is used for missing values. <code>NA</code> is propagated where appropriate.</p>
+<pre class="r"><code>x &lt;- c(1, NA)
+y &lt;- c(3, 4)
+x + y</code></pre>
+<pre><code>## [1]  4 NA</code></pre>
+<p><code>Inf</code> represents positive infinity. <code>-Inf</code> represents minus infinity.</p>
+<p><code>NaN</code> is “Not a Number” and is the value of, e.g., <code>0/0</code>, <code>Inf - Inf</code> or <code>Inf/Inf</code>.</p>
+</div>
+
+
+  <footer>
+  
+
+<script src="//yihui.name/js/math-code.js"></script>
+<script async src="//mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+<script async src="//yihui.name/js/center-img.js"></script>
+
+
+<script type="text/javascript">
+var sc_project=12110974;
+var sc_invisible=1;
+var sc_security="9b171880";
+</script>
+<script type="text/javascript"
+src="https://www.statcounter.com/counter/counter.js"
+async></script>
+<noscript><div class="statcounter"><a title="Web Analytics"
+href="https://statcounter.com/" target="_blank"><img
+class="statcounter"
+src="https://c.statcounter.com/12110974/0/9b171880/1/"
+alt="Web Analytics"></a></div></noscript>
+
+
+
+
+
+
+
+
+  
+
+
+<p align=right>
+
+<a href='https://github.com/awllee/sc1/blob/master/content/intro-r/fundamentals.Rmd'>View source</a>
+
+|
+
+<a href='https://github.com/awllee/sc1/edit/master/content/intro-r/fundamentals.Rmd'>Edit source</a>
+
+</p>
+
+
+
+
+
+<script src="https://utteranc.es/client.js"
+        repo="awllee/sc1"
+        issue-term="pathname"
+        label="utterance"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script>
+
+
+
+  
+
+
+
+<script src="//cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+
+
+
+<script src="//cdn.bootcss.com/highlight.js/9.12.0/languages/r.min.js"></script>
+<script src="//cdn.bootcss.com/highlight.js/9.12.0/languages/yaml.min.js"></script>
+<script src="//cdn.bootcss.com/highlight.js/9.12.0/languages/tex.min.js"></script>
+<script>hljs.configure({languages: []}); hljs.initHighlightingOnLoad();</script>
+
+
+
+  
+  <hr>
+  <div class="copyright">© 2020 <a href="https://sites.google.com/view/anthonylee">Anthony Lee</a>, <a href="http://www.bristol.ac.uk/maths/people/feng-yu/index.html">Feng Yu</a>, <a href="https://people.maths.bris.ac.uk/~tk18582/">Tobias Kley</a>, <a href="https://mfasiolo.github.io/">Matteo Fasiolo</a></div>
+  
+  </footer>
+  </article>
+  
+  </body>
+</html>
+

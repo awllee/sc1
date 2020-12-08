@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Common R functions on SC1</title>
+    <link>https://awllee.github.io/sc1/common-r/</link>
+    <description>Recent content in Common R functions on SC1</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language><atom:link href="https://awllee.github.io/sc1/common-r/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Vectorisation</title>
+      <link>https://awllee.github.io/sc1/common-r/vectorisation/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://awllee.github.io/sc1/common-r/vectorisation/</guid>
+      <description>Vectorisation, matrix operations, and readability Vectorisation means the same operation is applied to every single number in a vector. One avoids using loops in the code as much as possible. Why is vectorisation so important? The answer is speed: vector operations in R are much faster.
+Vectorisation is as important in R as in other interpreted languages, such as Matlab or python.
+fsum1 = function(x) { fsum = 0 for (i in 1:length(x)) { fsum = fsum + sin(x[i]) } return(fsum) } fsum2 = function(x) sum(sin(x)) We can compare the speed using system.</description>
+    </item>
+    
+    <item>
+      <title>R apply family, sweep, map, reduce, filter</title>
+      <link>https://awllee.github.io/sc1/common-r/apply/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://awllee.github.io/sc1/common-r/apply/</guid>
+      <description>R apply family The apply family of functions consist of apply(), lapply(), sapply(), and mapply(). The basic idea of the apply family is to apply the same function repetitively across a list or a certain dimension of an array or dataframe.
+apply We start with apply(). Its syntax is apply(X, MARGIN, FUN, ...), where
+ X is an array, including a matrix. MARGIN is a vector giving the subscripts which the function will be applied over.</description>
+    </item>
+    
+    <item>
+      <title>Parallel programming</title>
+      <link>https://awllee.github.io/sc1/common-r/parallel/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://awllee.github.io/sc1/common-r/parallel/</guid>
+      <description>Note. Any timing results here could be substantially different to what you would get if you ran the code on your own computer, so comments on the results may also be confusing. This is because these computations are run by Travis on nodes that may be heavily contested, as part of the website build process.
+Why parallel? Often, for large data processing jobs, a single CPU core is not enough.</description>
+    </item>
+    
+  </channel>
+</rss>

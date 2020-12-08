@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <title>Using the console - SC1</title>
+    <meta property="og:title" content="Using the console - SC1">
+    
+    <meta name="twitter:card" content="summary">
+
+    
+      
+    
+
+    
+      
+      <meta property="description" content="The console can be used to use R interactively. You can input commands at the prompt, and they will be executed if they are valid R commands. For example, an input of 1&#43;2 at the prompt outputs [1] 3. &amp;hellip;">
+      <meta property="og:description" content="The console can be used to use R interactively. You can input commands at the prompt, and they will be executed if they are valid R commands. For example, an input of 1&#43;2 at the prompt outputs [1] 3. &amp;hellip;">
+      
+    
+
+    
+    
+
+    
+
+    
+    
+
+
+<link href='//cdn.bootcss.com/highlight.js/9.12.0/styles/github.min.css' rel='stylesheet' type='text/css' />
+
+
+
+    <link rel="stylesheet" href="/sc1/css/style.css" />
+    <link rel="stylesheet" href="/sc1/css/fonts.css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Arvo">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Marcellus">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Code+Pro">
+
+<link rel="stylesheet" href="/sc1/css/custom.css" />
+
+<link rel="icon" href="/sc1/favicon.ico" type="image/x-icon" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<nav class="breadcrumbs">
+    
+        <a href="https://awllee.github.io/sc1/">home / </a>
+    
+        <a href="https://awllee.github.io/sc1/intro-r/">intro-r / </a>
+    
+        <a href="https://awllee.github.io/sc1/intro-r/console/">console / </a>
+    
+</nav>
+
+  </head>
+
+  
+  <body class="sc1">
+    <header class="masthead">
+      <h1><a href="/sc1/">SC1</a></h1>
+
+<p class="tagline">Statistical Computing 1</p>
+
+      <nav class="menu">
+  <input id="menu-check" type="checkbox" />
+  <label id="menu-label" for="menu-check" class="unselectable">
+    <span class="icon close-icon">✕</span>
+    <span class="icon open-icon">☰</span>
+    <span class="text">Menu</span>
+  </label>
+  <ul>
+  
+  
+  <li><a href="/sc1/">Home</a></li>
+  
+  <li><a href="/sc1/intro-r/">Intro to R</a></li>
+  
+  <li><a href="/sc1/reproducibility/">Reproducibility</a></li>
+  
+  <li><a href="/sc1/common-r/">Common R</a></li>
+  
+  <li><a href="/sc1/tidyverse/">Tidyverse</a></li>
+  
+  <li><a href="/sc1/packages/">Packages</a></li>
+  
+  <li><a href="/sc1/functional-oo/">Functional / OO</a></li>
+  
+  <li><a href="/sc1/profile-debug/">Performance / Bugs</a></li>
+  
+  <li><a href="/sc1/matrices/">Matrices</a></li>
+  
+  <li><a href="/sc1/optimization/">Optimization</a></li>
+  
+  <li><a href="/sc1/integration/">Integration</a></li>
+  
+  
+  </ul>
+</nav>
+
+    </header>
+
+    <article class="main">
+      <header class="title">
+      
+<h1>Using the console</h1>
+
+<h3>
+</h3>
+<hr>
+
+
+      </header>
+
+
+
+
+<link href="/sc1/rmarkdown-libs/anchor-sections/anchor-sections.css" rel="stylesheet" />
+<script src="/sc1/rmarkdown-libs/anchor-sections/anchor-sections.js"></script>
+
+<div id="TOC">
+<ul>
+<li><a href="#entering-commands-directly">Entering commands directly</a></li>
+<li><a href="#entering-commands-from-a-script">Entering commands from a script</a></li>
+</ul>
+</div>
+
+<div id="entering-commands-directly" class="section level2">
+<h2>Entering commands directly</h2>
+<p>The console can be used to use R <em>interactively</em>. You can input commands at the prompt, and they will be executed if they are valid R commands. For example, an input of <code>1+2</code> at the prompt outputs <code>[1] 3</code>.</p>
+<pre class="r"><code>1 + 2</code></pre>
+<pre><code>## [1] 3</code></pre>
+<p>The <code>[1]</code> can be ignored: <code>[1] 3</code> just means that the first element of the output is <code>3</code>. This may seem strange, but is more useful when the output is longer. For example, the command <code>1:50</code> constructs a vector of integers between 1 and 50.</p>
+<pre class="r"><code>1:50</code></pre>
+<pre><code>##  [1]  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25
+## [26] 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50</code></pre>
+<p>The numbers in square brackets here are helpful in keeping track of which element of the vector each value is associated with.</p>
+<p>You can print using the <code>print</code> command.</p>
+<pre class="r"><code>print(&quot;Hello, World!&quot;)</code></pre>
+<pre><code>## [1] &quot;Hello, World!&quot;</code></pre>
+</div>
+<div id="entering-commands-from-a-script" class="section level2">
+<h2>Entering commands from a script</h2>
+<p>Using the console directly is useful when you want to try out a quick command. An alternative is to gather a sequence of commands into an R script: a text file with extension “.R”.</p>
+<p>You can create a new R script file in RStudio via</p>
+<blockquote>
+<p>File -&gt; New File -&gt; R Script</p>
+</blockquote>
+<p>You do not need to name and save the file, but you can if you like.</p>
+<p>You can enter commands on lines of the script, and use comments (which start with <code>#</code>) to explain what you are doing. Try copying and pasting the following code into your script.</p>
+<pre class="r"><code>1 + 2 # should be 3
+3 * 4 # should be 12
+
+# this is a for loop that prints the integers between 1 and 5
+for (i in 1:5) {
+  print(i)
+}</code></pre>
+<p>You can execute the whole script by clicking the “Source” button in RStudio. Alternatively, you can execute one line of the script by placing the cursor on that line and clicking “Run” or pressing Ctrl+Enter (⌘+↩ on macOS). This also works for executing a highlighted selection of the script.</p>
+<p>Working on a script has the advantage that the commands you are running are stored, so you can easily re-run them or edit them.</p>
+</div>
+
+
+  <footer>
+  
+
+<script src="//yihui.name/js/math-code.js"></script>
+<script async src="//mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+<script async src="//yihui.name/js/center-img.js"></script>
+
+
+<script type="text/javascript">
+var sc_project=12110974;
+var sc_invisible=1;
+var sc_security="9b171880";
+</script>
+<script type="text/javascript"
+src="https://www.statcounter.com/counter/counter.js"
+async></script>
+<noscript><div class="statcounter"><a title="Web Analytics"
+href="https://statcounter.com/" target="_blank"><img
+class="statcounter"
+src="https://c.statcounter.com/12110974/0/9b171880/1/"
+alt="Web Analytics"></a></div></noscript>
+
+
+
+
+
+
+
+
+  
+
+
+<p align=right>
+
+<a href='https://github.com/awllee/sc1/blob/master/content/intro-r/console.Rmd'>View source</a>
+
+|
+
+<a href='https://github.com/awllee/sc1/edit/master/content/intro-r/console.Rmd'>Edit source</a>
+
+</p>
+
+
+
+
+
+<script src="https://utteranc.es/client.js"
+        repo="awllee/sc1"
+        issue-term="pathname"
+        label="utterance"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script>
+
+
+
+  
+
+
+
+<script src="//cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+
+
+
+<script src="//cdn.bootcss.com/highlight.js/9.12.0/languages/r.min.js"></script>
+<script src="//cdn.bootcss.com/highlight.js/9.12.0/languages/yaml.min.js"></script>
+<script src="//cdn.bootcss.com/highlight.js/9.12.0/languages/tex.min.js"></script>
+<script>hljs.configure({languages: []}); hljs.initHighlightingOnLoad();</script>
+
+
+
+  
+  <hr>
+  <div class="copyright">© 2020 <a href="https://sites.google.com/view/anthonylee">Anthony Lee</a>, <a href="http://www.bristol.ac.uk/maths/people/feng-yu/index.html">Feng Yu</a>, <a href="https://people.maths.bris.ac.uk/~tk18582/">Tobias Kley</a>, <a href="https://mfasiolo.github.io/">Matteo Fasiolo</a></div>
+  
+  </footer>
+  </article>
+  
+  </body>
+</html>
+

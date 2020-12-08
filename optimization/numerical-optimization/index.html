@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <title>Numerical Optimisation - SC1</title>
+    <meta property="og:title" content="Numerical Optimisation - SC1">
+    
+    <meta name="twitter:card" content="summary">
+
+    
+      
+    
+
+    
+      
+      <meta property="description" content="An optimisation problem is the problem of finding the best solution from all feasible solutions. There are genenally speaking two types of optimisation problems: continuous or discrete, which refers &amp;hellip;">
+      <meta property="og:description" content="An optimisation problem is the problem of finding the best solution from all feasible solutions. There are genenally speaking two types of optimisation problems: continuous or discrete, which refers &amp;hellip;">
+      
+    
+
+    
+    
+
+    
+
+    
+    
+
+
+<link href='//cdn.bootcss.com/highlight.js/9.12.0/styles/github.min.css' rel='stylesheet' type='text/css' />
+
+
+
+    <link rel="stylesheet" href="/sc1/css/style.css" />
+    <link rel="stylesheet" href="/sc1/css/fonts.css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Arvo">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Marcellus">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Code+Pro">
+
+<link rel="stylesheet" href="/sc1/css/custom.css" />
+
+<link rel="icon" href="/sc1/favicon.ico" type="image/x-icon" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<nav class="breadcrumbs">
+    
+        <a href="https://awllee.github.io/sc1/">home / </a>
+    
+        <a href="https://awllee.github.io/sc1/optimization/">optimization / </a>
+    
+        <a href="https://awllee.github.io/sc1/optimization/numerical-optimization/">numerical-optimization / </a>
+    
+</nav>
+
+  </head>
+
+  
+  <body class="sc1">
+    <header class="masthead">
+      <h1><a href="/sc1/">SC1</a></h1>
+
+<p class="tagline">Statistical Computing 1</p>
+
+      <nav class="menu">
+  <input id="menu-check" type="checkbox" />
+  <label id="menu-label" for="menu-check" class="unselectable">
+    <span class="icon close-icon">✕</span>
+    <span class="icon open-icon">☰</span>
+    <span class="text">Menu</span>
+  </label>
+  <ul>
+  
+  
+  <li><a href="/sc1/">Home</a></li>
+  
+  <li><a href="/sc1/intro-r/">Intro to R</a></li>
+  
+  <li><a href="/sc1/reproducibility/">Reproducibility</a></li>
+  
+  <li><a href="/sc1/common-r/">Common R</a></li>
+  
+  <li><a href="/sc1/tidyverse/">Tidyverse</a></li>
+  
+  <li><a href="/sc1/packages/">Packages</a></li>
+  
+  <li><a href="/sc1/functional-oo/">Functional / OO</a></li>
+  
+  <li><a href="/sc1/profile-debug/">Performance / Bugs</a></li>
+  
+  <li><a href="/sc1/matrices/">Matrices</a></li>
+  
+  <li><a href="/sc1/optimization/">Optimization</a></li>
+  
+  <li><a href="/sc1/integration/">Integration</a></li>
+  
+  
+  </ul>
+</nav>
+
+    </header>
+
+    <article class="main">
+      <header class="title">
+      
+<h1>Numerical Optimisation</h1>
+
+<h3>
+</h3>
+<hr>
+
+
+      </header>
+
+
+
+
+<link href="/sc1/rmarkdown-libs/anchor-sections/anchor-sections.css" rel="stylesheet" />
+<script src="/sc1/rmarkdown-libs/anchor-sections/anchor-sections.js"></script>
+
+
+<p>An optimisation problem is the problem of finding the best solution from all feasible solutions. There are genenally speaking two types of optimisation problems: continuous or discrete, which refers to whether the variables are continuous or discrete. We will focus on continuous optimisation problems. Without any loss of generality, just as in built in <code>R</code> functions, we try to minimise (rather than maximise) a function.</p>
+<p>The standard form of a continuous optimisation problem is as follows:</p>
+<p><span class="math display">\[ \begin{eqnarray}
+  \arg\min_x f(x) \ \mathrm{ subject \ to } \
+  &amp; g_i(x)\le 0 \mathrm{\ for \ } i=1,\ldots,m, \\
+  &amp; h_j(x) = 0 \mathrm{\ for \ } j=1,\ldots,p
+  \end{eqnarray}
+\]</span>
+where <span class="math inline">\(f:\mathbb{R}^N \to \mathbb{R}\)</span> is the objective function and <span class="math inline">\(g_i\)</span> and <span class="math inline">\(h_j\)</span> are constraints.</p>
+<p>We will mainly discuss optimisation without constraints here, although we note that the <code>R</code> function <code>optim</code> can deal with with box constraints if we choose the L-BFGS-B algorithm. The most common <code>R</code> function to deal with constrained optimisation problem is <code>constrOptim</code>.</p>
+<div id="one-dimensional-optimisation" class="section level1">
+<h1>One-Dimensional Optimisation</h1>
+<p>We start with the one-dimensional case where we can graph the function easily.</p>
+<pre class="r"><code>f = function(x) cos(x) + cos(2*x) + sin(3*x)
+curve(f, from=0, to=2*pi)</code></pre>
+<p><img src="/sc1/optimization/numerical-optimization_files/figure-html/unnamed-chunk-1-1.png" width="672" /></p>
+<div id="the-optimize-function" class="section level2">
+<h2>The <code>optimize</code> function</h2>
+<p>We apply the base <code>R</code> function <code>optimize</code>, which only works on functions of one variable, to this function:</p>
+<pre class="r"><code>optimize(f, interval=c(0, 2*pi))</code></pre>
+<pre><code>## $minimum
+## [1] 3.817878
+## 
+## $objective
+## [1] -1.460318</code></pre>
+<p>We see that the <code>optimize</code> function finds a local minimum at 3.82, but not the global minimum between 0 and <span class="math inline">\(2\pi\)</span> at 1.65. If we change the search interval to <span class="math inline">\((0,1.5\pi)\)</span>, however, <code>optimize</code> does find the global minimum at 1.65, even though 3.82 is in <span class="math inline">\((0,1.5\pi)\)</span>.</p>
+<pre class="r"><code>optimize(f, interval=c(0, 1.5*pi))</code></pre>
+<pre><code>## $minimum
+## [1] 1.648064
+## 
+## $objective
+## [1] -2.038528</code></pre>
+<p>It seems using <code>optimize</code> is a hit or miss affair even with a simple function as above. What algorithm is behind this function? According to the documentation, the method is based on golden section search, which is known to work well for a uni-modal function where the minimum is within the search interval. If the search interval contains multiple extrema, the golden search algorithm will converge to one of these extrema. But a plus is that no evaluation of derivatives is necessary.</p>
+<p>We can also specify a paramter <code>tol</code> for <code>optimize</code>, which will stop the search once tolerance is reached.</p>
+<pre class="r"><code>optimize(f, interval=c(0,1.5*pi), tol=1e-2)</code></pre>
+<pre><code>## $minimum
+## [1] 1.646619
+## 
+## $objective
+## [1] -2.038514</code></pre>
+</div>
+<div id="newtons-method" class="section level2">
+<h2>Newton’s Method</h2>
+<p>Also known as the Newton-Raphson method, Newton’s method aims to find the root of a function <span class="math inline">\(g\)</span>. If we assume <span class="math inline">\(g\)</span> has a Taylor expansion at <span class="math inline">\(x_0\)</span>, then
+<span class="math display">\[ g(x) \approx g(x_0) + g&#39;(x_0) (x-x_0). \]</span>
+Setting this to 0 yields
+<span class="math display">\[ 0 = g(x_0) + g&#39;(x_0) (x-x_0) \\
+  -g(x_0) = g&#39;(x_0) (x-x_0) \\
+  x = x_0 - \frac{g(x_0)}{g&#39;(x_0)}.
+\]</span>
+The idea of Newton is simply to iteratively apply the formula
+<span class="math display">\[ x \leftarrow x - \frac{g(x)}{g&#39;(x)}. \]</span>
+There is a nice animation on <a href="https://en.wikipedia.org/wiki/Newton%27s_method#Description">wikipedia</a> to show how Newton’s method works.</p>
+<p>In order to apply it to the optimisation problem, we solve for <span class="math inline">\(f&#39;(x)=0\)</span>.</p>
+<pre class="r"><code>f_sym = expression(cos(x) + cos(2*x) + sin(3*x))
+f1_sym = D(f_sym, &#39;x&#39;); f1 = function(x) eval(f1_sym)
+f2_sym = D(f1_sym, &#39;x&#39;); f2 = function(x) eval(f2_sym)
+x = 2
+for (i in 1:6) {
+  x = x - f1(x) / f2(x); cat(x, &#39;\n&#39;)
+}</code></pre>
+<pre><code>## 1.371591 
+## 1.686732 
+## 1.647531 
+## 1.648062 
+## 1.648062 
+## 1.648062</code></pre>
+<pre class="r"><code>x = 1
+for (i in 1:6) {
+  x = x - f1(x) / f2(x); cat(x, &#39;\n&#39;)
+}</code></pre>
+<pre><code>## -37.61615 
+## -37.2677 
+## -37.35961 
+## -37.3609 
+## -37.3609 
+## -37.3609</code></pre>
+<p>As one can see, if the initial guess is somewhat close to a local minimum, then convergence to that minimum is rapid. But if the initial guess is not that close (which is hard to know before hand), then the value Newton’s method converges to seems to be quite willful. Let’s see what the function is like near -37:</p>
+<pre class="r"><code>curve(f, from=-40, to=-30)</code></pre>
+<p><img src="/sc1/optimization/numerical-optimization_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<p>It seems -37.36 is a local maximum, which is not surprising since Newton’s method doesn’t distinguish between mimima and maxima. Another downside of Newton’s method is the requirement of second derivatives, which may not be available all the time.</p>
+<p>One dimensional optimisation problems should be easy, but as we have seen, even these “easy”&quot; problems can be troublesome for algorithms if we simply apply them blindly.</p>
+</div>
+</div>
+<div id="multi-dimensional-optimisation" class="section level1">
+<h1>Multi-dimensional Optimisation</h1>
+<p>Most optimisation problems we will encounter will be multi-dimensional. I will divide common optimisation algorithms into three categories:</p>
+<ul>
+<li>Simplex methods – only uses the value of the function</li>
+<li>Gradient type methods – uses the value of the function and its gradient vector</li>
+<li>Newton type methods – uses the value of the function, its gradient vector, and its Hessian matrix (or an approximation)</li>
+</ul>
+<p>There are two main functions for multi-dimensional optimisation in <code>R</code>, <code>nlm</code> (non-linear minimisation), which uses a Newton-type algorithm, and <code>optim</code>, which has a choice of algorithms: Nelder-Mead, BFGS (Broyden, Fletcher, Goldfarb and Shanno), CG (conjugate gradient), L-BFGS-B (Byrd et al’s version of BFGS that is has low memory requirements and allows box constraints), SANN (simulated annealing), and Brent (use the one-dimensional <code>optimize</code> function discussed previously).</p>
+<div id="simplex-methods" class="section level2">
+<h2>Simplex methods</h2>
+<p>Also known as the downhill simplex method, the Nelder-Mead algorithm is the most well-known simplex method. It is a direct search method based on comparing values of the function at various points. Its advantage is that it does not need to compute any derivatives. Its disadvantages are: the method is heuristic, it only converges to local minima, it may converge to non-stationary points, and it is reputed to be slow. The general idea is to start with a simplex (a polytope with <span class="math inline">\(n+1\)</span> vertices in <span class="math inline">\(n\)</span> dimensions, so a triangle in <span class="math inline">\(\mathbb{R}^2\)</span>) then reflect, expand, contract, or shrink the simplex depending on values of the functions at vertices of this simplex.</p>
+</div>
+<div id="gradient-type-methods" class="section level2">
+<h2>Gradient type methods</h2>
+<p>The most well known gradient type method is the steepest descent (also known as gradient descent) algorithm. In order to minimise a differentiable multi-variable function <span class="math inline">\(f(x)\)</span>, <span class="math inline">\(x\in\mathbb{R}^n\)</span>, we iteratively take <span class="math display">\[x \leftarrow x - \gamma \nabla f(x)\]</span> where <span class="math inline">\(\gamma\)</span> is small, i.e. we take a small step where the value of <span class="math inline">\(f\)</span> is decreasing the fastest. We can choose <span class="math inline">\(\gamma\)</span> by conducting a line-search to ensure the value of <span class="math inline">\(f\)</span> is decreasing as fast as possible.</p>
+<p>This relatively simple (both conceptually and in terms of ease of programming) method is known to relatively slow and can <a href="https://en.wikipedia.org/wiki/Gradient_descent#Examples">zigzag</a> (if applied to e.g. the Rosenbrock function). Neither <code>optim</code> nor <code>nlm</code> uses the steepest descent algorithm.</p>
+<p>A well-known improved gradient type method is the conjugate gradient (CG) algorithm. The main idea is that the search direction at each step should be conjugate toward search directions at previous step, so one avoids zigzag of classic steepest descent. In fact, if the function to be minimised is quadratic, then the conjugate gradient algorithm is guaranteed to reach the minimum in exactly <span class="math inline">\(n\)</span> steps if the input to the function is <span class="math inline">\(n\)</span>-dimensional (ignoring numerical errors). The conjugate gradient tend to perform better than the classical steepest descent even on general nonlinear functions, but not as well as Newton type methods.</p>
+</div>
+<div id="newton-type-methods" class="section level2">
+<h2>Newton type methods</h2>
+<p>Recall that with Newton’s method for one-dimensional functions, we need the first two derivatives of the function we try to minimize. For multi-dimensional function, Newton’s method becomes <span class="math display">\[x \leftarrow x - [Hf(x)]^{-1} \nabla f(x),\]</span> where we need to compute the matrix inverse of the Hessian, which can be expensive for multi-dimensional problems since the Hessian matrix may be very large. Numerically computing the inverse of the Hessian matrix is in any case undesirable. Quasi-Newton methods aim to replace the inverse Hessian matrix by a reasonable estimate.</p>
+<p>The most common quasi-Newton method is BFGS and its close relative L-BFGS. Details regarding the BFGS algorithm can be found on <a href="https://en.wikipedia.org/wiki/Broyden%E2%80%93Fletcher%E2%80%93Goldfarb%E2%80%93Shanno_algorithm">wikipedia</a>, where <span class="math inline">\(B_k\)</span> is an approximation to the Hessian matrix and its inverse is never computed. Rather, <span class="math inline">\(B_{k+1}^{-1}\)</span> is computed using <span class="math inline">\(B_k^{-1}\)</span>, without performing an explicit matrix inversion.</p>
+<p>The BFGS algorithm will store both <span class="math inline">\(B_k\)</span> and <span class="math inline">\(B_k^{-1}\)</span>, which are likely to be dense matrices. This causes memory problems when the dimension is higher than say 1000. The low memory version of BFGS, L-BFGS, solves this problem by storing a few vectors (rather than the full approximate Hessian matrix and its inverse) that represents <span class="math inline">\(B_k\)</span>.</p>
+</div>
+<div id="simulated-annealing" class="section level2">
+<h2>Simulated Annealing</h2>
+<p>Unlike the three types of techniques we have discussed so far, simulated annealing is supposed to be able to find the global minimum of a function. But it is slow and often fails to find the global minimum in any case. On the plus side, it only uses the value of the fuction, just like the simplex method. The implementation in <code>optim</code> uses a Metropolis function for the acceptance probability.</p>
+<p>Generally speaking, Newton type methods perform better than gradient type methods, but conjugate gradient falls somewhere between steepest descent and Newton type methods. If it were easy for simulated annealing to find the global minimum of a function, there would be no need for any other optimisation techniques. The fact that there are a plethora of optimisation algorithms says at least something about the efficacy of simulated annealing.</p>
+</div>
+</div>
+<div id="nonlinear-least-squares-problems" class="section level1">
+<h1>Nonlinear least squares problems</h1>
+<p>Assume we have a dataset <span class="math inline">\((x_1,y_1),(x_2,y_2), \ldots, (x_m,y_m)\)</span> and a model <span class="math inline">\(y=f(x,\beta)\)</span> where <span class="math inline">\(\beta=(\beta_1,\beta_2,\ldots,\beta_n)\)</span> are parameters of the model <span class="math inline">\(f\)</span>. We define residuals to be <span class="math display">\[r_i(\beta) = y_i - f(x_i,\beta).\]</span> In a nonlinear least squares problem, we aim to find <span class="math inline">\(\beta\)</span> such that the sum of squares of residuals is minimised: <span class="math display">\[\arg\min_\beta \sum_{i=1}^m r_i^2 = \arg\min_\beta \sum_{i=1}^m (y_i - f(x_i,\beta))^2.\]</span> A subclass of optimisation algorithms work just for nonlinear least squares problems. We briefly discuss the two most famous examples: the Gauss-Newton algorithm and the Levenberg-Marquardt algorithm.</p>
+<p>The Gauss-Newton algorithm is a closely related to Newton’s method for general optimisation problems. The difference (improvement) is that the Gauss-newton algorithm approximates the Hessian matrix of the objective function <span class="math inline">\(\sum_{i=1}^m (y_i - f(x_i,\beta))^2\)</span> using Jacobian matrix <span class="math inline">\(J_r\)</span> of the residue function, i.e. it pretends the Hessian matrix is <span class="math inline">\(2J_t^t J_r\)</span>, which may or may not be invertible: <span class="math display">\[ \beta \leftarrow \beta - (J_r^t J_r)^{-1} J_r^t r(\beta).\]</span> This works well in practice but is not guaranteed to converge (at least theoretically).</p>
+<p>The Levenberg-Marquardt algorithm address this problem by damping. It pretends the Hessian matrix is <span class="math inline">\(2(J_r^t J_r + \lambda I)\)</span>, where <span class="math inline">\(\lambda\)</span> is a small damping parameter and <span class="math inline">\(I\)</span> is the identity matrix: <span class="math display">\[\beta \leftarrow \beta - (J_r^t J_r + \lambda I)^{-1} J_r^t r(\beta).\]</span> We note that if <span class="math inline">\(\lambda=0\)</span> then we obtain the Gauss-Newton algorithm. But if <span class="math inline">\(\lambda\)</span> is large, then we obtain the steepest descent algorithm. Therefore we would like to use a <span class="math inline">\(\lambda\)</span> that is as small as possible but does not cause numerical stability issues. A useful strategy is to reduce <span class="math inline">\(\lambda\)</span> at every iteration as long as the squared residue is decreased, but increasing <span class="math inline">\(\lambda\)</span> sufficiently to ensure the squared residue does not increase. The matrix <span class="math inline">\(J_r^t J_r + \lambda I\)</span> is guaranteed to be invertible for at least some <span class="math inline">\(\lambda\)</span>.</p>
+</div>
+<div id="stochastic-gradient-descent" class="section level1">
+<h1>Stochastic Gradient Descent</h1>
+<p>Methods such as BFGS and Levenberg-Marquardt are highly efficient but they compute the gradient vectors taking into account all of the dataset. Such methods are known as batch methods. In many big data applications, however, the dataset can be too large to hold in computer memory at the same time. This is the main motivation behind stochastic gradient descent (SGD), which changes the parameter in the negative gradient direction taking into account only a few data samples. SGD is especially popular for the training of neural networks, where the full back propagation over the full training set can be very expensive computationally.</p>
+<p>In the simplest form, SGD takes on the following form: <span class="math display">\[\beta \leftarrow \beta - \gamma r_i \nabla r_i(\beta),\]</span> where <span class="math inline">\(i\)</span> cycles through all data points in a deterministic or random fashion. One can also combine a number of data samples into “minibatches” and update the parameter <span class="math inline">\(\beta\)</span> using samples in each minibatch.</p>
+</div>
+
+
+  <footer>
+  
+
+<script src="//yihui.name/js/math-code.js"></script>
+<script async src="//mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+<script async src="//yihui.name/js/center-img.js"></script>
+
+
+<script type="text/javascript">
+var sc_project=12110974;
+var sc_invisible=1;
+var sc_security="9b171880";
+</script>
+<script type="text/javascript"
+src="https://www.statcounter.com/counter/counter.js"
+async></script>
+<noscript><div class="statcounter"><a title="Web Analytics"
+href="https://statcounter.com/" target="_blank"><img
+class="statcounter"
+src="https://c.statcounter.com/12110974/0/9b171880/1/"
+alt="Web Analytics"></a></div></noscript>
+
+
+
+
+
+
+
+
+  
+
+
+<p align=right>
+
+<a href='https://github.com/awllee/sc1/blob/master/content/optimization/numerical-optimization.Rmd'>View source</a>
+
+|
+
+<a href='https://github.com/awllee/sc1/edit/master/content/optimization/numerical-optimization.Rmd'>Edit source</a>
+
+</p>
+
+
+
+
+
+<script src="https://utteranc.es/client.js"
+        repo="awllee/sc1"
+        issue-term="pathname"
+        label="utterance"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script>
+
+
+
+  
+
+
+
+<script src="//cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+
+
+
+<script src="//cdn.bootcss.com/highlight.js/9.12.0/languages/r.min.js"></script>
+<script src="//cdn.bootcss.com/highlight.js/9.12.0/languages/yaml.min.js"></script>
+<script src="//cdn.bootcss.com/highlight.js/9.12.0/languages/tex.min.js"></script>
+<script>hljs.configure({languages: []}); hljs.initHighlightingOnLoad();</script>
+
+
+
+  
+  <hr>
+  <div class="copyright">© 2020 <a href="https://sites.google.com/view/anthonylee">Anthony Lee</a>, <a href="http://www.bristol.ac.uk/maths/people/feng-yu/index.html">Feng Yu</a>, <a href="https://people.maths.bris.ac.uk/~tk18582/">Tobias Kley</a>, <a href="https://mfasiolo.github.io/">Matteo Fasiolo</a></div>
+  
+  </footer>
+  </article>
+  
+  </body>
+</html>
+

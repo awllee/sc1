@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <title>Creating an R package - SC1</title>
+    <meta property="og:title" content="Creating an R package - SC1">
+    
+    <meta name="twitter:card" content="summary">
+
+    
+      
+    
+
+    
+      
+      <meta property="description" content="Creating a package in RStudio is straightforward. Just click
+File -&amp;gt; New Project -&amp;gt; New Directory -&amp;gt; R Package You can choose a name for your package, the parent directory for the package and &amp;hellip;">
+      <meta property="og:description" content="Creating a package in RStudio is straightforward. Just click
+File -&amp;gt; New Project -&amp;gt; New Directory -&amp;gt; R Package You can choose a name for your package, the parent directory for the package and &amp;hellip;">
+      
+    
+
+    
+    
+
+    
+
+    
+    
+
+
+<link href='//cdn.bootcss.com/highlight.js/9.12.0/styles/github.min.css' rel='stylesheet' type='text/css' />
+
+
+
+    <link rel="stylesheet" href="/sc1/css/style.css" />
+    <link rel="stylesheet" href="/sc1/css/fonts.css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Arvo">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Marcellus">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Code+Pro">
+
+<link rel="stylesheet" href="/sc1/css/custom.css" />
+
+<link rel="icon" href="/sc1/favicon.ico" type="image/x-icon" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<nav class="breadcrumbs">
+    
+        <a href="https://awllee.github.io/sc1/">home / </a>
+    
+        <a href="https://awllee.github.io/sc1/packages/">packages / </a>
+    
+        <a href="https://awllee.github.io/sc1/packages/package/">package / </a>
+    
+</nav>
+
+  </head>
+
+  
+  <body class="sc1">
+    <header class="masthead">
+      <h1><a href="/sc1/">SC1</a></h1>
+
+<p class="tagline">Statistical Computing 1</p>
+
+      <nav class="menu">
+  <input id="menu-check" type="checkbox" />
+  <label id="menu-label" for="menu-check" class="unselectable">
+    <span class="icon close-icon">✕</span>
+    <span class="icon open-icon">☰</span>
+    <span class="text">Menu</span>
+  </label>
+  <ul>
+  
+  
+  <li><a href="/sc1/">Home</a></li>
+  
+  <li><a href="/sc1/intro-r/">Intro to R</a></li>
+  
+  <li><a href="/sc1/reproducibility/">Reproducibility</a></li>
+  
+  <li><a href="/sc1/common-r/">Common R</a></li>
+  
+  <li><a href="/sc1/tidyverse/">Tidyverse</a></li>
+  
+  <li><a href="/sc1/packages/">Packages</a></li>
+  
+  <li><a href="/sc1/functional-oo/">Functional / OO</a></li>
+  
+  <li><a href="/sc1/profile-debug/">Performance / Bugs</a></li>
+  
+  <li><a href="/sc1/matrices/">Matrices</a></li>
+  
+  <li><a href="/sc1/optimization/">Optimization</a></li>
+  
+  <li><a href="/sc1/integration/">Integration</a></li>
+  
+  
+  </ul>
+</nav>
+
+    </header>
+
+    <article class="main">
+      <header class="title">
+      
+<h1>Creating an R package</h1>
+
+<h3>
+</h3>
+<hr>
+
+
+      </header>
+
+
+
+<p>Creating a package in RStudio is straightforward. Just click</p>
+<pre><code>File -&gt; New Project -&gt; New Directory -&gt; R Package
+</code></pre><p>You can choose a name for your package, the parent directory for the package and whether or not you want to also initialize an empty git repository.</p>
+<p>The package will be populated with various files and folders.</p>
+<h2 id="package-structure">Package structure</h2>
+<pre><code>package/
+├── DESCRIPTION
+├── LICENSE
+├── LICENSE.md
+├── NAMESPACE
+├── R
+├── man
+└── tests
+</code></pre><h2 id="edit-description">Edit DESCRIPTION</h2>
+<ul>
+<li>Add license, e.g. GPL-2, GPL-3, GPL-2 | GPL-3, or MIT + file LICENSE</li>
+<li>Add LICENSE.md with actual license so it&rsquo;s easy to read on GitHub</li>
+<li>Add LICENSE.md to .Rbuildignore</li>
+<li>Add title, author (you), maintainer (you) and description.</li>
+<li>Add version, perhaps using <a href="https://semver.org/">semantic versioning</a>.</li>
+</ul>
+<h2 id="documentation-and-exporting-functions">Documentation and exporting functions</h2>
+<p>Make sure you have the <code>devtools</code> package installed.</p>
+<p>You can add automatic documentation building in RStudio by checking <code>Build -&gt; Configure Build Tools... -&gt; Generate documentation with Roxygen</code>. Otherwise, you can run devtools::document() when you want to create the documentation.</p>
+<p>In RStudio, you can add skeleton documentation to each function you want to export by placing your cursor on the function and clicking <code>Code -&gt; Insert Roxygen skeleton</code>. Then you can provide additional information, which will show up in help documentation for that function. This is accomplished by automatically creating <code>.Rd</code> files in the <code>man</code> folder.</p>
+<p>The documentation builder also creates/overwrites the NAMESPACE file, which specifies which functions are exported by the package (via <code>@export</code>). This file is not overwritten by Roxygen if it was not created by Roxygen, so you may have to delete it if it exists.</p>
+<h2 id="testing">Testing</h2>
+<p>Package functions should meet certain criteria. One can check that they meet these criteria by writing test functions that only &ldquo;pass&rdquo; if the criteria are met.</p>
+<p>In many cases, developers write informal test scripts that they run while working on a particular piece of functionality. When the functionality they are working on is &ldquo;complete&rdquo;, they then commit their code changes and often never test the functionality again unless a bug appears later.</p>
+<p>Test suites are a mechanism for ensuring that code changes do not break existing functionality that is measured by the test suite. They involve retaining test scripts that are run collectively as part of a suite after changes have been made to code. In practice, this can be very helpful for preventing bugs. Moreover, once a test suite has been designed, running it usually takes very little programmer effort.</p>
+<p>To begin testing, install the &ldquo;testthat&rdquo; R package and then run <code>usethis::use_test(&quot;&lt;name&gt;&quot;)</code>. This will create a <code>tests</code> directory and populate it. You can add tests to the created file <code>tests/test-&lt;name&gt;.R</code>, or create more test files.</p>
+<p>Tests in the <code>tests/test-&lt;name&gt;.R</code> will often be of the form</p>
+<pre><code>test_that(&quot;&lt;feature name&gt;&quot;, {
+  expect_equal(a, b)
+  expect_true(c &gt;= 1)
+})
+</code></pre><p>There is more information on various different <code>expect_</code> functions in the <a href="https://r-pkgs.org/tests.html">R Packages</a> book. For example, you can test that some code produces an error or a warning, or that something will be printed.</p>
+<p>You can run tests from the Build pane or via <code>devtools::test()</code>.</p>
+<p>There are many different approaches to testing. Some people do not routinely test their code, while some others adopt a very <a href="https://en.wikipedia.org/wiki/Test-driven_development">test-centric view of development</a>. For collaborative projects, tests can be run automatically whenever a pull request is made to ensure that modified code passes all tests: this can ease the burden of code review and ensure that tests are <em>always</em> passing on the relevant branch (e.g. <code>master</code>).</p>
+<h2 id="coverage">Coverage</h2>
+<p>Routine testing is useful for checking that changes in code do not break existing functionality, as measured by the test suite. However, there may be many lines of code that are not tested, and it is possible that these lines of code contain bugs, or even cause serious errors whenever they are run.</p>
+<p>One way to mitigate this issue, is to use automated tools for checking which lines of code have been run during the automated tests, i.e. by computing <a href="https://en.wikipedia.org/wiki/Code_coverage">code coverage</a>. This is very easy to do with R packages.</p>
+<p>Begin by installing the &ldquo;covr&rdquo; package, if it is not already installed. Then run</p>
+<pre><code>covr::report()
+</code></pre><p>A simple report with code coverage for each file will appear in R&rsquo;s viewer pane. File names can be clicked to see how many times each line is covered.</p>
+<p>Code coverage tools only tell us which lines are covered. When lines are not covered, one might introduce new tests to cover additional lines. In general, more coverage is better, but it is not uncommon for large projects to have less than 100% coverage.</p>
+<h2 id="example-package">Example package</h2>
+<p>An example R package can be found <a href="https://github.com/awllee/SC1ExamplePackage">here</a>.</p>
+<p>You can install a package from GitHub in R via</p>
+<pre><code>devtools::install_github(&quot;https://github.com/awllee/SC1ExamplePackage&quot;)
+</code></pre><p>This is why the git repository includes computer-generated content, specifically <code>NAMESPACE</code> and the <code>man</code> folder.</p>
+
+
+  <footer>
+  
+
+<script src="//yihui.name/js/math-code.js"></script>
+<script async src="//mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+<script async src="//yihui.name/js/center-img.js"></script>
+
+
+<script type="text/javascript">
+var sc_project=12110974;
+var sc_invisible=1;
+var sc_security="9b171880";
+</script>
+<script type="text/javascript"
+src="https://www.statcounter.com/counter/counter.js"
+async></script>
+<noscript><div class="statcounter"><a title="Web Analytics"
+href="https://statcounter.com/" target="_blank"><img
+class="statcounter"
+src="https://c.statcounter.com/12110974/0/9b171880/1/"
+alt="Web Analytics"></a></div></noscript>
+
+
+
+
+
+
+
+
+  
+
+
+<p align=right>
+
+<a href='https://github.com/awllee/sc1/blob/master/content/packages/package.md'>View source</a>
+
+|
+
+<a href='https://github.com/awllee/sc1/edit/master/content/packages/package.md'>Edit source</a>
+
+</p>
+
+
+
+
+
+<script src="https://utteranc.es/client.js"
+        repo="awllee/sc1"
+        issue-term="pathname"
+        label="utterance"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script>
+
+
+
+  
+
+
+
+<script src="//cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+
+
+
+<script src="//cdn.bootcss.com/highlight.js/9.12.0/languages/r.min.js"></script>
+<script src="//cdn.bootcss.com/highlight.js/9.12.0/languages/yaml.min.js"></script>
+<script src="//cdn.bootcss.com/highlight.js/9.12.0/languages/tex.min.js"></script>
+<script>hljs.configure({languages: []}); hljs.initHighlightingOnLoad();</script>
+
+
+
+  
+  <hr>
+  <div class="copyright">© 2020 <a href="https://sites.google.com/view/anthonylee">Anthony Lee</a>, <a href="http://www.bristol.ac.uk/maths/people/feng-yu/index.html">Feng Yu</a>, <a href="https://people.maths.bris.ac.uk/~tk18582/">Tobias Kley</a>, <a href="https://mfasiolo.github.io/">Matteo Fasiolo</a></div>
+  
+  </footer>
+  </article>
+  
+  </body>
+</html>
+

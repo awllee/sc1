@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <title>Projects: organizing your code - SC1</title>
+    <meta property="og:title" content="Projects: organizing your code - SC1">
+    
+    <meta name="twitter:card" content="summary">
+
+    
+      
+    
+
+    
+      
+      <meta property="description" content="RStudio has a nice interface for programming in R. You may have only been using it to create R scripts / RMarkdown files and execute / render them.
+It is generally a good idea to keep code for a &amp;hellip;">
+      <meta property="og:description" content="RStudio has a nice interface for programming in R. You may have only been using it to create R scripts / RMarkdown files and execute / render them.
+It is generally a good idea to keep code for a &amp;hellip;">
+      
+    
+
+    
+    
+
+    
+
+    
+    
+
+
+<link href='//cdn.bootcss.com/highlight.js/9.12.0/styles/github.min.css' rel='stylesheet' type='text/css' />
+
+
+
+    <link rel="stylesheet" href="/sc1/css/style.css" />
+    <link rel="stylesheet" href="/sc1/css/fonts.css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Arvo">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Marcellus">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Code+Pro">
+
+<link rel="stylesheet" href="/sc1/css/custom.css" />
+
+<link rel="icon" href="/sc1/favicon.ico" type="image/x-icon" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<nav class="breadcrumbs">
+    
+        <a href="https://awllee.github.io/sc1/">home / </a>
+    
+        <a href="https://awllee.github.io/sc1/packages/">packages / </a>
+    
+        <a href="https://awllee.github.io/sc1/packages/project/">project / </a>
+    
+</nav>
+
+  </head>
+
+  
+  <body class="sc1">
+    <header class="masthead">
+      <h1><a href="/sc1/">SC1</a></h1>
+
+<p class="tagline">Statistical Computing 1</p>
+
+      <nav class="menu">
+  <input id="menu-check" type="checkbox" />
+  <label id="menu-label" for="menu-check" class="unselectable">
+    <span class="icon close-icon">✕</span>
+    <span class="icon open-icon">☰</span>
+    <span class="text">Menu</span>
+  </label>
+  <ul>
+  
+  
+  <li><a href="/sc1/">Home</a></li>
+  
+  <li><a href="/sc1/intro-r/">Intro to R</a></li>
+  
+  <li><a href="/sc1/reproducibility/">Reproducibility</a></li>
+  
+  <li><a href="/sc1/common-r/">Common R</a></li>
+  
+  <li><a href="/sc1/tidyverse/">Tidyverse</a></li>
+  
+  <li><a href="/sc1/packages/">Packages</a></li>
+  
+  <li><a href="/sc1/functional-oo/">Functional / OO</a></li>
+  
+  <li><a href="/sc1/profile-debug/">Performance / Bugs</a></li>
+  
+  <li><a href="/sc1/matrices/">Matrices</a></li>
+  
+  <li><a href="/sc1/optimization/">Optimization</a></li>
+  
+  <li><a href="/sc1/integration/">Integration</a></li>
+  
+  
+  </ul>
+</nav>
+
+    </header>
+
+    <article class="main">
+      <header class="title">
+      
+<h1>Projects: organizing your code</h1>
+
+<h3>
+</h3>
+<hr>
+
+
+      </header>
+
+
+
+<p>RStudio has a nice interface for programming in R. You may have only been using it to create R scripts / RMarkdown files and execute / render them.</p>
+<p>It is generally a good idea to keep code for a &ldquo;project&rdquo; in one place. RStudio can help with this by letting you create a &ldquo;Project&rdquo;, which is little more than a directory with files in it. Opening a project in RStudio automatically sets R&rsquo;s working directory to that directory.</p>
+<h2 id="project-structure">Project structure</h2>
+<p>The structure of the files in a project should of course be dictated by the purpose of the project. However, the following top-level folder structure is often used:</p>
+<pre><code>project/
+├── R/
+├── README.md
+├── data/
+├── doc/
+└── output/
+</code></pre><ul>
+<li>R scripts containing functions are in the <code>R</code> folder. These are usually <em>not</em> organized in subdirectories.</li>
+<li><code>README.md</code> describes the project.</li>
+<li>data is in the <code>data</code> folder. One might have a <code>raw</code> subdirectory for raw data that is never modified, and a <code>processed</code> subdirectory for processed data used in the analysis. The processed data should be produced by an R function.</li>
+<li>documentation is in the <code>doc</code> folder, e.g. this could be the source files for an academic paper written based on the analysis of the data.</li>
+<li>the results of applying R functions to the data are in the <code>output</code> folder. The contents of this folder should be easy to reproduce. A subdirectory might hold figures or tables produced for visualization purposes.</li>
+</ul>
+<p>A specific project may require additional folders. For example, in some cases it is useful to write some C or C++ code for performance reasons, and this code would normally reside in a <code>src/</code> folder. One popular way to incorporate C++ code is through the <a href="http://www.rcpp.org/">Rcpp package</a>.</p>
+<p>If your R code is complicated enough, you may want to add a <code>tests</code> folder with test scripts that you can run automatically to check that the functions do what you expect them to do. In some such cases, you might wish to convert your project into a package to take advantage of various tools that work with packages.</p>
+<h2 id="loading-code-from-files-and-packages">Loading code from files and packages</h2>
+<p>When code is split across multiple files, there needs to be a mechanism to load it. For R projects and scripts, one can use the <code>source</code> command. For example, one could load the code in the &ldquo;algorithms.R&rdquo; file in the &ldquo;R&rdquo; directory.</p>
+<pre><code>source(&quot;R/algorithms.R&quot;)
+</code></pre><p>To use an R package, one uses the <code>library</code> or <code>requires</code> command. For example, one could load the Matrix package, which has support for some sparse matrix computations.</p>
+<pre><code>library(Matrix)
+</code></pre><h2 id="example-project">Example project</h2>
+<p>An example R project can be found <a href="https://github.com/awllee/SC1ExampleProject">here</a>. You can clone it and knit the RMarkdown document if you like.</p>
+
+
+  <footer>
+  
+
+<script src="//yihui.name/js/math-code.js"></script>
+<script async src="//mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+<script async src="//yihui.name/js/center-img.js"></script>
+
+
+<script type="text/javascript">
+var sc_project=12110974;
+var sc_invisible=1;
+var sc_security="9b171880";
+</script>
+<script type="text/javascript"
+src="https://www.statcounter.com/counter/counter.js"
+async></script>
+<noscript><div class="statcounter"><a title="Web Analytics"
+href="https://statcounter.com/" target="_blank"><img
+class="statcounter"
+src="https://c.statcounter.com/12110974/0/9b171880/1/"
+alt="Web Analytics"></a></div></noscript>
+
+
+
+
+
+
+
+
+  
+
+
+<p align=right>
+
+<a href='https://github.com/awllee/sc1/blob/master/content/packages/project.md'>View source</a>
+
+|
+
+<a href='https://github.com/awllee/sc1/edit/master/content/packages/project.md'>Edit source</a>
+
+</p>
+
+
+
+
+
+<script src="https://utteranc.es/client.js"
+        repo="awllee/sc1"
+        issue-term="pathname"
+        label="utterance"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script>
+
+
+
+  
+
+
+
+<script src="//cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+
+
+
+<script src="//cdn.bootcss.com/highlight.js/9.12.0/languages/r.min.js"></script>
+<script src="//cdn.bootcss.com/highlight.js/9.12.0/languages/yaml.min.js"></script>
+<script src="//cdn.bootcss.com/highlight.js/9.12.0/languages/tex.min.js"></script>
+<script>hljs.configure({languages: []}); hljs.initHighlightingOnLoad();</script>
+
+
+
+  
+  <hr>
+  <div class="copyright">© 2020 <a href="https://sites.google.com/view/anthonylee">Anthony Lee</a>, <a href="http://www.bristol.ac.uk/maths/people/feng-yu/index.html">Feng Yu</a>, <a href="https://people.maths.bris.ac.uk/~tk18582/">Tobias Kley</a>, <a href="https://mfasiolo.github.io/">Matteo Fasiolo</a></div>
+  
+  </footer>
+  </article>
+  
+  </body>
+</html>
+

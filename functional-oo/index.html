@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <title>Functional and object-oriented programming - SC1</title>
+    <meta property="og:title" content="Functional and object-oriented programming - SC1">
+    
+    <meta name="twitter:card" content="summary">
+
+    
+      
+    
+
+    
+      
+      <meta property="description" content="Like many programming languages for scientific computation, R supports multiple programming paradigms.
+Programming paradigms, roughly speaking, describe ways in which one can structure and ultimately &amp;hellip;">
+      <meta property="og:description" content="Like many programming languages for scientific computation, R supports multiple programming paradigms.
+Programming paradigms, roughly speaking, describe ways in which one can structure and ultimately &amp;hellip;">
+      
+    
+
+    
+    
+
+    
+
+    
+    <link href="/sc1/functional-oo/index.xml" rel="alternate" type="application/rss+xml" title="SC1" />
+    
+    
+
+    <link rel="stylesheet" href="/sc1/css/style.css" />
+    <link rel="stylesheet" href="/sc1/css/fonts.css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Arvo">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Marcellus">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Code+Pro">
+
+<link rel="stylesheet" href="/sc1/css/custom.css" />
+
+<link rel="icon" href="/sc1/favicon.ico" type="image/x-icon" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<nav class="breadcrumbs">
+    
+        <a href="https://awllee.github.io/sc1/">home / </a>
+    
+        <a href="https://awllee.github.io/sc1/functional-oo/">functional-oo / </a>
+    
+</nav>
+
+  </head>
+
+  
+  <body class="sc1">
+    <header class="masthead">
+      <h1><a href="/sc1/">SC1</a></h1>
+
+<p class="tagline">Statistical Computing 1</p>
+
+      <nav class="menu">
+  <input id="menu-check" type="checkbox" />
+  <label id="menu-label" for="menu-check" class="unselectable">
+    <span class="icon close-icon">✕</span>
+    <span class="icon open-icon">☰</span>
+    <span class="text">Menu</span>
+  </label>
+  <ul>
+  
+  
+  <li><a href="/sc1/">Home</a></li>
+  
+  <li><a href="/sc1/intro-r/">Intro to R</a></li>
+  
+  <li><a href="/sc1/reproducibility/">Reproducibility</a></li>
+  
+  <li><a href="/sc1/common-r/">Common R</a></li>
+  
+  <li><a href="/sc1/tidyverse/">Tidyverse</a></li>
+  
+  <li><a href="/sc1/packages/">Packages</a></li>
+  
+  <li class="active"><a href="/sc1/functional-oo/">Functional / OO</a></li>
+  
+  <li><a href="/sc1/profile-debug/">Performance / Bugs</a></li>
+  
+  <li><a href="/sc1/matrices/">Matrices</a></li>
+  
+  <li><a href="/sc1/optimization/">Optimization</a></li>
+  
+  <li><a href="/sc1/integration/">Integration</a></li>
+  
+  
+  </ul>
+</nav>
+
+    </header>
+
+    <article class="main">
+      <header class="title">
+      
+<h1>Functional and object-oriented programming</h1>
+
+<h3>
+</h3>
+<hr>
+
+
+      </header>
+
+
+<p>Like many programming languages for scientific computation, R supports multiple <a href="https://en.wikipedia.org/wiki/Programming_paradigm">programming paradigms</a>.</p>
+<p>Programming paradigms, roughly speaking, describe ways in which one can structure and ultimately write larger programs. There are two main approaches to programming: imperative and declarative.</p>
+<p>In an imperative approach, one defines a sequence of instructions that modify the &ldquo;state&rdquo; of the program. This is quite natural when one considers that most computer hardware ultimately requires programs to be translated into machine code: specific instructions that read and write from registers and memory, perform arithmetic operations on the contents of registers, jump to various instructions in the machine code, etc. A high-level, imperative language abstracts away some of that tedious detail while retaining the feature that a program is a sequence of explicit instructions.</p>
+<p>Object-oriented programming falls into the imperative paradigm. Objects combine state and methods together, and programs are defined via the construction of objects and interaction between objects.</p>
+<p>In a declarative approach, roughly speaking, a sequence of operations is defined that determines what the output of the program should be. The precise details of how the sequence of operations will be reduced to primitive operations is left to the implementation of the language.</p>
+<p>Functional programming falls into the declarative paradigm. In a purely functional language, there is no program state and functions are practically identical to mathematical functions. One can view a program as a sequence of function applications.</p>
+
+
+
+<ul>
+    
+        <li>
+            <a href="/sc1/functional-oo/functional/"> Functional programming</a>
+        </li>
+    
+        <li>
+            <a href="/sc1/functional-oo/object-oriented/"> Object-oriented programming</a>
+        </li>
+    
+</ul>
+
+
+  <footer>
+  
+
+<script src="//yihui.name/js/math-code.js"></script>
+<script async src="//mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+<script async src="//yihui.name/js/center-img.js"></script>
+
+
+<script type="text/javascript">
+var sc_project=12110974;
+var sc_invisible=1;
+var sc_security="9b171880";
+</script>
+<script type="text/javascript"
+src="https://www.statcounter.com/counter/counter.js"
+async></script>
+<noscript><div class="statcounter"><a title="Web Analytics"
+href="https://statcounter.com/" target="_blank"><img
+class="statcounter"
+src="https://c.statcounter.com/12110974/0/9b171880/1/"
+alt="Web Analytics"></a></div></noscript>
+
+
+
+
+
+
+
+
+  
+
+
+<p align=right>
+
+<a href='https://github.com/awllee/sc1/blob/master/content/functional-oo/_index.md'>View source</a>
+
+|
+
+<a href='https://github.com/awllee/sc1/edit/master/content/functional-oo/_index.md'>Edit source</a>
+
+</p>
+
+
+
+
+
+
+  
+
+  
+  <hr>
+  <div class="copyright">© 2020 <a href="https://sites.google.com/view/anthonylee">Anthony Lee</a>, <a href="http://www.bristol.ac.uk/maths/people/feng-yu/index.html">Feng Yu</a>, <a href="https://people.maths.bris.ac.uk/~tk18582/">Tobias Kley</a>, <a href="https://mfasiolo.github.io/">Matteo Fasiolo</a></div>
+  
+  </footer>
+  </article>
+  
+  </body>
+</html>
+

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Numerical integration on SC1</title>
+    <link>https://awllee.github.io/sc1/integration/</link>
+    <description>Recent content in Numerical integration on SC1</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language><atom:link href="https://awllee.github.io/sc1/integration/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Quadrature</title>
+      <link>https://awllee.github.io/sc1/integration/quadrature/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://awllee.github.io/sc1/integration/quadrature/</guid>
+      <description>Polynomial interpolation Lagrange polynomials Polynomial interpolation error Composite polynomial interpolation Other polynomial interpolation schemes  Polynomial integration Changing the limits of integration Integrating the interpolating polynomial approximation Newton–Cotes rules Composite rules Gaussian quadrature Practical algorithms Multiple integrals Recursive algorithm The curse of dimensionality      Error analysis is the tithe that intelligence demands of action, but it is rarely paid.
+– Davis &amp;amp; Rabinowitz, Methods of Numerical Integration (1975), p.</description>
+    </item>
+    
+    <item>
+      <title>Monte Carlo integration</title>
+      <link>https://awllee.github.io/sc1/integration/monte-carlo/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://awllee.github.io/sc1/integration/monte-carlo/</guid>
+      <description>Monte Carlo with i.i.d. random variables Fundamental results Error and comparison with quadrature Perfect sampling Rejection sampling Importance sampling Self-normalized importance sampling  Markov chain Monte Carlo What is a Markov chain? LLN and CLT Basic definitions Metropolis–Hastings Algorithm Validity  Combining Markov kernels    Quadrature rules give excellent rates of convergence, in terms of computational cost, for one-dimensional integrals of sufficiently smooth functions. However, they quickly become prohibitively expensive in high-dimensional problems.</description>
+    </item>
+    
+  </channel>
+</rss>

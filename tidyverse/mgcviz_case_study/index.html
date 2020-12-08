@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <title>3. A ggplot2 case study: the mgcViz package - SC1</title>
+    <meta property="og:title" content="3. A ggplot2 case study: the mgcViz package - SC1">
+    
+    <meta name="twitter:card" content="summary">
+
+    
+      
+    
+
+    
+      
+      <meta property="description" content="As we said before, ggplot2 provides a powerful framework for building visualization libraries. The best way to see why this is the case, might be to examine a real example. Here we consider the mgcViz &amp;hellip;">
+      <meta property="og:description" content="As we said before, ggplot2 provides a powerful framework for building visualization libraries. The best way to see why this is the case, might be to examine a real example. Here we consider the mgcViz &amp;hellip;">
+      
+    
+
+    
+    
+
+    
+
+    
+    
+
+
+<link href='//cdn.bootcss.com/highlight.js/9.12.0/styles/github.min.css' rel='stylesheet' type='text/css' />
+
+
+
+    <link rel="stylesheet" href="/sc1/css/style.css" />
+    <link rel="stylesheet" href="/sc1/css/fonts.css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Arvo">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Marcellus">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Code+Pro">
+
+<link rel="stylesheet" href="/sc1/css/custom.css" />
+
+<link rel="icon" href="/sc1/favicon.ico" type="image/x-icon" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<nav class="breadcrumbs">
+    
+        <a href="https://awllee.github.io/sc1/">home / </a>
+    
+        <a href="https://awllee.github.io/sc1/tidyverse/">tidyverse / </a>
+    
+        <a href="https://awllee.github.io/sc1/tidyverse/mgcviz_case_study/">mgcviz_case_study / </a>
+    
+</nav>
+
+  </head>
+
+  
+  <body class="sc1">
+    <header class="masthead">
+      <h1><a href="/sc1/">SC1</a></h1>
+
+<p class="tagline">Statistical Computing 1</p>
+
+      <nav class="menu">
+  <input id="menu-check" type="checkbox" />
+  <label id="menu-label" for="menu-check" class="unselectable">
+    <span class="icon close-icon">✕</span>
+    <span class="icon open-icon">☰</span>
+    <span class="text">Menu</span>
+  </label>
+  <ul>
+  
+  
+  <li><a href="/sc1/">Home</a></li>
+  
+  <li><a href="/sc1/intro-r/">Intro to R</a></li>
+  
+  <li><a href="/sc1/reproducibility/">Reproducibility</a></li>
+  
+  <li><a href="/sc1/common-r/">Common R</a></li>
+  
+  <li><a href="/sc1/tidyverse/">Tidyverse</a></li>
+  
+  <li><a href="/sc1/packages/">Packages</a></li>
+  
+  <li><a href="/sc1/functional-oo/">Functional / OO</a></li>
+  
+  <li><a href="/sc1/profile-debug/">Performance / Bugs</a></li>
+  
+  <li><a href="/sc1/matrices/">Matrices</a></li>
+  
+  <li><a href="/sc1/optimization/">Optimization</a></li>
+  
+  <li><a href="/sc1/integration/">Integration</a></li>
+  
+  
+  </ul>
+</nav>
+
+    </header>
+
+    <article class="main">
+      <header class="title">
+      
+<h1>3. A ggplot2 case study: the mgcViz package</h1>
+
+<h3>
+</h3>
+<hr>
+
+
+      </header>
+
+
+
+
+<link href="/sc1/rmarkdown-libs/anchor-sections/anchor-sections.css" rel="stylesheet" />
+<script src="/sc1/rmarkdown-libs/anchor-sections/anchor-sections.js"></script>
+
+
+<style>
+body {
+text-align: justify}
+</style>
+<p>As we said before, <code>ggplot2</code> provides a powerful framework for building visualization libraries. The best way to see why this is the case, might be to examine a real example. Here we consider the <code>mgcViz</code> package, with provides a layered framework for visualizing Generalized Additive Models (GAMs) using <code>ggplot2</code>. You might have heard about GAMs before but, if you didn’t, don’t worry because background knowledge on GAMs is not necessary to understand this section.</p>
+<p>GAMs are an extension of Generalized Linear Models (GLMs), which allow using spline-based smooth effects in addition to the usual linear effects used in GLMs. For example, a Poisson GLM might have the following structure
+<span class="math display">\[
+y \sim \text{Pois}\{\mu({\bf x})\}, \;\;\; \log \mu({\bf x}) = \beta_0 + \beta_1 x_1 + \beta_2 x_2,
+\]</span>
+where <span class="math inline">\({\bf x} = \{x_1, x_2\}\)</span> are indipendent variables (covariates) and <span class="math inline">\(\beta_0, \beta_1, \beta_2\)</span> are regression coefficients. Here we are modelling the log-rate of a Poisson distribution, using linear effects for variables <span class="math inline">\(x_1\)</span> and <span class="math inline">\(x_2\)</span>. A GAM extension of such model could be
+<span class="math display">\[
+\log \mu({\bf x}) = \beta_0 + f_1(x_1) + f_2(x_2),
+\]</span>
+where <span class="math inline">\(f_1\)</span> and <span class="math inline">\(f_2\)</span> are non-linear functions, built using spline basis expansions. That is the first effect is
+<span class="math display">\[
+f_1(x_1) = \sum_{j=1}^{K_1} \beta^1_j b_j^1(x_1), 
+\]</span>
+where <span class="math inline">\(b_1^1(x_1), \dots, b_{K_1}^1(x_1)\)</span> are known basis functions and <span class="math inline">\(\beta_1^1, \dots, \beta_{K_1}^1\)</span> are unknown regression coefficients (to be estimated). Effect <span class="math inline">\(f_2\)</span> is defined similarly. There are many classes of effects, for example they can be multidimensional, such as
+<span class="math display">\[
+\log \mu({\bf x}) = \beta_0 + f(x_1, x_2),
+\]</span>
+where <span class="math inline">\(f(x_1, x_2)\)</span> is built using 2-D basis functions.</p>
+<p>Here we are not interested in discussing how GAMs are estimated, what they can be used for, etc… but we want to demonstrate the advantages of adopting a layer-based system for visualizing GAM models. Consider again the following data sets:</p>
+<pre class="r"><code>library(qgam)
+data(UKload)
+head(UKload)</code></pre>
+<pre><code>##     NetDemand       wM   wM_s95       Posan      Dow      Trend NetDemand.48
+## 25      38353 6.046364 5.558800 0.001369941   samedi 1293879600        38353
+## 73      41192 2.803969 3.230582 0.004109824 dimanche 1293966000        38353
+## 121     43442 2.097259 1.858198 0.006849706    lundi 1294052400        41192
+## 169     50736 3.444187 2.310408 0.009589588    mardi 1294138800        43442
+## 217     50438 5.958674 4.724961 0.012329471 mercredi 1294225200        50736
+## 265     50064 4.124248 4.589470 0.015069353    jeudi 1294311600        50438
+##     Holy Year                Date
+## 25     1 2011 2011-01-01 12:00:00
+## 73     0 2011 2011-01-02 12:00:00
+## 121    0 2011 2011-01-03 12:00:00
+## 169    0 2011 2011-01-04 12:00:00
+## 217    0 2011 2011-01-05 12:00:00
+## 265    0 2011 2011-01-06 12:00:00</code></pre>
+<p>See <code>?UKload</code> for more information about the data. A simple GAM model for aggregate electricity demand <span class="math inline">\(\text{Dem}_t\)</span> could be:
+<span class="math display">\[
+\mathbb{E}(\text{Dem}_t) \sim \psi_{D_t} + f_1(T_t) + f_2(T^s_t) + f_3(S_t) + f_4(L_{t-48}) + f_5(t),
+\]</span>
+where we have smooth effects for the hourly temperatures (<span class="math inline">\(T_t\)</span>), the smoothed temperature (<span class="math inline">\(T^s_t\)</span>, defined by <span class="math inline">\(T_{t}^s = \alpha T_{t-1}^s + (1-\alpha)T_t\)</span> with <span class="math inline">\(\alpha = 0.95\)</span>), the variable indicating the position within the year (<span class="math inline">\(S_t\)</span>), the sequential index representing time (<span class="math inline">\(t\)</span>) and the observed load at the same time of the previous day (<span class="math inline">\(L_{t-48}\)</span>). <span class="math inline">\(\psi_{D_t}\)</span> is a parametric effect, whose value depends on <span class="math inline">\(D_t\)</span>, which is a factor variable indicating the day of the week. This model can be fitted using <code>mgcv</code> as follows:</p>
+<pre class="r"><code>fitG &lt;- gam(NetDemand ~ Dow + s(wM) + s(wM_s95) + s(Posan) + 
+                        s(NetDemand.48) + s(Trend, k = 6), data = UKload)</code></pre>
+<p>Let’s say that we now want to visualize the seasonal effect, that is the effect of <span class="math inline">\(S_t\)</span> (<code>Posan</code> in the code). This is done as follows:</p>
+<pre class="r"><code>plot(fitG, select = 3, scale = FALSE)</code></pre>
+<p><img src="/sc1/tidyverse/mgcViz_case_study_files/figure-html/unnamed-chunk-3-1.png" width="576" style="display: block; margin: auto;" />
+where the <code>select</code> argument is used to determine which smooth effect should be plotted. Given that <code>plot</code> is a generic function and that:</p>
+<pre class="r"><code>class(fitG)</code></pre>
+<pre><code>## [1] &quot;gam&quot; &quot;glm&quot; &quot;lm&quot;</code></pre>
+<p>the above code is calling <code>plot.gam</code> from the <code>mgcv</code> package. <code>plot.gam</code> is based on base R plotting functions, not on <code>ggplot2</code>. This function does its job, but has some limitations that can be addressed by adopting a layer-based plotting framework. The first issue is that <code>plot.gam</code> has quite a lot of arguments:</p>
+<pre class="r"><code>args(plot.gam)</code></pre>
+<pre><code>## function (x, residuals = FALSE, rug = NULL, se = TRUE, pages = 0, 
+##     select = NULL, scale = -1, n = 100, n2 = 40, n3 = 3, pers = FALSE, 
+##     theta = 30, phi = 30, jit = FALSE, xlab = NULL, ylab = NULL, 
+##     main = NULL, ylim = NULL, xlim = NULL, too.far = 0.1, all.terms = FALSE, 
+##     shade = FALSE, shade.col = &quot;gray80&quot;, shift = 0, trans = I, 
+##     seWithMean = FALSE, unconditional = FALSE, by.resids = FALSE, 
+##     scheme = 0, ...) 
+## NULL</code></pre>
+<p>Furthermore, many of its arguments are not used at all during most function calls, for instance</p>
+<pre class="r"><code>plot(fitG, select = 3, scale = FALSE, n2 = 100, theta = 10, n3 = 4)</code></pre>
+<p>produces exactly the same plot as before (not shown), because the arguments <code>n2</code>, <code>theta</code> and <code>n3</code> are not relevant for one-dimensional effects plots. A related problem is that it is not possible to control the graphical options of the layers appearing in the plot. For example:</p>
+<pre class="r"><code>plot(fitG, select = 3, scale = FALSE, col = &quot;red&quot;)</code></pre>
+<p><img src="/sc1/tidyverse/mgcViz_case_study_files/figure-html/unnamed-chunk-7-1.png" width="576" style="display: block; margin: auto;" /></p>
+<p>makes the whole plot red, because the <code>col = &quot;red&quot;</code> argument is passed, via the <code>...</code> argument (a.k.a. <code>ellipsis</code>), to each plotting function called within <code>plot.gam</code> (e.g. <code>rug</code>). So it is hard to customize the appearance of the plot. The fact that the graphical elements of the plot are rendered in a fixed order by <code>plot.gam</code> is also limiting, for example:</p>
+<pre class="r"><code>par(mfrow = c(1, 2))
+plot(fitG, select = 3, scale = FALSE, residuals = TRUE, ylim = c(-2000, 2000))
+plot(fitG, select = 3, scale = FALSE, residuals = TRUE, pch = 1, ylim = c(-2000, 2000))</code></pre>
+<p><img src="/sc1/tidyverse/mgcViz_case_study_files/figure-html/unnamed-chunk-8-1.png" width="768" style="display: block; margin: auto;" /></p>
+<p>Here the points representing the residuals are always plotted over the fitted effect and confidence intervals so, if you change the size of the points, they will completely hide the fit, as on the plot on the right. We could probably live with the limitations mentioned so far, but the biggest issue is that it is quite hard to add new features to the plots offered by <code>plot.gam</code>. In fact, <code>plot.gam</code> is a big multi-purpose function, and adding a new graphical features requires looking at its source code, understanding what is going on, and modifing the whole function (e.g. we need to add new arguments, choose at which point within <code>plot.gam</code> the new graphical layer should be rendered, etc). So adding new features is a rather involved process.</p>
+<p>The good news is that the limitations just mentioned make of <code>plot.gam</code> a very good case study for illustrating the usefulness of layer-based framework provided by <code>ggplot2</code>. In particular, let’s see how the <code>mgcViz</code> package solves these issues by adopting the layered system based on <code>ggplot2</code>. To use it, we need to convert the output of <code>gam</code> to an object of class <code>gamViz</code>:</p>
+<pre class="r"><code>library(mgcViz)
+fitG_v &lt;- getViz(fitG)
+
+class(fitG)</code></pre>
+<pre><code>## [1] &quot;gam&quot; &quot;glm&quot; &quot;lm&quot;</code></pre>
+<pre class="r"><code>class(fitG_v)</code></pre>
+<pre><code>## [1] &quot;gamViz&quot; &quot;gam&quot;    &quot;glm&quot;    &quot;lm&quot;</code></pre>
+<p>so we see that the output of <code>getViz</code> is still of class <code>gam</code>. For the purpose of illustration, here we show how to plot an effect step by step, but in practice there are shortcuts (see <code>?plot.gamViz</code>). We start by extracting individual effects using the <code>sm</code> function:</p>
+<pre class="r"><code>e3 &lt;- sm(fitG_v, 3)
+class(e3)</code></pre>
+<pre><code>## [1] &quot;tprs.smooth&quot;    &quot;mgcv.smooth.1D&quot;</code></pre>
+<p>So <code>e3</code> is a one-dimensional effect built using a thin plate regression splines basis (<code>tprs</code>), which we can plot using a class-specific method:</p>
+<pre class="r"><code>pl3 &lt;- plot(e3) # calls plot.mgcv.smooth.1D()
+class(pl3)</code></pre>
+<pre><code>## [1] &quot;plotSmooth&quot; &quot;gg&quot;</code></pre>
+<p>Having stored the plot in <code>pl3</code>, an object of class <code>plotSmooth</code> which inherits from <code>gg</code>, we can then add layers and render</p>
+<pre class="r"><code>pl3 &lt;- pl3 + l_fitLine() + l_ciLine()
+pl3 </code></pre>
+<p><img src="/sc1/tidyverse/mgcViz_case_study_files/figure-html/unnamed-chunk-12-1.png" width="480" style="display: block; margin: auto;" /></p>
+<p>where the last line calls <code>print.plotSmooth</code>. In one step:</p>
+<pre class="r"><code>plot(sm(fitG_v, 3)) + l_fitLine() + l_ciLine() # not shown</code></pre>
+<p>How does this work? The functions starting with <code>l_</code> are layers implemented in <code>mgcViz</code> and can be seen as wrappers around one or more <code>ggplot2</code> layers (e.g. <code>mgcViz::l_fitLine</code> is a wrapper around <code>ggplot2::geom_line</code>). All <code>mgcViz</code> layers start with the <code>l_</code> prefix.
+Why is this useful? Because, as we illustrate below:</p>
+<ul>
+<li>we now have full control over which graphical arguments are passed to each layer;</li>
+<li>we can add the layers in the order we like;</li>
+<li>adding new layers does not require modifying the function that created the initial plot (here <code>plot.mgcv.smooth.1D</code>)</li>
+<li>the number of arguments of the initial plotting function is greatly reduced, in fact</li>
+</ul>
+<pre class="r"><code>args( plot.mgcv.smooth.1D )</code></pre>
+<pre><code>## function (x, n = 100, xlim = NULL, maxpo = 10000, trans = identity, 
+##     unconditional = FALSE, seWithMean = FALSE, nsim = 0, ...) 
+## NULL</code></pre>
+<p>There is a variety of layers available, for example:</p>
+<pre class="r"><code>pl3a &lt;- plot(sm(fitG_v, 3)) + l_ciPoly(level = 0.99) + l_fitLine(color = &quot;red&quot;) + l_rug() 
+pl3b &lt;- plot(sm(fitG_v, 3), nsim = 20) + l_simLine()
+
+gridPrint(pl3a, pl3b, ncol = 2)</code></pre>
+<p><img src="/sc1/tidyverse/mgcViz_case_study_files/figure-html/plot_sm_lay_one_all-1.png" width="864" style="display: block; margin: auto;" /></p>
+<p>where the second plot shows a set of 20 random curves drawn from (a Gaussian approximation to) the posterior distribution of the seasonal effect (but this is not crucial here). As for most smooth effect plots in <code>mgcViz</code>, the output of <code>plot.mgcv.smooth.1D</code> has class <code>plotSmooth</code>, which contains an object of class <code>c(&quot;gg&quot;, &quot;ggObj&quot;)</code> is its <code>$ggObj</code> slot. Here <code>gridPrint</code> simply extracts the <code>ggplot</code> objects from <code>pl3a$ggObj</code> and <code>pl3b$ggObj</code>, and renders them on one page. To get the full list of available <code>mgcViz</code> layers for a particular object, do:</p>
+<pre class="r"><code>listLayers( plot(sm(fitG_v, 3)) )</code></pre>
+<pre><code>## [1] &quot;l_ciLine&quot;  &quot;l_ciPoly&quot;  &quot;l_dens2D&quot;  &quot;l_fitDens&quot; &quot;l_fitLine&quot; &quot;l_points&quot; 
+## [7] &quot;l_rug&quot;     &quot;l_simLine&quot;</code></pre>
+<p>We can of course use layers and functions provided by <code>ggplot2</code>, for example:</p>
+<pre class="r"><code>pl &lt;- plot(sm(fitG_v, 3))
+pl + geom_hex(data = pl$data$res, alpha = 0.7) + l_fitLine() + 
+     l_ciLine() + xlim(c(0.25, 0.75))</code></pre>
+<p><img src="/sc1/tidyverse/mgcViz_case_study_files/figure-html/ggplot2-1.png" width="480" style="display: block; margin: auto;" /></p>
+<p>Here we used <code>ggplot2::geom_hex</code> to plot the density of the residuals, which required specifying that the residual data can be found in <code>pl$data$res</code>, and we zoomed along the <span class="math inline">\(x\)</span>-axis on <span class="math inline">\([0.25, 0.75]\)</span> using <code>ggplot2::xlim</code>.</p>
+<p>The examples above should illustrate some of the advantages of a layered system. To get some insights into how this layered system might be useful to someone trying to build a graphical library for GAM models (but this applies to other models, of course), it’s probably instructive to have a look at how <code>ggplot2</code> layers can be wrapped up to extend the array of layers made available by <code>mgcViz</code>. Here we consider implementing an <code>mgcViz</code> layer which plots the residual density using binning, as in the last plot above. Suppose that we want to call such layer <code>l_binRes</code>. The first thing we need to do, is to build its general (or generic-like) version:</p>
+<pre class="r"><code>l_binRes &lt;- function(...){
+  arg &lt;- list(...)
+  o &lt;- structure(list(&quot;fun&quot; = &quot;myBinRes&quot;,
+                      &quot;arg&quot; = arg), 
+                 class = &quot;gamLayer&quot;)
+  return(o)
+}</code></pre>
+<p>This is the template used by all <code>mgcViz</code> layers. The layer returns an object of class <code>gamLayer</code>, where the <code>arg</code> slot contains all arguments that will be passed to the type-specific layer (you’ll see what we mean by type-specific in a minute). The <code>fun</code> slot indicates the name of the internal function to be used. This is:</p>
+<pre class="r"><code>myBinRes.1D &lt;- function(a){
+  
+  a$data &lt;- a$data$res
+  a$mapping &lt;- aes(x = x, y = y)
+  out &lt;- do.call(&quot;geom_hex&quot;, a)
+  return( out )
+  
+}</code></pre>
+<p>As you can see, this function returns the output of the <code>ggplot2::geom_hex</code> layer. The <code>.1D</code> suffix in <code>myBinRes.1D</code> is there because it matches the type of the plot we are focussing on:</p>
+<pre class="r"><code>pl$type</code></pre>
+<pre><code>## [1] &quot;1D&quot;</code></pre>
+<p>Having set up the general <code>l_binRes</code> function and the internal function <code>myBinRes.1D</code>, we can now do:</p>
+<pre class="r"><code>pl + l_binRes(alpha = 0.7) + l_fitLine() + l_ciLine()</code></pre>
+<p><img src="/sc1/tidyverse/mgcViz_case_study_files/figure-html/unnamed-chunk-18-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>which works! We could say that this is an informal object oriented framework, because we are dispatching the method (<code>myBinRes.1D</code>) based on the <code>type</code> slot, rather than on a formal class. If we wanted to use the new layer on an plot of a different <code>type</code>, we would need to develop a specific <code>myBinRes</code> function for that plot type. For instance, if we extract the day-of-week effect and build its plot:</p>
+<pre class="r"><code>pl &lt;- plot(pterm(fitG_v, 1))</code></pre>
+<p>this would not work:</p>
+<pre class="r"><code>pl + l_binRes(alpha = 0.9) + l_fitPoints(col = 2) + l_ciBar(col = 2)</code></pre>
+<pre><code>## Warning in value[[3L]](cond): No myBinRes() layer available for type &quot;Pterm
+## Factor&quot;</code></pre>
+<p>To make <code>binRes</code> work with plots of type <code>c(&quot;Pterm&quot;, &quot;Factor&quot;)</code>, we need to define:</p>
+<pre class="r"><code>myBinRes.PtermFactor &lt;- function(a){
+  
+  a$data &lt;- a$data$res
+  a$mapping &lt;- aes(x = x, y = y, z = y)
+  a$fun &lt;- function(x) length(x)
+  out &lt;- do.call(&quot;stat_summary_2d&quot;, a)
+  return( out )
+  
+}</code></pre>
+<p>where we used the <code>stat_summary_2d</code> layers from <code>ggplot2</code>, which is more appropriate when the <span class="math inline">\(x\)</span>-axis is categorical. Now we get:</p>
+<pre class="r"><code>pl + l_binRes(alpha = 0.7) + l_fitPoints(col = 2) + l_ciBar()</code></pre>
+<p><img src="/sc1/tidyverse/mgcViz_case_study_files/figure-html/unnamed-chunk-22-1.png" width="672" style="display: block; margin: auto;" />
+The point of all this is illustrating that, using the layer-based system provided by <code>ggplot</code>, it is easy to introduce new GAM-specific layers for <code>mgcViz</code>, without modifying the functions used to build the initial plots (here <code>plot.mgcv.smooth.1D</code> and <code>plot.ptermFactor</code>). Of course, the new layer introduced here (<code>l_binRes</code>) is quite trivial, and we might be better off using the raw <code>ggplot2</code> layers directly (e.g. <code>stat_summary_2d</code>), but some of the layers implemented by <code>mgcViz</code> are quite complicated, hence coding them in <code>mgcViz</code> is worthwhile (see, e.g., the code for <code>mgcViz:::l_fitDens.1D</code>).</p>
+
+
+  <footer>
+  
+
+<script src="//yihui.name/js/math-code.js"></script>
+<script async src="//mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+<script async src="//yihui.name/js/center-img.js"></script>
+
+
+<script type="text/javascript">
+var sc_project=12110974;
+var sc_invisible=1;
+var sc_security="9b171880";
+</script>
+<script type="text/javascript"
+src="https://www.statcounter.com/counter/counter.js"
+async></script>
+<noscript><div class="statcounter"><a title="Web Analytics"
+href="https://statcounter.com/" target="_blank"><img
+class="statcounter"
+src="https://c.statcounter.com/12110974/0/9b171880/1/"
+alt="Web Analytics"></a></div></noscript>
+
+
+
+
+
+
+
+
+  
+
+
+<p align=right>
+
+<a href='https://github.com/awllee/sc1/blob/master/content/tidyverse/mgcViz_case_study.Rmd'>View source</a>
+
+|
+
+<a href='https://github.com/awllee/sc1/edit/master/content/tidyverse/mgcViz_case_study.Rmd'>Edit source</a>
+
+</p>
+
+
+
+
+
+<script src="https://utteranc.es/client.js"
+        repo="awllee/sc1"
+        issue-term="pathname"
+        label="utterance"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script>
+
+
+
+  
+
+
+
+<script src="//cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+
+
+
+<script src="//cdn.bootcss.com/highlight.js/9.12.0/languages/r.min.js"></script>
+<script src="//cdn.bootcss.com/highlight.js/9.12.0/languages/yaml.min.js"></script>
+<script src="//cdn.bootcss.com/highlight.js/9.12.0/languages/tex.min.js"></script>
+<script>hljs.configure({languages: []}); hljs.initHighlightingOnLoad();</script>
+
+
+
+  
+  <hr>
+  <div class="copyright">© 2020 <a href="https://sites.google.com/view/anthonylee">Anthony Lee</a>, <a href="http://www.bristol.ac.uk/maths/people/feng-yu/index.html">Feng Yu</a>, <a href="https://people.maths.bris.ac.uk/~tk18582/">Tobias Kley</a>, <a href="https://mfasiolo.github.io/">Matteo Fasiolo</a></div>
+  
+  </footer>
+  </article>
+  
+  </body>
+</html>
+

@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <title>Version control with git &amp; GitHub - SC1</title>
+    <meta property="og:title" content="Version control with git &amp; GitHub - SC1">
+    
+    <meta name="twitter:card" content="summary">
+
+    
+      
+    
+
+    
+      
+      <meta property="description" content="Many people think that using version control is a complicated, time-consuming process that is only necessary for large, collaborative software projects. In fact, version control is now very easy, &amp;hellip;">
+      <meta property="og:description" content="Many people think that using version control is a complicated, time-consuming process that is only necessary for large, collaborative software projects. In fact, version control is now very easy, &amp;hellip;">
+      
+    
+
+    
+    
+
+    
+
+    
+    
+
+
+<link href='//cdn.bootcss.com/highlight.js/9.12.0/styles/github.min.css' rel='stylesheet' type='text/css' />
+
+
+
+    <link rel="stylesheet" href="/sc1/css/style.css" />
+    <link rel="stylesheet" href="/sc1/css/fonts.css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Arvo">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Marcellus">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Code+Pro">
+
+<link rel="stylesheet" href="/sc1/css/custom.css" />
+
+<link rel="icon" href="/sc1/favicon.ico" type="image/x-icon" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<nav class="breadcrumbs">
+    
+        <a href="https://awllee.github.io/sc1/">home / </a>
+    
+        <a href="https://awllee.github.io/sc1/packages/">packages / </a>
+    
+        <a href="https://awllee.github.io/sc1/packages/git/">git / </a>
+    
+</nav>
+
+  </head>
+
+  
+  <body class="sc1">
+    <header class="masthead">
+      <h1><a href="/sc1/">SC1</a></h1>
+
+<p class="tagline">Statistical Computing 1</p>
+
+      <nav class="menu">
+  <input id="menu-check" type="checkbox" />
+  <label id="menu-label" for="menu-check" class="unselectable">
+    <span class="icon close-icon">✕</span>
+    <span class="icon open-icon">☰</span>
+    <span class="text">Menu</span>
+  </label>
+  <ul>
+  
+  
+  <li><a href="/sc1/">Home</a></li>
+  
+  <li><a href="/sc1/intro-r/">Intro to R</a></li>
+  
+  <li><a href="/sc1/reproducibility/">Reproducibility</a></li>
+  
+  <li><a href="/sc1/common-r/">Common R</a></li>
+  
+  <li><a href="/sc1/tidyverse/">Tidyverse</a></li>
+  
+  <li><a href="/sc1/packages/">Packages</a></li>
+  
+  <li><a href="/sc1/functional-oo/">Functional / OO</a></li>
+  
+  <li><a href="/sc1/profile-debug/">Performance / Bugs</a></li>
+  
+  <li><a href="/sc1/matrices/">Matrices</a></li>
+  
+  <li><a href="/sc1/optimization/">Optimization</a></li>
+  
+  <li><a href="/sc1/integration/">Integration</a></li>
+  
+  
+  </ul>
+</nav>
+
+    </header>
+
+    <article class="main">
+      <header class="title">
+      
+<h1>Version control with git &amp; GitHub</h1>
+
+<h3>
+</h3>
+<hr>
+
+
+      </header>
+
+
+ <nav id="TableOfContents">
+  <ul>
+    <li><a href="#installing-and-setting-up-git">Installing and setting up git</a></li>
+    <li><a href="#initializing-a-git-repository">Initializing a git repository</a></li>
+    <li><a href="#adding-files-to-the-staging-area">Adding files to the staging area</a></li>
+    <li><a href="#committing-changes">Committing changes</a></li>
+    <li><a href="#reverting">Reverting</a></li>
+    <li><a href="#viewing-old-versions">Viewing old versions</a></li>
+    <li><a href="#creating-a-branch">Creating a branch</a></li>
+    <li><a href="#checking-out-an-old-version">Checking out an old version</a></li>
+    <li><a href="#ignoring-files">Ignoring files</a></li>
+    <li><a href="#more-advanced-command-line-options">More advanced command line options</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#creating-a-repository">Creating a repository</a></li>
+    <li><a href="#choosing-a-software-license">Choosing a software license</a></li>
+    <li><a href="#fetching-pulling-merging--pushing">Fetching, pulling, merging &amp; pushing</a></li>
+    <li><a href="#contributing-code-forks-and-pull-requests">Contributing code: forks and pull requests</a></li>
+  </ul>
+</nav> 
+<p>Many people think that using version control is a complicated, time-consuming process that is only necessary for large, collaborative software projects. In fact, version control is now very easy, thanks to excellent tools like git and online services like GitHub, and can save a significant amount of time. Moreover, it is helpful in making research reproducible, and public repositories can extend its impact.</p>
+<p>There are other version control systems, but we focus on git and GitHub here for simplicity.</p>
+<p>A version control system is basically software that tracks changes in files. People use an informal version control system implicitly even if they don&rsquo;t use a software system, e.g. by copying and renaming files. As you might imagine, most ad hoc systems make recovering the state of a software project at a specific time difficult. Modern version control systems have been developed to cater to the needs of most projects with minimal effort.</p>
+<h1 id="git">Git</h1>
+<h2 id="installing-and-setting-up-git">Installing and setting up git</h2>
+<p>Linux users can install git using their package manager, macOS users can install Xcode (larger) or the Xcode command line tools (smaller). Once you have git on your system, it&rsquo;s a good idea to set up your identity as a global configuration parameter, as this information will be used automatically in certain git commands.</p>
+<p>To set your name, execute the following commands in a terminal.</p>
+<pre><code>git config --global user.name &quot;Your Name&quot;
+git config --global user.email name@domain
+</code></pre><p>You can check your global configuration.</p>
+<pre><code>git config --list --show-origin
+</code></pre><h2 id="initializing-a-git-repository">Initializing a git repository</h2>
+<p>To initialize a git repository from a terminal, go to the top-level directory you want git to track and type</p>
+<pre><code>git init
+</code></pre><p>You can accomplish the same feat in RStudio (for a given project directory) by choosing git as a version control system in the <code>Tools -&gt; Version Control</code> menu.</p>
+<p>Initializing a repository does not cause any files to be tracked. You need to add files to the version control system to track them.</p>
+<h2 id="adding-files-to-the-staging-area">Adding files to the staging area</h2>
+<p>You can add a new file or a file which has been modified in a terminal via</p>
+<pre><code>git add &lt;filename&gt;
+</code></pre><p>In the RStudio git panel, staging is accomplished by checking the appropriate box next to the file.</p>
+<p>This adds the file to the &ldquo;Staging Area&rdquo;. The change is not actually committed to the version control system.</p>
+<p>There are more advanced options, such as staging only certain lines. This can be accomplished via the command line but is also possible to do clicking RStudio&rsquo;s &ldquo;Diff&rdquo; button and then choosing lines to stage.</p>
+<h2 id="committing-changes">Committing changes</h2>
+<p>To commit changes using the terminal you can run</p>
+<pre><code>git commit
+</code></pre><p>which will ask you to provide a commit message.</p>
+<p>It is good practice to include in a single commit those changes that are relevant for changing a particular piece of functionality, rather than <em>all</em> changes that have been made. The commit message should ideally be informative, and it is common practice to use present tense, as it indicates what the commit does. For example, &ldquo;add residual checks&rdquo; might be used if you have added code for checking residuals.</p>
+<h2 id="reverting">Reverting</h2>
+<p>One common situation that arises is that a number of changes have been made locally without being committed, and one wishes to revert back to the last commit. To do this, one can run</p>
+<pre><code>git revert HEAD
+</code></pre><p>In RStudio, one can select individual files and revert (available by first clicking on the gear icon).</p>
+<h2 id="viewing-old-versions">Viewing old versions</h2>
+<p>In RStudio, you can review previous commits by clicking on the history (clock) icon.</p>
+<h2 id="creating-a-branch">Creating a branch</h2>
+<p>In some cases it is desirable to start making a number of changes to code without affecting the default &ldquo;master&rdquo; branch of the git repository.</p>
+<p>You can create and then start working on a branch by</p>
+<pre><code>git branch &lt;branch-name&gt;
+git checkout &lt;branch-name&gt;
+</code></pre><p>or do both together via <code>git checkout -b &lt;branch-name&gt;</code>.</p>
+<p>You can then work on both the branch and also on master. If you want to merge the changes from the <code>&lt;branch-name&gt;</code> branch into master, you can switch to master , i.e. <code>git checkout master</code>, and then merge via <code>git merge &lt;branch-name&gt;</code></p>
+<p>If there are no conflicts, the merge will occur automatically. If there are conflicts, you will have to manually edit the corresponding file(s) to resolve them before committing.</p>
+<p>To delete a branch, one can use <code>git branch -d &lt;branch-name&gt;</code></p>
+<h2 id="checking-out-an-old-version">Checking out an old version</h2>
+<p>One way to checkout an old version of the code into a new branch is to use the command</p>
+<pre><code>git checkout &lt;commit hash&gt; -b &lt;branch-name&gt;
+</code></pre><p>where the commit hash can be found in the git log.</p>
+<pre><code>git log
+</code></pre><h2 id="ignoring-files">Ignoring files</h2>
+<p>A file will only be added to version control if you stage it at least once. However, it can be irritating to see files in the unstaged area that you will never want to stage. Files that should never be staged can be specified in a <a href="https://git-scm.com/docs/gitignore"><code>.gitignore</code></a> file in the main directory of the git project. You can also ignore files specified using some types of <a href="https://en.wikipedia.org/wiki/Regular_expression">regular expressions</a>. For example, one can ignore all files with extension <code>.ext</code> by adding <code>*.ext</code>. If you only want to ignore files in a folder and its subfolders, you can create a <code>.gitignore</code> file in that folder. The prefix <code>!</code> can be used to negate a previous pattern. For example, <code>!</code> can be used to version control the <code>special.ext</code> file even if <code>*.ext</code> appears earlier in the <code>.gitignore</code> file.</p>
+<h2 id="more-advanced-command-line-options">More advanced command line options</h2>
+<p>There are a very large number of use cases that git caters to, and it would be impossible to cover even a fraction of them here. If you want to find out how to do something, it is quite likely someone else has asked how to do it online.</p>
+<p>In most cases, one should usually be staging and committing changes more frequently than performing any other operation. It is good practice to develop on feature-specific branches, particularly in collaborative projects, but it is not unusual to work primarily on the master branch for smaller projects.</p>
+<h1 id="github">GitHub</h1>
+<h2 id="creating-a-repository">Creating a repository</h2>
+<p>Using git for version control of a local repository can be useful. Having a repository online and useful tools for interacting with it adds even more benefit.</p>
+<p>You can create a new GitHub user account by signing up on the <a href="https://github.com/">website</a>. As a student or academic you can obtain additional benefits via the <a href="https://education.github.com/">education website</a>.</p>
+<p>Once you have an account you can <a href="https://help.github.com/en/articles/create-a-repo">create a new repository</a>. You can choose whether it should be public or private. Private repositories are only visible to people you choose to collaborate with, and you can use them to test out ideas that you are not ready to share publicly. In this course, we focus more on public repositories.</p>
+<p><strong>New projects with no existing content</strong></p>
+<p>If you are starting a new project with no existing content, you can initialize the project with a README.md, .gitignore (choose R for a default R .gitignore file) and LICENSE file.</p>
+<p>You can then clone the repository on your system using a terminal. The repository will be a subfolder of the current working directory of the terminal.</p>
+<pre><code>git clone https://github.com/&lt;username&gt;/&lt;repository-name&gt;.git
+</code></pre><p>This essentially copies the files in the repository to your local repository, and sets the GitHub online repository as the &ldquo;origin&rdquo;. After changing your working directory to the local repository, you can check this from the terminal.</p>
+<pre><code>git remote -v
+</code></pre><p><strong>New projects from a local git repository</strong></p>
+<p>If you are planning to &ldquo;push&rdquo; from a local git repository to populate the new project, it&rsquo;s easier if you do not initialize the project with any files.</p>
+<p>Then, instead of cloning the repository, you add the GitHub repository as the remote &ldquo;origin&rdquo; repository, and push.</p>
+<pre><code>git remote add origin https://github.com/&lt;username&gt;/&lt;repository-name&gt;.git
+git push -u origin master
+</code></pre><h2 id="choosing-a-software-license">Choosing a software license</h2>
+<p>When software is written in the UK, the author <a href="https://www.gov.uk/copyright">automatically receives copyright protection</a>. Making code publicly available on GitHub allows people to <a href="https://help.github.com/en/articles/github-terms-of-service#5-license-grant-to-other-users">view it and to fork the repository</a>, but does not give people the rights required to modify and distribute the code, or create derivative works, as this would constitute copyright infringement.</p>
+<p>A software license grants people the right to do specific things, such as create derivative works. You may find GitHub&rsquo;s <a href="https://choosealicense.com/">choose a license</a> website helpful. One of the main distinctions is between <a href="https://en.wikipedia.org/wiki/Permissive_software_license">permissive</a> and <a href="https://en.wikipedia.org/wiki/Copyleft">copyleft</a> licenses. The text of the license can be placed in a &ldquo;LICENSE&rdquo;, &ldquo;LICENSE.txt&rdquo; or &ldquo;LICENSE.md&rdquo; file in the root of your repository.</p>
+<p>Copyright and licensing are legal matters for which many questions require professional legal opinions, and <strong>there is no legal advice here</strong>. There appear to be significant differences of opinion on some topics, such as <a href="https://en.wikipedia.org/wiki/GNU_General_Public_License#Linking_and_derived_works">linking and derived works</a> with respect to the GNU General Public License. It appears that many R packages that <em>use</em> GPLv2 or GPLv3 packages have released their package source code under more permissive licenses such as MIT, even though if the <em>combined program</em> was ever released it would need to be released under the relevant GPL license.</p>
+<p>When contributing to an existing project on GitHub that has a clear license, and in the absence of an explicit alternative agreement, <a href="https://help.github.com/en/articles/github-terms-of-service#6-contributions-under-repository-license">the contribution is licensed under the same terms</a>.</p>
+<h2 id="fetching-pulling-merging--pushing">Fetching, pulling, merging &amp; pushing</h2>
+<p>With a remote repository, e.g. hosted on GitHub, you can fetch, merge, pull and push code changes.</p>
+<ul>
+<li><code>git fetch &lt;remote&gt;</code> fetches updates from the remote repository.</li>
+<li><code>git merge &lt;remote&gt;/&lt;branch&gt;</code> merges fetched updates into your local branch.</li>
+<li><code>git pull &lt;remote&gt; &lt;branch&gt;</code> combines fetching and merging.</li>
+<li><code>git push &lt;remote&gt; &lt;branch&gt;</code> pushes local commits to the remote repository.</li>
+</ul>
+<p>In RStudio, one can pull and push using the corresponding buttons in the Git panel.</p>
+<p>It is often preferable to avoid complicated merge operations by keeping both the local and remote repositories up to date with each other.</p>
+<h2 id="contributing-code-forks-and-pull-requests">Contributing code: forks and pull requests</h2>
+<p>One of the main collaborative mechanisms provided by GitHub is the ease with which one can fork a repository, make changes and then submit a &ldquo;pull request&rdquo;.</p>
+<p>To fork a repository, you can just click the &ldquo;Fork&rdquo; button on GitHub. This creates a personal copy of the original repository. You can clone the repository to your computer using</p>
+<pre><code>git clone https://github.com/&lt;username&gt;/&lt;fork-name&gt;.git
+</code></pre><p>or you can do this via the &ldquo;New Project -&gt; Version Control -&gt; git&rdquo; menu options in RStudio.</p>
+<p>This sets up your local repository with <strong>your fork</strong> as the remote. You can make changes locally and push them to the remote. When you have made the changes you wanted to the code, you can <em>ask</em> a maintainer of the original repository to incorporate the changes via a pull request.</p>
+<p>It is easiest to do this using GitHub&rsquo;s web interface. You can click on &ldquo;New pull request&rdquo; or &ldquo;Pull request&rdquo;, to do this. The pull request will include all the commit information and you can add information that explains why the code changes should be merged. If a maintainer approves the request, the changes can then be merged. It is not uncommon for a discussion to lead to further commits to the branch associated with the pull request; these commits will automatically update the pull request.</p>
+<p>When a pull request is made, it is possible for there to be conflicts due to other commits being made to the original repository. One common strategy to keep pull requests simple is to ensure that the pull request can be merged automatically. To do this, one should tell the local repository about the &ldquo;upstream&rdquo; (original) repository.</p>
+<pre><code>git remote add upstream &lt;upstream address&gt;
+</code></pre><p>You can then fetch and merge upstream changes into your branch.</p>
+<pre><code>git fetch upstream
+git merge upstream/master
+</code></pre><p>After merging, if you commit and then push, the pull request will automatically be updated. It is often useful to keep a fork up to date with the upstream, i.e. original repository.</p>
+
+
+  <footer>
+  
+
+<script src="//yihui.name/js/math-code.js"></script>
+<script async src="//mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+<script async src="//yihui.name/js/center-img.js"></script>
+
+
+<script type="text/javascript">
+var sc_project=12110974;
+var sc_invisible=1;
+var sc_security="9b171880";
+</script>
+<script type="text/javascript"
+src="https://www.statcounter.com/counter/counter.js"
+async></script>
+<noscript><div class="statcounter"><a title="Web Analytics"
+href="https://statcounter.com/" target="_blank"><img
+class="statcounter"
+src="https://c.statcounter.com/12110974/0/9b171880/1/"
+alt="Web Analytics"></a></div></noscript>
+
+
+
+
+
+
+
+
+  
+
+
+<p align=right>
+
+<a href='https://github.com/awllee/sc1/blob/master/content/packages/git.md'>View source</a>
+
+|
+
+<a href='https://github.com/awllee/sc1/edit/master/content/packages/git.md'>Edit source</a>
+
+</p>
+
+
+
+
+
+<script src="https://utteranc.es/client.js"
+        repo="awllee/sc1"
+        issue-term="pathname"
+        label="utterance"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script>
+
+
+
+  
+
+
+
+<script src="//cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+
+
+
+<script src="//cdn.bootcss.com/highlight.js/9.12.0/languages/r.min.js"></script>
+<script src="//cdn.bootcss.com/highlight.js/9.12.0/languages/yaml.min.js"></script>
+<script src="//cdn.bootcss.com/highlight.js/9.12.0/languages/tex.min.js"></script>
+<script>hljs.configure({languages: []}); hljs.initHighlightingOnLoad();</script>
+
+
+
+  
+  <hr>
+  <div class="copyright">© 2020 <a href="https://sites.google.com/view/anthonylee">Anthony Lee</a>, <a href="http://www.bristol.ac.uk/maths/people/feng-yu/index.html">Feng Yu</a>, <a href="https://people.maths.bris.ac.uk/~tk18582/">Tobias Kley</a>, <a href="https://mfasiolo.github.io/">Matteo Fasiolo</a></div>
+  
+  </footer>
+  </article>
+  
+  </body>
+</html>
+

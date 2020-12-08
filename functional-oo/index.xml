@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Functional and object-oriented programming on SC1</title>
+    <link>https://awllee.github.io/sc1/functional-oo/</link>
+    <description>Recent content in Functional and object-oriented programming on SC1</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language><atom:link href="https://awllee.github.io/sc1/functional-oo/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Functional programming</title>
+      <link>https://awllee.github.io/sc1/functional-oo/functional/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://awllee.github.io/sc1/functional-oo/functional/</guid>
+      <description>First-class functions Pure functions Closures Lazy evaluation   R supports many functional programming features.
+First-class functions Perhaps the most important feature is that R has first-class functions. While most programming languages involve defining functions or procedures, a language has first-class functions if in addition:
+ functions can be arguments to other functions functions can be returned by functions functions can be stored in data structures.  Essentially, functions are like any other variable.</description>
+    </item>
+    
+    <item>
+      <title>Object-oriented programming</title>
+      <link>https://awllee.github.io/sc1/functional-oo/object-oriented/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://awllee.github.io/sc1/functional-oo/object-oriented/</guid>
+      <description>Outlook Terminology S3 S4 Reference Classes   Outlook The purpose of this chapter is to introduce object-oriented programming (OOP) in R. Base R offers three different models for OOP:
+ S3, S4, and Reference Classes.  Further, some R packages on CRAN are available that provide additional models (e. g., R6, R.oo or proto).
+Here we focus on an introduction of the models available in base R and a discussion of their advantages and disadvantages.</description>
+    </item>
+    
+  </channel>
+</rss>

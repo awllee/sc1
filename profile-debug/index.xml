@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Investigating issues: profiling and debugging on SC1</title>
+    <link>https://awllee.github.io/sc1/profile-debug/</link>
+    <description>Recent content in Investigating issues: profiling and debugging on SC1</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language><atom:link href="https://awllee.github.io/sc1/profile-debug/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Debugging</title>
+      <link>https://awllee.github.io/sc1/profile-debug/debug/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://awllee.github.io/sc1/profile-debug/debug/</guid>
+      <description>General tips An example of debugging in R   It is almost impossible to write non-trivial code without bugs, where a “bug” is any flaw that leads to a computation producing an unintended result or causing an error to be thrown. There are many types of bugs: from simple spelling mistakes to logical flaws. In some cases, the source of a bug is obvious and in others a bug arises from misunderstanding something very subtle and it can be difficult to identify the root cause of the problem.</description>
+    </item>
+    
+    <item>
+      <title>Profiling</title>
+      <link>https://awllee.github.io/sc1/profile-debug/profile/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://awllee.github.io/sc1/profile-debug/profile/</guid>
+      <description>Updating a list of primes The Sieve of Eratosthenes Comments   Profiling in R is fairly straightforward using the profvis package, which builds upon base R’s Rprof functionality.
+library(profvis) This is a statistical profiler: it operates by regularly (e.g. every few milliseconds) using operating system interrupts to determine what code is being executed. This enables one to build a picture of where the computation is spending most of its time, and is essentially an application of the Monte Carlo method.</description>
+    </item>
+    
+    <item>
+      <title>Performance</title>
+      <link>https://awllee.github.io/sc1/profile-debug/performance/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://awllee.github.io/sc1/profile-debug/performance/</guid>
+      <description>Optimized routines Memory management Column-major storage Example: logistic regression Example: matrix vector multiplications Writing code in another language   Optimized routines Code written in R will often fail to have good performance, in the sense that it would run faster if written in a language such as C. The main exception is when the computationally intensive code is essentially delegated to optimized library code. A primary example is linear algebra operations, which are performed by a separate library.</description>
+    </item>
+    
+    <item>
+      <title>Additional reading</title>
+      <link>https://awllee.github.io/sc1/profile-debug/reading/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://awllee.github.io/sc1/profile-debug/reading/</guid>
+      <description> Efficient R programming  </description>
+    </item>
+    
+  </channel>
+</rss>

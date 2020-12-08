@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+  xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  
+  <url>
+    <loc>https://awllee.github.io/sc1/profile-debug/debug/</loc>
+  </url>
+  
+  <url>
+    <loc>https://awllee.github.io/sc1/matrices/dense/</loc>
+  </url>
+  
+  <url>
+    <loc>https://awllee.github.io/sc1/functional-oo/functional/</loc>
+  </url>
+  
+  <url>
+    <loc>https://awllee.github.io/sc1/optimization/numerical-optimization/</loc>
+  </url>
+  
+  <url>
+    <loc>https://awllee.github.io/sc1/packages/project/</loc>
+  </url>
+  
+  <url>
+    <loc>https://awllee.github.io/sc1/integration/quadrature/</loc>
+  </url>
+  
+  <url>
+    <loc>https://awllee.github.io/sc1/reproducibility/</loc>
+  </url>
+  
+  <url>
+    <loc>https://awllee.github.io/sc1/reproducibility/reproducibile-research/</loc>
+  </url>
+  
+  <url>
+    <loc>https://awllee.github.io/sc1/intro-r/console/</loc>
+  </url>
+  
+  <url>
+    <loc>https://awllee.github.io/sc1/common-r/vectorisation/</loc>
+  </url>
+  
+  <url>
+    <loc>https://awllee.github.io/sc1/tidyverse/intro_to_pipes/</loc>
+  </url>
+  
+  <url>
+    <loc>https://awllee.github.io/sc1/tidyverse/intro_to_ggplot2/</loc>
+  </url>
+  
+  <url>
+    <loc>https://awllee.github.io/sc1/tidyverse/mgcviz_case_study/</loc>
+  </url>
+  
+  <url>
+    <loc>https://awllee.github.io/sc1/tidyverse/data_transformation_dplyr/</loc>
+  </url>
+  
+  <url>
+    <loc>https://awllee.github.io/sc1/tidyverse/data_reshaping_tidyr/</loc>
+  </url>
+  
+  <url>
+    <loc>https://awllee.github.io/sc1/intro-r/fundamentals/</loc>
+  </url>
+  
+  <url>
+    <loc>https://awllee.github.io/sc1/reproducibility/literate/</loc>
+  </url>
+  
+  <url>
+    <loc>https://awllee.github.io/sc1/integration/monte-carlo/</loc>
+  </url>
+  
+  <url>
+    <loc>https://awllee.github.io/sc1/functional-oo/object-oriented/</loc>
+  </url>
+  
+  <url>
+    <loc>https://awllee.github.io/sc1/profile-debug/profile/</loc>
+  </url>
+  
+  <url>
+    <loc>https://awllee.github.io/sc1/common-r/apply/</loc>
+  </url>
+  
+  <url>
+    <loc>https://awllee.github.io/sc1/optimization/r-optimization/</loc>
+  </url>
+  
+  <url>
+    <loc>https://awllee.github.io/sc1/matrices/sparse/</loc>
+  </url>
+  
+  <url>
+    <loc>https://awllee.github.io/sc1/packages/git/</loc>
+  </url>
+  
+  <url>
+    <loc>https://awllee.github.io/sc1/packages/package/</loc>
+  </url>
+  
+  <url>
+    <loc>https://awllee.github.io/sc1/intro-r/data/</loc>
+  </url>
+  
+  <url>
+    <loc>https://awllee.github.io/sc1/reproducibility/project-euler/</loc>
+  </url>
+  
+  <url>
+    <loc>https://awllee.github.io/sc1/optimization/sgd/</loc>
+  </url>
+  
+  <url>
+    <loc>https://awllee.github.io/sc1/common-r/parallel/</loc>
+  </url>
+  
+  <url>
+    <loc>https://awllee.github.io/sc1/profile-debug/performance/</loc>
+  </url>
+  
+  <url>
+    <loc>https://awllee.github.io/sc1/reproducibility/latex-lyx/</loc>
+  </url>
+  
+  <url>
+    <loc>https://awllee.github.io/sc1/packages/travis/</loc>
+  </url>
+  
+  <url>
+    <loc>https://awllee.github.io/sc1/intro-r/reading/</loc>
+  </url>
+  
+  <url>
+    <loc>https://awllee.github.io/sc1/packages/reading/</loc>
+  </url>
+  
+  <url>
+    <loc>https://awllee.github.io/sc1/profile-debug/reading/</loc>
+  </url>
+  
+  <url>
+    <loc>https://awllee.github.io/sc1/reproducibility/reading/</loc>
+  </url>
+  
+  <url>
+    <loc>https://awllee.github.io/sc1/categories/</loc>
+  </url>
+  
+  <url>
+    <loc>https://awllee.github.io/sc1/common-r/</loc>
+  </url>
+  
+  <url>
+    <loc>https://awllee.github.io/sc1/functional-oo/</loc>
+  </url>
+  
+  <url>
+    <loc>https://awllee.github.io/sc1/</loc>
+  </url>
+  
+  <url>
+    <loc>https://awllee.github.io/sc1/intro-r/</loc>
+  </url>
+  
+  <url>
+    <loc>https://awllee.github.io/sc1/profile-debug/</loc>
+  </url>
+  
+  <url>
+    <loc>https://awllee.github.io/sc1/matrices/</loc>
+  </url>
+  
+  <url>
+    <loc>https://awllee.github.io/sc1/integration/</loc>
+  </url>
+  
+  <url>
+    <loc>https://awllee.github.io/sc1/optimization/</loc>
+  </url>
+  
+  <url>
+    <loc>https://awllee.github.io/sc1/packages/</loc>
+  </url>
+  
+  <url>
+    <loc>https://awllee.github.io/sc1/reproducibility/project-euler/problem1/</loc>
+  </url>
+  
+  <url>
+    <loc>https://awllee.github.io/sc1/reproducibility/project-euler/problem2/</loc>
+  </url>
+  
+  <url>
+    <loc>https://awllee.github.io/sc1/sparse-matrix/</loc>
+  </url>
+  
+  <url>
+    <loc>https://awllee.github.io/sc1/tags/</loc>
+  </url>
+  
+  <url>
+    <loc>https://awllee.github.io/sc1/tidyverse/</loc>
+  </url>
+  
+</urlset>

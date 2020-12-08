@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Packages on SC1</title>
+    <link>https://awllee.github.io/sc1/packages/</link>
+    <description>Recent content in Packages on SC1</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language><atom:link href="https://awllee.github.io/sc1/packages/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Projects: organizing your code</title>
+      <link>https://awllee.github.io/sc1/packages/project/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://awllee.github.io/sc1/packages/project/</guid>
+      <description>RStudio has a nice interface for programming in R. You may have only been using it to create R scripts / RMarkdown files and execute / render them.
+It is generally a good idea to keep code for a &amp;ldquo;project&amp;rdquo; in one place. RStudio can help with this by letting you create a &amp;ldquo;Project&amp;rdquo;, which is little more than a directory with files in it. Opening a project in RStudio automatically sets R&amp;rsquo;s working directory to that directory.</description>
+    </item>
+    
+    <item>
+      <title>Version control with git &amp; GitHub</title>
+      <link>https://awllee.github.io/sc1/packages/git/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://awllee.github.io/sc1/packages/git/</guid>
+      <description>Many people think that using version control is a complicated, time-consuming process that is only necessary for large, collaborative software projects. In fact, version control is now very easy, thanks to excellent tools like git and online services like GitHub, and can save a significant amount of time. Moreover, it is helpful in making research reproducible, and public repositories can extend its impact.
+There are other version control systems, but we focus on git and GitHub here for simplicity.</description>
+    </item>
+    
+    <item>
+      <title>Creating an R package</title>
+      <link>https://awllee.github.io/sc1/packages/package/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://awllee.github.io/sc1/packages/package/</guid>
+      <description>Creating a package in RStudio is straightforward. Just click
+File -&amp;gt; New Project -&amp;gt; New Directory -&amp;gt; R Package You can choose a name for your package, the parent directory for the package and whether or not you want to also initialize an empty git repository.
+The package will be populated with various files and folders.
+Package structure package/ ├── DESCRIPTION ├── LICENSE ├── LICENSE.md ├── NAMESPACE ├── R ├── man └── tests Edit DESCRIPTION  Add license, e.</description>
+    </item>
+    
+    <item>
+      <title>Testing a package using Travis</title>
+      <link>https://awllee.github.io/sc1/packages/travis/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://awllee.github.io/sc1/packages/travis/</guid>
+      <description>An R package that is publicly available on GitHub can be tested using Travis CI (.com). CI stands for continuous integration.
+CI is a useful tool when developing software collaboratively because pull requests can automatically trigger tests. This means that the reviewer of the pull request can be sure that the code works, insofar as the tests pass, and focus on other aspects of the code.
+Even in non-collaborative development, this can be useful as tests can be configured to run systematically against different configurations.</description>
+    </item>
+    
+    <item>
+      <title>Additional reading</title>
+      <link>https://awllee.github.io/sc1/packages/reading/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://awllee.github.io/sc1/packages/reading/</guid>
+      <description> git documentation git learning resources R Packages  </description>
+    </item>
+    
+  </channel>
+</rss>

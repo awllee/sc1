@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <title>Functional programming - SC1</title>
+    <meta property="og:title" content="Functional programming - SC1">
+    
+    <meta name="twitter:card" content="summary">
+
+    
+      
+    
+
+    
+      
+      <meta property="description" content="R supports many functional programming features.
+[&amp;hellip;] Perhaps the most important feature is that R has first-class functions. While most programming languages involve defining functions or &amp;hellip;">
+      <meta property="og:description" content="R supports many functional programming features.
+[&amp;hellip;] Perhaps the most important feature is that R has first-class functions. While most programming languages involve defining functions or &amp;hellip;">
+      
+    
+
+    
+    
+
+    
+
+    
+    
+
+
+<link href='//cdn.bootcss.com/highlight.js/9.12.0/styles/github.min.css' rel='stylesheet' type='text/css' />
+
+
+
+    <link rel="stylesheet" href="/sc1/css/style.css" />
+    <link rel="stylesheet" href="/sc1/css/fonts.css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Arvo">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Marcellus">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Code+Pro">
+
+<link rel="stylesheet" href="/sc1/css/custom.css" />
+
+<link rel="icon" href="/sc1/favicon.ico" type="image/x-icon" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<nav class="breadcrumbs">
+    
+        <a href="https://awllee.github.io/sc1/">home / </a>
+    
+        <a href="https://awllee.github.io/sc1/functional-oo/">functional-oo / </a>
+    
+        <a href="https://awllee.github.io/sc1/functional-oo/functional/">functional / </a>
+    
+</nav>
+
+  </head>
+
+  
+  <body class="sc1">
+    <header class="masthead">
+      <h1><a href="/sc1/">SC1</a></h1>
+
+<p class="tagline">Statistical Computing 1</p>
+
+      <nav class="menu">
+  <input id="menu-check" type="checkbox" />
+  <label id="menu-label" for="menu-check" class="unselectable">
+    <span class="icon close-icon">✕</span>
+    <span class="icon open-icon">☰</span>
+    <span class="text">Menu</span>
+  </label>
+  <ul>
+  
+  
+  <li><a href="/sc1/">Home</a></li>
+  
+  <li><a href="/sc1/intro-r/">Intro to R</a></li>
+  
+  <li><a href="/sc1/reproducibility/">Reproducibility</a></li>
+  
+  <li><a href="/sc1/common-r/">Common R</a></li>
+  
+  <li><a href="/sc1/tidyverse/">Tidyverse</a></li>
+  
+  <li><a href="/sc1/packages/">Packages</a></li>
+  
+  <li><a href="/sc1/functional-oo/">Functional / OO</a></li>
+  
+  <li><a href="/sc1/profile-debug/">Performance / Bugs</a></li>
+  
+  <li><a href="/sc1/matrices/">Matrices</a></li>
+  
+  <li><a href="/sc1/optimization/">Optimization</a></li>
+  
+  <li><a href="/sc1/integration/">Integration</a></li>
+  
+  
+  </ul>
+</nav>
+
+    </header>
+
+    <article class="main">
+      <header class="title">
+      
+<h1>Functional programming</h1>
+
+<h3>
+</h3>
+<hr>
+
+
+      </header>
+
+
+
+
+<link href="/sc1/rmarkdown-libs/anchor-sections/anchor-sections.css" rel="stylesheet" />
+<script src="/sc1/rmarkdown-libs/anchor-sections/anchor-sections.js"></script>
+
+<div id="TOC">
+<ul>
+<li><a href="#first-class-functions">First-class functions</a></li>
+<li><a href="#pure-functions">Pure functions</a></li>
+<li><a href="#closures">Closures</a></li>
+<li><a href="#lazy-evaluation">Lazy evaluation</a></li>
+</ul>
+</div>
+
+<p>R supports many functional programming features.</p>
+<div id="first-class-functions" class="section level2">
+<h2>First-class functions</h2>
+<p>Perhaps the most important feature is that R has first-class functions. While most programming languages involve defining functions or procedures, a language has first-class functions if in addition:</p>
+<ul>
+<li>functions can be arguments to other functions</li>
+<li>functions can be returned by functions</li>
+<li>functions can be stored in data structures.</li>
+</ul>
+<p>Essentially, functions are like any other variable.</p>
+<p>You have already seen some functional features of R, such as the Map and Reduce functions, which take functions as arguments.</p>
+<pre class="r"><code>square &lt;- function(x) x*x
+
+unlist(Map(square, 1:5))</code></pre>
+<pre><code>## [1]  1  4  9 16 25</code></pre>
+<pre class="r"><code>Reduce(`+`, Map(square, 1:5), init=0)</code></pre>
+<pre><code>## [1] 55</code></pre>
+<p>One can also return functions.</p>
+<pre class="r"><code>negate &lt;- function(f) {
+  function(...) {
+    return(-f(...))
+  }
+}
+
+negative.add &lt;- negate(`+`)
+negative.add(1, 2)</code></pre>
+<pre><code>## [1] -3</code></pre>
+<p>Functions can be stored in lists.</p>
+<pre class="r"><code>arithmetic &lt;- list(add=function(x,y) x+y, multiply=function(x,y) x*y)
+arithmetic$add(1,2)</code></pre>
+<pre><code>## [1] 3</code></pre>
+</div>
+<div id="pure-functions" class="section level2">
+<h2>Pure functions</h2>
+<p>In functional programming, one often aims to avoid functions that have side effects. That is, functions that modify global program state.</p>
+<p>A function that has always gives the same output for the same arguments and does not have any side effects is a pure function. These are very similar to mathematical functions and can be easier to reason about.</p>
+<p>Typically, a few functions in data analysis software will need to be impure. For example, functions that perform I/O or generate pseudo-random numbers. The former is necessary to access data and/or report results.</p>
+</div>
+<div id="closures" class="section level2">
+<h2>Closures</h2>
+<p>When a function <code>foo</code> is created by another function <code>make.foo</code>, the environment in which it is created is used to resolve free variables (not arguments or locally declared) in <code>foo</code>. If <code>foo</code> has such free variables, and the environment binds them then <code>foo</code> is a closure.</p>
+<p>This may sound complicated, but operationally the important feature is that functions created in an environment have access to the variables defined in that environment.</p>
+<pre class="r"><code>make.foo &lt;- function(x) {
+  foo &lt;- function(y) x + y
+}
+
+f &lt;- make.foo(10) # f(y) = 10 + y
+f(3)</code></pre>
+<pre><code>## [1] 13</code></pre>
+<pre class="r"><code>f(5)</code></pre>
+<pre><code>## [1] 15</code></pre>
+<pre class="r"><code>exists(&#39;x&#39;)</code></pre>
+<pre><code>## [1] FALSE</code></pre>
+<p>You may have used this feature without even thinking about it very much.</p>
+<p>It is quite useful in data analysis. For example, imagine a linear regression model with design matrix <span class="math inline">\(X\)</span> and data <span class="math inline">\(y\)</span>. One can write a function that returns a predictor, as follows.</p>
+<pre class="r"><code>make.predictor &lt;- function(X, y) {
+  beta &lt;- as.vector(solve(t(X)%*%X, t(X)%*%y))
+  predictor &lt;- function(x) as.vector(x%*%beta)
+}</code></pre>
+<p>We can check that the predictions are reasonable.</p>
+<pre class="r"><code># make a &quot;training&quot; dataset
+X &lt;- cbind(1, matrix(rnorm(100*2), 100, 2))
+beta.true &lt;- rnorm(3)
+y &lt;- X%*%beta.true + rnorm(100)
+
+# create the prediction function
+f &lt;- make.predictor(X, y)
+
+# make a &quot;testing&quot; dataset
+test.X &lt;- cbind(1, matrix(rnorm(10*2),10,2))
+
+# plot the true means
+plot(test.X%*%beta.true, col=&quot;red&quot;, pch=20,
+  main=&quot;true and predicted means for test data&quot;,
+  xlab=&quot;test index&quot;, ylab=&quot;y&quot;)
+# and also the predicted means
+points(f(test.X), col=&quot;blue&quot;, pch=20)</code></pre>
+<p><img src="/sc1/functional-oo/functional_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<p>The important feature is that the estimated coefficient vector is <em>captured</em> by the closure. In some sense, the predictor function carries data along with it: one does not need to pass in the original data or the estimated coefficients to the predictor function. This can allow very simple interfaces to functions that are quite complicated.</p>
+<p>The idea of closures carrying data along with functions can be thought of as an alternative to objects providing an interface to data and methods in object-oriented programming.</p>
+<p><em>Note</em>. One fairly common source of bugs is capturing the wrong variable. For example, unintentionally referring to a global variable rather than a local variable due to a spelling mistake.</p>
+</div>
+<div id="lazy-evaluation" class="section level2">
+<h2>Lazy evaluation</h2>
+<p>R uses lazy evaluation for function arguments, and this can cause confusion in some specific settings. <a href="https://adv-r.hadley.nz/functions.html#lazy-evaluation">This example from Advanced R</a> is instructive.</p>
+<pre class="r"><code>foo &lt;- function(x) {
+  return(10)
+}
+foo(warning(&quot;this warning is not shown&quot;))</code></pre>
+<pre><code>## [1] 10</code></pre>
+<p>We can use the <code>force</code> function to force evaluation of an argument.</p>
+<pre class="r"><code>bar &lt;- function(x) {
+  force(x)
+  return(10)
+}
+bar(warning(&quot;this warning is shown&quot;))</code></pre>
+<pre><code>## Warning in force(x): this warning is shown</code></pre>
+<pre><code>## [1] 10</code></pre>
+<p>Lazy evaluation is useful because it can reduce the number of times expressions are evaluated. But it may be difficult to reason about, especially when dealing with functions that return functions. Consider <a href="https://adv-r.hadley.nz/function-factories.html#factory-fundamentals">another example from Advanced R</a>.</p>
+<pre class="r"><code>make.power.function &lt;- function(exponent) {
+  power &lt;- function(x) x^exponent
+}
+
+square &lt;- make.power.function(2)
+cube &lt;- make.power.function(3)
+
+square(3)</code></pre>
+<pre><code>## [1] 9</code></pre>
+<pre class="r"><code>cube(3)</code></pre>
+<pre><code>## [1] 27</code></pre>
+<p>The following is probably not what you expected, however.</p>
+<pre class="r"><code>exponent &lt;- 2
+square &lt;- make.power.function(exponent)
+exponent &lt;- 3
+square(2)</code></pre>
+<pre><code>## [1] 8</code></pre>
+<p>What has happened is that <code>exponent</code> is only lazily evaluated when <code>square</code> is called, at which point <code>exponent = 3</code>.</p>
+<p>To fix the “bug”, one can force the evaluation of exponent in <code>make.power.function</code>.</p>
+<pre class="r"><code>make.power.function &lt;- function(exponent) {
+  force(exponent)
+  power &lt;- function(x) x^exponent
+}
+exponent &lt;- 2
+square &lt;- make.power.function(exponent)
+exponent &lt;- 3
+square(2)</code></pre>
+<pre><code>## [1] 4</code></pre>
+</div>
+
+
+  <footer>
+  
+
+<script src="//yihui.name/js/math-code.js"></script>
+<script async src="//mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+<script async src="//yihui.name/js/center-img.js"></script>
+
+
+<script type="text/javascript">
+var sc_project=12110974;
+var sc_invisible=1;
+var sc_security="9b171880";
+</script>
+<script type="text/javascript"
+src="https://www.statcounter.com/counter/counter.js"
+async></script>
+<noscript><div class="statcounter"><a title="Web Analytics"
+href="https://statcounter.com/" target="_blank"><img
+class="statcounter"
+src="https://c.statcounter.com/12110974/0/9b171880/1/"
+alt="Web Analytics"></a></div></noscript>
+
+
+
+
+
+
+
+
+  
+
+
+<p align=right>
+
+<a href='https://github.com/awllee/sc1/blob/master/content/functional-oo/functional.Rmd'>View source</a>
+
+|
+
+<a href='https://github.com/awllee/sc1/edit/master/content/functional-oo/functional.Rmd'>Edit source</a>
+
+</p>
+
+
+
+
+
+<script src="https://utteranc.es/client.js"
+        repo="awllee/sc1"
+        issue-term="pathname"
+        label="utterance"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script>
+
+
+
+  
+
+
+
+<script src="//cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+
+
+
+<script src="//cdn.bootcss.com/highlight.js/9.12.0/languages/r.min.js"></script>
+<script src="//cdn.bootcss.com/highlight.js/9.12.0/languages/yaml.min.js"></script>
+<script src="//cdn.bootcss.com/highlight.js/9.12.0/languages/tex.min.js"></script>
+<script>hljs.configure({languages: []}); hljs.initHighlightingOnLoad();</script>
+
+
+
+  
+  <hr>
+  <div class="copyright">© 2020 <a href="https://sites.google.com/view/anthonylee">Anthony Lee</a>, <a href="http://www.bristol.ac.uk/maths/people/feng-yu/index.html">Feng Yu</a>, <a href="https://people.maths.bris.ac.uk/~tk18582/">Tobias Kley</a>, <a href="https://mfasiolo.github.io/">Matteo Fasiolo</a></div>
+  
+  </footer>
+  </article>
+  
+  </body>
+</html>
+

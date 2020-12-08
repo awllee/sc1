@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <title>Testing a package using Travis - SC1</title>
+    <meta property="og:title" content="Testing a package using Travis - SC1">
+    
+    <meta name="twitter:card" content="summary">
+
+    
+      
+    
+
+    
+      
+      <meta property="description" content="An R package that is publicly available on GitHub can be tested using Travis CI (.com). CI stands for continuous integration.
+CI is a useful tool when developing software collaboratively because pull &amp;hellip;">
+      <meta property="og:description" content="An R package that is publicly available on GitHub can be tested using Travis CI (.com). CI stands for continuous integration.
+CI is a useful tool when developing software collaboratively because pull &amp;hellip;">
+      
+    
+
+    
+    
+
+    
+
+    
+    
+
+
+<link href='//cdn.bootcss.com/highlight.js/9.12.0/styles/github.min.css' rel='stylesheet' type='text/css' />
+
+
+
+    <link rel="stylesheet" href="/sc1/css/style.css" />
+    <link rel="stylesheet" href="/sc1/css/fonts.css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Arvo">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Marcellus">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Code+Pro">
+
+<link rel="stylesheet" href="/sc1/css/custom.css" />
+
+<link rel="icon" href="/sc1/favicon.ico" type="image/x-icon" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<nav class="breadcrumbs">
+    
+        <a href="https://awllee.github.io/sc1/">home / </a>
+    
+        <a href="https://awllee.github.io/sc1/packages/">packages / </a>
+    
+        <a href="https://awllee.github.io/sc1/packages/travis/">travis / </a>
+    
+</nav>
+
+  </head>
+
+  
+  <body class="sc1">
+    <header class="masthead">
+      <h1><a href="/sc1/">SC1</a></h1>
+
+<p class="tagline">Statistical Computing 1</p>
+
+      <nav class="menu">
+  <input id="menu-check" type="checkbox" />
+  <label id="menu-label" for="menu-check" class="unselectable">
+    <span class="icon close-icon">✕</span>
+    <span class="icon open-icon">☰</span>
+    <span class="text">Menu</span>
+  </label>
+  <ul>
+  
+  
+  <li><a href="/sc1/">Home</a></li>
+  
+  <li><a href="/sc1/intro-r/">Intro to R</a></li>
+  
+  <li><a href="/sc1/reproducibility/">Reproducibility</a></li>
+  
+  <li><a href="/sc1/common-r/">Common R</a></li>
+  
+  <li><a href="/sc1/tidyverse/">Tidyverse</a></li>
+  
+  <li><a href="/sc1/packages/">Packages</a></li>
+  
+  <li><a href="/sc1/functional-oo/">Functional / OO</a></li>
+  
+  <li><a href="/sc1/profile-debug/">Performance / Bugs</a></li>
+  
+  <li><a href="/sc1/matrices/">Matrices</a></li>
+  
+  <li><a href="/sc1/optimization/">Optimization</a></li>
+  
+  <li><a href="/sc1/integration/">Integration</a></li>
+  
+  
+  </ul>
+</nav>
+
+    </header>
+
+    <article class="main">
+      <header class="title">
+      
+<h1>Testing a package using Travis</h1>
+
+<h3>
+</h3>
+<hr>
+
+
+      </header>
+
+
+
+<p>An R package that is publicly available on GitHub can be tested using <a href="https://travis-ci.com/">Travis CI (.com)</a>. CI stands for continuous integration.</p>
+<p>CI is a useful tool when developing software collaboratively because pull requests can automatically trigger tests. This means that the reviewer of the pull request can be sure that the code works, insofar as the tests pass, and focus on other aspects of the code.</p>
+<p>Even in non-collaborative development, this can be useful as tests can be configured to run systematically against different configurations. For example, operating systems and versions of R.</p>
+<h2 id="travis-ci-org-vs-com">Travis CI .org vs .com</h2>
+<p>There have historically been two different services for public and private repositories. However, now Travis CI is aiming to service both types of repositories on <a href="https://travis-ci.com/">Travis CI .com</a>.</p>
+<h2 id="getting-set-up">Getting set up</h2>
+<p>You can log in to Travis using your GitHub account.</p>
+<p>Your repositories should be listed in Travis, and you can choose which ones undergo continuous integration by toggling them. You may need to synchronize your GitHub account within Travis to see new repositories.</p>
+<p>In order for Travis to build your R package, a file called <code>.travis.yml</code> should be placed in your repository.</p>
+<p>For a simple R package, the following should be sufficient:</p>
+<pre><code>language: r
+dist: xenial
+cache: packages
+branches:
+  only:
+    - master
+
+r_github_packages:
+  - r-lib/covr
+
+after_success:
+  - Rscript -e 'covr::codecov()'
+</code></pre><p>Next, you have to tell R to ignore this file. You do this by adding the following code to the <strong>.Rbuildignore</strong> file in your package.</p>
+<pre><code>## Ignore travis config file
+^\.travis\.yml$
+</code></pre><p>The information in the file tells Travis to build the master branch on an Ubuntu 16.04 (Xenial Xerus) system. If you have added tests using &ldquo;testthat&rdquo; these will be automatically run as part of the package build. Code coverage will also be run.</p>
+<p>You can view the code coverage results by going to <a href="https://codecov.io">Codecov</a>, logging in using your GitHub account and selecting the appropriate repository.</p>
+<h2 id="hosting-pages-using-github-pages">Hosting pages using GitHub pages</h2>
+<p>In fact, you can also have Travis build RMarkdown pages and deploy them to a GitHub Pages website associated with your GitHub repository.</p>
+<p>This is how this website is created.</p>
+<p>Here are simple examples:</p>
+<ul>
+<li><a href="https://github.com/awllee/rmarkdown-travis-demo">basic RMarkdown project</a> + <a href="https://awllee.github.io/rmarkdown-travis-demo/example.html">webpage</a></li>
+<li><a href="https://github.com/awllee/smc-tutorial">some slides</a> + <a href="https://awllee.github.io/smc-tutorial/smc-tutorial.html">webpage</a></li>
+</ul>
+<p>The only minor complication here is that you need to allow Travis to deploy to your GitHub repository. One way to do this is to create a &ldquo;Personal Access Token&rdquo; via</p>
+<p><code>Settings -&gt; Developer Settings -&gt; Personal access tokens</code></p>
+<p>in your GitHub account, which can be used to perform actions in GitHub that otherwise only you would be able to do.</p>
+<p>You should given the token a meaningful name (such as &ldquo;Travis GitHub pages deployment&rdquo;, and save the token in an encrypted file. You can then add this string to your Travis settings for that repository as an &ldquo;environment variable&rdquo;. For example, you could call it <code>GITHUB_PAT</code>. Make sure it is not shown in the build log.</p>
+<p>Then you can follow the Travis build instructions in the <a href="https://github.com/awllee/rmarkdown-travis-demo">basic RMarkdown project</a> listed above. In particular, for that project the <code>.travis.yml</code> file contains the following text:</p>
+<pre><code>language: r
+dist: xenial
+cache: packages
+branches:
+    only:
+        - master
+r_packages:
+    - rmarkdown
+
+script:
+    - Rscript -e 'rmarkdown::render(&quot;example.Rmd&quot;, output_dir=&quot;public&quot;)'
+
+deploy:
+    provider: pages
+    skip_cleanup: true
+    github_token: $GITHUB_PAT
+    on:
+        branch: master
+    local_dir: public
+    target_branch: gh-pages
+</code></pre><p>Rather than building an R package, Travis will render the RMarkdown file and place it in the &ldquo;public&rdquo; subdirectory. Then the deploy options tell Travis to copy the public directory to the <code>gh-pages</code> branch of the repository.</p>
+<p>For Travis to successfully deploy the webpages, you should create a <code>gh-pages</code> branch in your repository. You can do this using the GitHub web interface. You should also go to the settings page for the repository and in the GitHub Pages section you should select the <code>gh-pages</code> branch as the source.</p>
+<p>If you have succeeded, the webpage will be available at</p>
+<pre><code>https://&lt;username&gt;.github.io/&lt;repository-name&gt;/&lt;filename&gt;.html
+</code></pre>
+
+  <footer>
+  
+
+<script src="//yihui.name/js/math-code.js"></script>
+<script async src="//mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+<script async src="//yihui.name/js/center-img.js"></script>
+
+
+<script type="text/javascript">
+var sc_project=12110974;
+var sc_invisible=1;
+var sc_security="9b171880";
+</script>
+<script type="text/javascript"
+src="https://www.statcounter.com/counter/counter.js"
+async></script>
+<noscript><div class="statcounter"><a title="Web Analytics"
+href="https://statcounter.com/" target="_blank"><img
+class="statcounter"
+src="https://c.statcounter.com/12110974/0/9b171880/1/"
+alt="Web Analytics"></a></div></noscript>
+
+
+
+
+
+
+
+
+  
+
+
+<p align=right>
+
+<a href='https://github.com/awllee/sc1/blob/master/content/packages/travis.md'>View source</a>
+
+|
+
+<a href='https://github.com/awllee/sc1/edit/master/content/packages/travis.md'>Edit source</a>
+
+</p>
+
+
+
+
+
+<script src="https://utteranc.es/client.js"
+        repo="awllee/sc1"
+        issue-term="pathname"
+        label="utterance"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script>
+
+
+
+  
+
+
+
+<script src="//cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+
+
+
+<script src="//cdn.bootcss.com/highlight.js/9.12.0/languages/r.min.js"></script>
+<script src="//cdn.bootcss.com/highlight.js/9.12.0/languages/yaml.min.js"></script>
+<script src="//cdn.bootcss.com/highlight.js/9.12.0/languages/tex.min.js"></script>
+<script>hljs.configure({languages: []}); hljs.initHighlightingOnLoad();</script>
+
+
+
+  
+  <hr>
+  <div class="copyright">© 2020 <a href="https://sites.google.com/view/anthonylee">Anthony Lee</a>, <a href="http://www.bristol.ac.uk/maths/people/feng-yu/index.html">Feng Yu</a>, <a href="https://people.maths.bris.ac.uk/~tk18582/">Tobias Kley</a>, <a href="https://mfasiolo.github.io/">Matteo Fasiolo</a></div>
+  
+  </footer>
+  </article>
+  
+  </body>
+</html>
+

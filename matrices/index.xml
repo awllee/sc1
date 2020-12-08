@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Matrix computations on SC1</title>
+    <link>https://awllee.github.io/sc1/matrices/</link>
+    <description>Recent content in Matrix computations on SC1</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language><atom:link href="https://awllee.github.io/sc1/matrices/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Dense Matrices</title>
+      <link>https://awllee.github.io/sc1/matrices/dense/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://awllee.github.io/sc1/matrices/dense/</guid>
+      <description>Some examples of dense matrix operations Matrix is a two dimensional data structure in R. We can specify the values of entries in a matrix by column by default, or by row if byrow=T is set. Additionally, the column and row can have names, and can be renamed without changing values of matrix.
+x = matrix(1:6, 2, 3) class(x) ## [1] &amp;quot;matrix&amp;quot; &amp;quot;array&amp;quot; attributes(x) ## $dim ## [1] 2 3 dim(x) ## [1] 2 3 x2 = matrix(1:6, 2, 3, dimnames = list(c(&amp;#39;A&amp;#39;, &amp;#39;B&amp;#39;), c(&amp;#39;K&amp;#39;, &amp;#39;L&amp;#39;, &amp;#39;M&amp;#39;))) x2 ## K L M ## A 1 3 5 ## B 2 4 6 colnames(x2) ## [1] &amp;quot;K&amp;quot; &amp;quot;L&amp;quot; &amp;quot;M&amp;quot; rownames(x2) ## [1] &amp;quot;A&amp;quot; &amp;quot;B&amp;quot; colnames(x2) = c(&amp;#39;C1&amp;#39;, &amp;#39;C2&amp;#39;, &amp;#39;C3&amp;#39;) rownames(x2) = c(&amp;#39;R1&amp;#39;, &amp;#39;R2&amp;#39;) x2 ## C1 C2 C3 ## R1 1 3 5 ## R2 2 4 6 If one obtains a row of a matrix, the result is given as a vector, not matrix.</description>
+    </item>
+    
+    <item>
+      <title>Sparse Matrices</title>
+      <link>https://awllee.github.io/sc1/matrices/sparse/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://awllee.github.io/sc1/matrices/sparse/</guid>
+      <description>Matrix package The R Matrix package provides additional functions for both dense and sparse matrices that extend the basic matrix data type. In the Matrix package, dense matrices are stored as dgeMatrix objects. One useful function it adds for dense matrices is rankMatrix, which returns the rank of the input matrix, up to a certain tolerance if desired. Another useful function is rcond, which gives the condition number of a square matrix, defined to be the product of the norm of the matrix and the norm of its inverse.</description>
+    </item>
+    
+  </channel>
+</rss>
