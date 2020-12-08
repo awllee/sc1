@@ -115,7 +115,7 @@ The rejection sampling algorithm is very simple and powerful. However, we observ
 $$\Pr(Y=1)=\int_{\mathsf{X}}\frac{1}{M}\frac{\pi(x)}{\mu(x)}\mu(x){\rm d}x=\frac{1}{M},$$
 and the algorithm stops on the first trial where $Y=1$. □
 
-This is a simple implementation of a rejection sampler. The use of log densities is to avoid numerical issues, especially in high dimensions.
+This is a simple implementation of a rejection sampler.
 
 ```{r}
 # simple but not numerically stable
@@ -157,13 +157,11 @@ For complicated $\pi$, especially in high dimensions, we do not usually know how
 ## Importance sampling
 
 Assume $\pi(x) > 0 \Rightarrow \mu(x) > 0$. Importance sampling is motivated by expressing $\pi(f)$ as an integral w.r.t. $\mu$. That is,
-
 \begin{align}
 \pi(f) &= \int_\mathsf{X} f(x) \pi({\rm d}x) \\
   &= \int_\mathsf{X} f(x)w(x) \mu({\rm d}x) \\
 	&= \mu(f \cdot w),
 \end{align}
-
 where $w(x) = \pi(x)/\mu(x)$ is the ratio of the densities of $\pi$ and $\mu$.
 
 This justifies the use of $n^{-1} S_n(f \cdot w)$ as an approximation of $\pi(f)$. The variance of the approximation multiplied by $n$ is
