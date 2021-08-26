@@ -19,20 +19,19 @@ jobs:
         uses: r-lib/actions/setup-r@v1
 
       - name: Install dependencies
-        uses: r-lib/actions/setup-r-dependencies@v1
-        with:
-          extra-packages: |
-            tidyverse
-            mgcViz
-            GGally
-            devtools
-            hexbin
-            microbenchmark
-            profvis
-            miniCRAN
-            pracma
-            minpack.lm
-            blogdown
+        run: R -e 'intall.packages("c(
+          tidyverse,
+          mgcViz,
+          GGally,
+          devtools,
+          hexbin,
+          microbenchmark,
+          profvis,
+          miniCRAN,
+          pracma,
+          minpack.lm,
+          blogdown
+          )")'
 
       - name: Setup pandoc
         uses: r-lib/actions/setup-pandoc@v1
