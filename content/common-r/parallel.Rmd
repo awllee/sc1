@@ -8,7 +8,7 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-*Note*. Any timing results here could be substantially different to what you would get if you ran the code on your own computer, so comments on the results may also be confusing. This is because these computations are run by Travis on nodes that may be heavily contested, as part of the website build process.
+*Note*. Any timing results here could be substantially different to what you would get if you ran the code on your own computer, so comments on the results may also be confusing. This is because these computations are run in the cloud, as part of the website build process.
 
 ## Why parallel?
 
