@@ -276,8 +276,8 @@ Creating synthetic data R has many functions for simulating random variates from
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>https://awllee.github.io/sc1/common-r/parallel/</guid>
-      <description>Note. Any timing results here could be substantially different to what you would get if you ran the code on your own computer, so comments on the results may also be confusing. This is because these computations are run by Travis on nodes that may be heavily contested, as part of the website build process.
-Why parallel? Often, for large data processing jobs, a single CPU core is not enough.</description>
+      <description>Note. Any timing results here could be substantially different to what you would get if you ran the code on your own computer, so comments on the results may also be confusing. This is because these computations are run in the cloud, as part of the website build process.
+Why parallel? Often, for large data processing jobs, a single CPU core is not enough. Large computational jobs can be:</description>
     </item>
     
     <item>
