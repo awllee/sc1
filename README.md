@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.com/awllee/sc1.svg?branch=master)](https://travis-ci.com/awllee/sc1)
+[![Build Status](https://github.com/awllee/sc1/workflows/blogdown/badge.svg)](https://github.com/awllee/sc1/actions)
 
 # Statistical Computing 1 Website
 
