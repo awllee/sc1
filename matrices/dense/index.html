@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <title>Dense Matrices - SC1</title>
+    <meta property="og:title" content="Dense Matrices - SC1">
+    
+    <meta name="twitter:card" content="summary">
+
+    
+      
+    
+
+    
+      
+      <meta property="description" content="Matrix is a two dimensional data structure in R. We can specify the values of entries in a matrix by column by default, or by row if byrow=T is set. Additionally, the column and row can have names, &amp;hellip;">
+      <meta property="og:description" content="Matrix is a two dimensional data structure in R. We can specify the values of entries in a matrix by column by default, or by row if byrow=T is set. Additionally, the column and row can have names, &amp;hellip;">
+      
+    
+
+    
+    
+
+    
+
+    
+    
+
+
+<link href='//cdn.bootcss.com/highlight.js/9.12.0/styles/github.min.css' rel='stylesheet' type='text/css' />
+
+
+
+    <link rel="stylesheet" href="/sc1/css/style.css" />
+    <link rel="stylesheet" href="/sc1/css/fonts.css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Arvo">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Marcellus">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Code+Pro">
+
+<link rel="stylesheet" href="/sc1/css/custom.css" />
+
+<link rel="icon" href="/sc1/favicon.ico" type="image/x-icon" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<nav class="breadcrumbs">
+    
+        <a href="https://awllee.github.io/sc1/">home / </a>
+    
+        <a href="https://awllee.github.io/sc1/matrices/">matrices / </a>
+    
+        <a href="https://awllee.github.io/sc1/matrices/dense/">dense / </a>
+    
+</nav>
+
+  </head>
+
+  
+  <body class="sc1">
+    <header class="masthead">
+      <h1><a href="/sc1/">SC1</a></h1>
+
+<p class="tagline">Statistical Computing 1</p>
+
+      <nav class="menu">
+  <input id="menu-check" type="checkbox" />
+  <label id="menu-label" for="menu-check" class="unselectable">
+    <span class="icon close-icon">✕</span>
+    <span class="icon open-icon">☰</span>
+    <span class="text">Menu</span>
+  </label>
+  <ul>
+  
+  
+  <li><a href="/sc1/">Home</a></li>
+  
+  <li><a href="/sc1/intro-r/">Intro to R</a></li>
+  
+  <li><a href="/sc1/reproducibility/">Reproducibility</a></li>
+  
+  <li><a href="/sc1/common-r/">Common R</a></li>
+  
+  <li><a href="/sc1/tidyverse/">Tidyverse</a></li>
+  
+  <li><a href="/sc1/packages/">Packages</a></li>
+  
+  <li><a href="/sc1/functional-oo/">Functional / OO</a></li>
+  
+  <li><a href="/sc1/profile-debug/">Performance / Bugs</a></li>
+  
+  <li><a href="/sc1/matrices/">Matrices</a></li>
+  
+  <li><a href="/sc1/optimization/">Optimization</a></li>
+  
+  <li><a href="/sc1/integration/">Integration</a></li>
+  
+  
+  </ul>
+</nav>
+
+    </header>
+
+    <article class="main">
+      <header class="title">
+      
+<h1>Dense Matrices</h1>
+
+<h3>
+</h3>
+<hr>
+
+
+      </header>
+
+
+
+
+
+
+<div id="some-examples-of-dense-matrix-operations" class="section level2">
+<h2>Some examples of dense matrix operations</h2>
+<p>Matrix is a two dimensional data structure in <code>R</code>. We can specify the values of entries in a matrix by column by default, or by row if <code>byrow=T</code> is set. Additionally, the column and row can have names, and can be renamed without changing values of matrix.</p>
+<pre class="r"><code>x = matrix(1:6, 2, 3)
+class(x)</code></pre>
+<pre><code>## [1] &quot;matrix&quot; &quot;array&quot;</code></pre>
+<pre class="r"><code>attributes(x)</code></pre>
+<pre><code>## $dim
+## [1] 2 3</code></pre>
+<pre class="r"><code>dim(x)</code></pre>
+<pre><code>## [1] 2 3</code></pre>
+<pre class="r"><code>x2 = matrix(1:6, 2, 3, dimnames = list(c(&#39;A&#39;, &#39;B&#39;), c(&#39;K&#39;, &#39;L&#39;, &#39;M&#39;)))
+x2</code></pre>
+<pre><code>##   K L M
+## A 1 3 5
+## B 2 4 6</code></pre>
+<pre class="r"><code>colnames(x2)</code></pre>
+<pre><code>## [1] &quot;K&quot; &quot;L&quot; &quot;M&quot;</code></pre>
+<pre class="r"><code>rownames(x2)</code></pre>
+<pre><code>## [1] &quot;A&quot; &quot;B&quot;</code></pre>
+<pre class="r"><code>colnames(x2) = c(&#39;C1&#39;, &#39;C2&#39;, &#39;C3&#39;)
+rownames(x2) = c(&#39;R1&#39;, &#39;R2&#39;)
+x2</code></pre>
+<pre><code>##    C1 C2 C3
+## R1  1  3  5
+## R2  2  4  6</code></pre>
+<p>If one obtains a row of a matrix, the result is given as a vector, not matrix. One can avoid this behaviour by adding <code>drop=F</code> when indexing.</p>
+<pre class="r"><code>x[1,]</code></pre>
+<pre><code>## [1] 1 3 5</code></pre>
+<pre class="r"><code>x[1, ,drop=F]</code></pre>
+<pre><code>##      [,1] [,2] [,3]
+## [1,]    1    3    5</code></pre>
+<p><code>R</code> also has higher dimensional data structures, which is known as arrays.</p>
+<pre class="r"><code>y = array(1:6, c(2,4,2))
+dim(y)</code></pre>
+<pre><code>## [1] 2 4 2</code></pre>
+<pre class="r"><code>y[,,1]</code></pre>
+<pre><code>##      [,1] [,2] [,3] [,4]
+## [1,]    1    3    5    1
+## [2,]    2    4    6    2</code></pre>
+<pre class="r"><code>y[,,2]</code></pre>
+<pre><code>##      [,1] [,2] [,3] [,4]
+## [1,]    3    5    1    3
+## [2,]    4    6    2    4</code></pre>
+</div>
+<div id="solve-linear-systems" class="section level2">
+<h2>Solve linear systems</h2>
+<p>If one would like to solve a linear system <span class="math inline">\(Ax = b\)</span>, there are two ways in <code>R</code> to write the code. One way is to invert the matrix <span class="math inline">\(A\)</span> first and then multiple by <span class="math inline">\(b\)</span>, i.e. <code>solve(A) %*% b</code>. The other way is to use <code>solve</code> directly to solve for <span class="math inline">\(x\)</span>. We run an experiment with a Hilbert matrix of size 9. Hilbert matrices are know to be close to singular. We use the package <code>Matrix</code> here only to access the Hilbert matrix function. We will discuss the <code>Matrix</code> package in more detail when we discuss sparse matrices.</p>
+<pre class="r"><code>n = 9
+library(Matrix); A = as.matrix(Hilbert(n))
+c(rankMatrix(A), rankMatrix(A, tol=1e-9), det(A))</code></pre>
+<pre><code>## [1] 9.000000e+00 7.000000e+00 9.720265e-43</code></pre>
+<pre class="r"><code>x = matrix(rnorm(n), nrow=n, ncol=1)
+b = A %*% x
+x1 = solve(A) %*% b
+x2 = solve(A, b)
+c(norm(x-x1, type=&#39;1&#39;), norm(x-x2, type=&#39;1&#39;)) # compare 1-norm of error</code></pre>
+<pre><code>## [1] 2.074985e-04 6.791651e-07</code></pre>
+<pre class="r"><code>c(norm(b - A %*% x1, type=&#39;1&#39;), norm(b - A %*% x2, type=&#39;1&#39;)) # compare residuals</code></pre>
+<pre><code>## [1] 3.166766e-06 6.106227e-16</code></pre>
+<p>In the above, the function <code>norm</code> computes the matrix norm, with the 1-norm being <span class="math display">\[\|A\|_1 = \max_{1\le j\le n} \sum_{i=1}^n |a_{ij}|.\]</span>
+As can be seen from this example, solving directly is more accurate, not to mention faster. Unless a linear system needs to be repeated solved for different vectors, the matrix involved should never be inverted in <code>R</code>.</p>
+</div>
+<div id="numerical-stability-finite-precision-arithmetic" class="section level2">
+<h2>Numerical stability, finite precision arithmetic</h2>
+<p>In R and many other programming packages, a floating point number is stored as a “double” precision number. According to the IEEE754 standard, a double number consists of 64 binary bits arranged as follows:</p>
+<ul>
+<li>sign bit: 1 bit</li>
+<li>exponent bit: 11 bits</li>
+<li>significant precision: 52 bits</li>
+</ul>
+<p>This means that there are largest and smallest finite numbers in R:</p>
+<pre class="r"><code>c(2^(-1075), 2^(-1074), 2^1023, 2^1024, 2^1024 / 2^1024)</code></pre>
+<pre><code>## [1]  0.000000e+00 4.940656e-324 8.988466e+307           Inf           NaN</code></pre>
+<p>With <span class="math inline">\(2^{-52}\approx 2.22 \times 10^{-16}\)</span>, we can expect an error of order <span class="math inline">\(10^{-16}\)</span> in numerical representations (and therefore computation) of double numbers. For example,</p>
+<pre class="r"><code>1 + 1e-15</code></pre>
+<pre><code>## [1] 1</code></pre>
+<pre class="r"><code>print(1 + 1e-15, digits=22)</code></pre>
+<pre><code>## [1] 1.000000000000001110223</code></pre>
+<pre class="r"><code>print(1, digits=22)</code></pre>
+<pre><code>## [1] 1</code></pre>
+<p>This finite precision causes numerical errors when one performs arithmetic operation on floating point number:</p>
+<pre class="r"><code>0.1 + 0.2 - 0.3</code></pre>
+<pre><code>## [1] 5.551115e-17</code></pre>
+<p>In addition to floating point representation, R also has an integer data type “long”, e.g. <code>1L</code> means 1 stored as a long integer.</p>
+<pre class="r"><code>1 == 1L</code></pre>
+<pre><code>## [1] TRUE</code></pre>
+<pre class="r"><code>identical(1, 1L)</code></pre>
+<pre><code>## [1] FALSE</code></pre>
+<p>The equality comparison <code>==</code> is somewhat problematic especially when comparing double floating point numbers, but <code>all.equal</code> ignores errors up to a tolerence level, defaulted to be <code>1.5e-8</code>.</p>
+<pre class="r"><code>0.1 + 0.2 - 0.3 == 0</code></pre>
+<pre><code>## [1] FALSE</code></pre>
+<pre class="r"><code>all.equal(0.1+0.2-0.3, 0)</code></pre>
+<pre><code>## [1] TRUE</code></pre>
+<pre class="r"><code>all.equal(1L, 1)</code></pre>
+<pre><code>## [1] TRUE</code></pre>
+<p>Due to finite precision, matrix operations will contain numerical errors, with matrix multiplication generally having larger errors due to many operations of addition and scalar multiplication.</p>
+<pre class="r"><code>A = matrix(rnorm(100), 10, 10); B = matrix(rnorm(100), 10, 10); C = rnorm(10)
+
+summary(c((A+B) - A - B))</code></pre>
+<pre><code>##       Min.    1st Qu.     Median       Mean    3rd Qu.       Max. 
+## -2.220e-16  0.000e+00  0.000e+00 -2.429e-19  0.000e+00  1.665e-16</code></pre>
+<pre class="r"><code>summary(c(A%*%B%*%C - A%*%(B%*%C)))</code></pre>
+<pre><code>##       Min.    1st Qu.     Median       Mean    3rd Qu.       Max. 
+## -1.776e-15 -6.661e-16  0.000e+00  7.216e-16  1.582e-15  7.105e-15</code></pre>
+<p>The R function <code>solve</code> gives the inverse of a matrix for <code>solve(A)</code>, or solves a linear system <span class="math inline">\(Ax=b\)</span> for <code>solve(A,b)</code>. If one needs to solve <span class="math inline">\(Ax=b\)</span>, then <code>solve(A,b)</code> generally speaking has lower numerical error than <code>solve(A) %*% b</code>, which is equivalent to computing <span class="math inline">\(A^{-1} b\)</span>.</p>
+<pre class="r"><code>A = rbind(c(10,7,8,7), c(7,5,6,5), c(8,6,10,9), c(7,5,9,10))
+b1 = c(32,23,33,31); b2 = b1 + rnorm(4)*0.1
+c( A %*% (solve(A, b1)) - b1 )</code></pre>
+<pre><code>## [1] -3.552714e-15  0.000000e+00  0.000000e+00 -3.552714e-15</code></pre>
+<pre class="r"><code>c( A %*% (solve(A) %*% b1) - b1 )</code></pre>
+<pre><code>## [1] 8.384404e-13 5.826450e-13 5.258016e-13 3.979039e-13</code></pre>
+<pre class="r"><code>c( A %*% (solve(A, b2)) - b2 )</code></pre>
+<pre><code>## [1]  0.000000e+00 -3.552714e-15  0.000000e+00  0.000000e+00</code></pre>
+<pre class="r"><code>c( A %*% (solve(A) %*% b2) - b2 )</code></pre>
+<pre><code>## [1] 9.023893e-13 6.288303e-13 6.394885e-13 5.400125e-13</code></pre>
+<p>The R function <code>eigen</code> gives a list of two outputs, eigenvalues and eigenvectors of the input matrix. If one knows the input matrix is symmetric, hence will have real eigenvalues, one should specify this in the input argument to <code>eigen</code>. As can be seen in the following examples, if the eigenvalues of a matrix differ by magnitudes, the values of the eigenvectors have significant numerical error.</p>
+<pre class="r"><code>n = 10
+A1 = matrix(rnorm(n*n), nrow=n, ncol=n); A2 = A1 + t(A1)
+eA = eigen(A2, symmetric=TRUE)
+summary(abs(eA$values))</code></pre>
+<pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+##  0.7349  2.9005  4.3203  4.3478  6.0346  8.1500</code></pre>
+<pre class="r"><code>c(norm(eA$vectors %*% diag(eA$values) %*% t(eA$vectors) - A2, type=&#39;1&#39;),
+  norm(eA$vectors %*% t(eA$vectors) - diag(rep(1, n)), type=&#39;1&#39;))</code></pre>
+<pre><code>## [1] 6.616929e-14 4.694162e-15</code></pre>
+<pre class="r"><code>n = 100
+A1 = matrix(rnorm(n*n), nrow=n, ncol=n); A2 = A1 + t(A1)
+eA = eigen(A2, symmetric=TRUE)
+summary(abs(eA$values))</code></pre>
+<pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+##  0.3504  5.2956 11.0072 12.0656 18.2066 27.7958</code></pre>
+<pre class="r"><code>c(norm(eA$vectors %*% diag(eA$values) %*% t(eA$vectors) - A2, type=&#39;1&#39;),
+  norm(eA$vectors %*% t(eA$vectors) - diag(rep(1, n)), type=&#39;1&#39;))</code></pre>
+<pre><code>## [1] 4.289947e-12 3.085550e-13</code></pre>
+<pre class="r"><code>n = 1000
+A1 = matrix(rnorm(n*n), nrow=n, ncol=n); A2 = A1 + t(A1)
+eA = eigen(A2, symmetric=TRUE)
+summary(abs(eA$values))</code></pre>
+<pre><code>##     Min.  1st Qu.   Median     Mean  3rd Qu.     Max. 
+##  0.01042 17.67844 36.07423 37.93987 56.65723 89.52462</code></pre>
+<pre class="r"><code>c(norm(eA$vectors %*% diag(eA$values) %*% t(eA$vectors) - A2, type=&#39;1&#39;),
+  norm(eA$vectors %*% t(eA$vectors) - diag(rep(1, n)), type=&#39;1&#39;))</code></pre>
+<pre><code>## [1] 1.310099e-10 4.601240e-12</code></pre>
+</div>
+
+
+  <footer>
+  
+
+<script src="//yihui.name/js/math-code.js"></script>
+<script async src="//mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+<script async src="//yihui.name/js/center-img.js"></script>
+
+
+<script type="text/javascript">
+var sc_project=12110974;
+var sc_invisible=1;
+var sc_security="9b171880";
+</script>
+<script type="text/javascript"
+src="https://www.statcounter.com/counter/counter.js"
+async></script>
+<noscript><div class="statcounter"><a title="Web Analytics"
+href="https://statcounter.com/" target="_blank"><img
+class="statcounter"
+src="https://c.statcounter.com/12110974/0/9b171880/1/"
+alt="Web Analytics"></a></div></noscript>
+
+
+
+
+
+
+
+
+  
+
+
+<p align=right>
+
+<a href='https://github.com/awllee/sc1/blob/master/content/matrices/dense.Rmd'>View source</a>
+
+|
+
+<a href='https://github.com/awllee/sc1/edit/master/content/matrices/dense.Rmd'>Edit source</a>
+
+</p>
+
+
+
+
+
+<script src="https://utteranc.es/client.js"
+        repo="awllee/sc1"
+        issue-term="pathname"
+        label="utterance"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script>
+
+
+
+  
+
+
+
+<script src="//cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+
+
+
+<script src="//cdn.bootcss.com/highlight.js/9.12.0/languages/r.min.js"></script>
+<script src="//cdn.bootcss.com/highlight.js/9.12.0/languages/yaml.min.js"></script>
+<script src="//cdn.bootcss.com/highlight.js/9.12.0/languages/tex.min.js"></script>
+<script>hljs.configure({languages: []}); hljs.initHighlightingOnLoad();</script>
+
+
+
+  
+  <hr>
+  <div class="copyright">© 2020 <a href="https://sites.google.com/view/anthonylee">Anthony Lee</a>, <a href="http://www.bristol.ac.uk/maths/people/feng-yu/index.html">Feng Yu</a>, <a href="https://people.maths.bris.ac.uk/~tk18582/">Tobias Kley</a>, <a href="https://mfasiolo.github.io/">Matteo Fasiolo</a></div>
+  
+  </footer>
+  </article>
+  
+  </body>
+</html>
+

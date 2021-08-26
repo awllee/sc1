@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <title>Object-oriented programming - SC1</title>
+    <meta property="og:title" content="Object-oriented programming - SC1">
+    
+    <meta name="twitter:card" content="summary">
+
+    
+      
+    
+
+    
+      
+      <meta property="description" content="The purpose of this chapter is to introduce object-oriented programming (OOP) in R. Base R offers three different models for OOP:
+[&amp;hellip;] Further, some R packages on CRAN are available that provide &amp;hellip;">
+      <meta property="og:description" content="The purpose of this chapter is to introduce object-oriented programming (OOP) in R. Base R offers three different models for OOP:
+[&amp;hellip;] Further, some R packages on CRAN are available that provide &amp;hellip;">
+      
+    
+
+    
+    
+
+    
+
+    
+    
+
+
+<link href='//cdn.bootcss.com/highlight.js/9.12.0/styles/github.min.css' rel='stylesheet' type='text/css' />
+
+
+
+    <link rel="stylesheet" href="/sc1/css/style.css" />
+    <link rel="stylesheet" href="/sc1/css/fonts.css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Arvo">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Marcellus">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Code+Pro">
+
+<link rel="stylesheet" href="/sc1/css/custom.css" />
+
+<link rel="icon" href="/sc1/favicon.ico" type="image/x-icon" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<nav class="breadcrumbs">
+    
+        <a href="https://awllee.github.io/sc1/">home / </a>
+    
+        <a href="https://awllee.github.io/sc1/functional-oo/">functional-oo / </a>
+    
+        <a href="https://awllee.github.io/sc1/functional-oo/object-oriented/">object-oriented / </a>
+    
+</nav>
+
+  </head>
+
+  
+  <body class="sc1">
+    <header class="masthead">
+      <h1><a href="/sc1/">SC1</a></h1>
+
+<p class="tagline">Statistical Computing 1</p>
+
+      <nav class="menu">
+  <input id="menu-check" type="checkbox" />
+  <label id="menu-label" for="menu-check" class="unselectable">
+    <span class="icon close-icon">✕</span>
+    <span class="icon open-icon">☰</span>
+    <span class="text">Menu</span>
+  </label>
+  <ul>
+  
+  
+  <li><a href="/sc1/">Home</a></li>
+  
+  <li><a href="/sc1/intro-r/">Intro to R</a></li>
+  
+  <li><a href="/sc1/reproducibility/">Reproducibility</a></li>
+  
+  <li><a href="/sc1/common-r/">Common R</a></li>
+  
+  <li><a href="/sc1/tidyverse/">Tidyverse</a></li>
+  
+  <li><a href="/sc1/packages/">Packages</a></li>
+  
+  <li><a href="/sc1/functional-oo/">Functional / OO</a></li>
+  
+  <li><a href="/sc1/profile-debug/">Performance / Bugs</a></li>
+  
+  <li><a href="/sc1/matrices/">Matrices</a></li>
+  
+  <li><a href="/sc1/optimization/">Optimization</a></li>
+  
+  <li><a href="/sc1/integration/">Integration</a></li>
+  
+  
+  </ul>
+</nav>
+
+    </header>
+
+    <article class="main">
+      <header class="title">
+      
+<h1>Object-oriented programming</h1>
+
+<h3>
+</h3>
+<hr>
+
+
+      </header>
+
+
+
+
+
+<div id="TOC">
+<ul>
+<li><a href="#outlook">Outlook</a></li>
+<li><a href="#terminology">Terminology</a></li>
+<li><a href="#s3">S3</a></li>
+<li><a href="#s4">S4</a></li>
+<li><a href="#reference-classes">Reference Classes</a></li>
+</ul>
+</div>
+
+<div id="outlook" class="section level2">
+<h2>Outlook</h2>
+<p>The purpose of this chapter is to introduce object-oriented programming (OOP) in R. Base R offers three different models for OOP:</p>
+<ul>
+<li><a href="http://search.r-project.org/library/base/html/UseMethod.html">S3</a>,</li>
+<li><a href="http://search.r-project.org/library/methods/html/Introduction.html">S4</a>, and</li>
+<li><a href="http://search.r-project.org/library/methods/html/refClass.html">Reference Classes</a>.</li>
+</ul>
+<p>Further, some R packages on CRAN are available that provide additional models (e. g., R6, R.oo or proto).</p>
+<p>Here we focus on an introduction of the models available in base R and a discussion of their advantages and disadvantages. For a more in depth introduction to the mechanics of OOP in R you may want to read in Part III of <a href="https://adv-r.hadley.nz/oo.html">Advanced R</a>.</p>
+</div>
+<div id="terminology" class="section level2">
+<h2>Terminology</h2>
+<p>An important reason to use OOP is that it allows for <a href="https://en.wikipedia.org/wiki/Polymorphism_(computer_science)"><strong>polymorphism</strong></a>, which greatly facilitates re-usability and extendability. Polymorphism means that a single symbol may refer to different types. In particular, this approach allows for the separation of the interface of a piece of software and its implementation. A software developer who wants to reuse some already existing software thus only needs to know the interface against which he is programming and what the expected behaviour is. The details of the implementation on the other hand are not required to be know. One specific implementation of an interface could thus even be exchanged for another one and the two implementations may (internally) works quite different without affecting the validity of the software that makes use of them.</p>
+<p>In OOP the implementation is <strong>encapsulated</strong> in an <strong>object</strong>; i.e., its data and functionality are conceptually at the same place, but separate from the rest. The state (this can include data) of an object is specified via its <strong>fields</strong> and the behaviour is specified by its <strong>methods</strong>. Many OOP model (but not all) allow for <a href="https://en.wikipedia.org/wiki/Inheritance_(object-oriented_programming)"><strong>inheritance</strong></a> when defining new classes. If one class (the derived class is usually referred to as the child) inherits from another class (the base class is usually referred to as the parent) then the child class will have all the fields and methods of the parent class available and the fields and methods from the definition are added to those. The resulting hierarchical structure is often displayed graphically in form of a <a href="https://en.wikipedia.org/wiki/Class_diagram">class diagram</a> which are part of the <a href="https://en.wikipedia.org/wiki/Unified_Modeling_Language">Unified Modelling Language</a> (UML). The use of UML can be very helpful when designing software systems using OOP.</p>
+<p>With classes and their relationships to each other laid out in a tactical way (e. g., via inheritance and how they interact or are associated to each other) software systems become more easily maintainable and it is often possible to extend functionality without changes to the already existing code. Reusable solutions and best practices in OOP are documented in a formalised fashion as <a href="https://en.wikipedia.org/wiki/Software_design_pattern"><strong>design patterns</strong></a>.</p>
+<p>The different OOP models in R vary in the degree of encapsulation that they provide. S3 is probably the least rigorous of the models available in base R. In <a href="https://adv-r.hadley.nz/oo.html">Advanced R</a> it is described as <strong>functional OOP</strong>, because of the mechanism in which a function call of the form <code>generic(object, additional_args)</code> is dispatched. Here, a <strong>method dispatch</strong> refers to finding the right code to evaluate given the type of <code>object</code>. S4 enforces more disciplined programming by requiring formal definitions that S3 does not require. The upside to this extra work is that a greater degree of integrity can be guaranteed. Reference Classes implement properly encapsulated object-oriented paradigm. In particular, they are <strong>mutable</strong>, meaning that they can be modified in place avoiding R’s usual copy-on-modify mechanism.</p>
+</div>
+<div id="s3" class="section level2">
+<h2>S3</h2>
+<p>The easiest and most informal system for OOP in R is called S3 (named after version 3 of the S programming language into which it was introduced). For S3 there is no formal class definition. While, on the one hand, this makes using the system very flexible, on the other hand, it also means that there are usually no build-in integrity checks. Programming with S3 is largely based on conventions. We outline how to use S3 in the rest of this section.</p>
+<p>An S3 object is an object of a base type with the attribute <code>class</code> set to the class name. If you feel that you need to revise what base types and attributes are in R we refer you to Sections <a href="https://adv-r.hadley.nz/vectors-chap.html#attributes">3.3</a> and <a href="https://adv-r.hadley.nz/vectors-chap.html#attributes">12</a> in <a href="https://adv-r.hadley.nz/oo.html">Advanced R</a>. The functions <code>class()</code> and <code>unclass()</code> provide a convenient way to set the attribute to a class name or strip it off the object again.</p>
+<p>It is good practice to have a <strong>constructor</strong> function that a user can call to initialise all relevant elements of the object and then return the object afterwards. In <a href="https://adv-r.hadley.nz/oo.html">Advanced R</a> it is recommended to have only the essential elements in the constructor and validate the arguments in a separate function (the <strong>validator</strong>). Further, in <a href="https://adv-r.hadley.nz/oo.html">Advanced R</a> it is recommended to have a <strong>helper</strong> function that is intended for end users. This function is meant to make the constructor more user-friendly, for example, by anticipating common mistakes and correcting them on the fly.</p>
+<p>The following code block illustrates how to construct a vector <code>y</code> with <span class="math inline">\(n\)</span> responses, an <span class="math inline">\(n \times p\)</span> design matrix <code>x</code> and the ordinary least squares estimate b into an S3 object.</p>
+<pre class="r"><code># set seed for reproducibility
+set.seed(123)
+
+# define sample size, coefficients, regressor and response
+n  &lt;- 50
+b0 &lt;- matrix(c(2, -1), ncol = 1)
+x  &lt;- rnorm(n)
+y  &lt;- b0[1] + b0[2] * x + rnorm(n)
+
+# Constructor for `simple_lin_regression`.
+#
+# This function computes the ordinary least squares estimate
+# for the simple linear regression E[y|x] = b0 + b1 * x.
+#
+# Params: y - a vector with n elements; observed responses
+#         x - a vector with n elements; observed regressors
+#
+# Returns: an S3 object of type simple_lin_regression
+#
+simple_lin_regression &lt;- function(y, x) {
+  # define design matrix
+  n &lt;- length(y)
+  D &lt;- matrix(c(rep(1, n), x), ncol = 2)
+  
+  # compute the OLS estimate
+  b &lt;- solve(t(D) %*% D) %*% t(D) %*% y 
+  
+  # the object will encapsulate y, X and b
+  slr &lt;- list(response=y, regressor=x, estimate=b)
+  
+  # the object `slr` is declared to be an S3 object of
+  # class &quot;simple_lin_regression&quot;, by
+  class(slr) &lt;- &quot;simple_lin_regression&quot;
+  
+  return(slr)
+}
+
+sl1 &lt;- simple_lin_regression(y, x)</code></pre>
+<p>One reason for organising the data and estimates in this way is that we can now implement special versions of generic methods (e. g., <code>print</code> and <code>plot</code>) that will be capable of working with this class of objects. Methods for S3 objects are defined by the following naming convention <code>[method_name].[class_name]()</code>. For example, we can implement <code>print</code> and <code>plot</code> for our class <code>simple_lin_regression</code> by the following code</p>
+<pre class="r"><code>print.simple_lin_regression &lt;- function(x, ...) {
+  cat(&quot;head(x) =&quot;, head(x$regressor), &quot;\n&quot;)
+  cat(&quot;head(y) =&quot;, head(x$response), &quot;\n\n&quot;)
+  cat(&quot;Estimated regression: E[y|x] = b0 + b1 * x\n&quot;)
+  cat(&quot;b0 = &quot;, x$estimate[1], &quot; and b1 = &quot;, x$estimate[2], &quot;.\n&quot;, sep = &quot;&quot;)
+}
+
+plot.simple_lin_regression &lt;- function(x, y = NULL, ...) {
+  plot(x = x$regressor, y = x$response,
+       xlab = expression(X), ylab = expression(Y))
+  abline(a = x$estimate[1], b = x$estimate[2])
+}</code></pre>
+<p>Now we call them on the object <code>sl</code> that we previously created.</p>
+<pre class="r"><code>print(sl1)</code></pre>
+<pre><code>## head(x) = -0.5604756 -0.2301775 1.558708 0.07050839 0.1292877 1.715065 
+## head(y) = 2.813794 2.201631 0.3984212 3.298094 1.644941 1.801406 
+## 
+## Estimated regression: E[y|x] = b0 + b1 * x
+## b0 = 2.147615 and b1 = -1.035079.</code></pre>
+<pre class="r"><code>plot(sl1)</code></pre>
+<p><img src="/sc1/functional-oo/object-oriented_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+<p>Note that to implement a method for an S3 class, a generic function of the same name needs to exist. You can, for example, see the definition of the generic function <code>plot</code> by</p>
+<pre class="r"><code>plot</code></pre>
+<pre><code>## function (x, y, ...) 
+## UseMethod(&quot;plot&quot;)
+## &lt;bytecode: 0x7fdee728b420&gt;
+## &lt;environment: namespace:base&gt;</code></pre>
+<p>Note that the generic function <code>plot</code> has two compulsory arguments <code>x</code> and <code>y</code> and optional arguments indicated by <code>...</code>. The generic functions body is always a call of the function <code>UseMethod("[name_of_generic_function]")</code>.</p>
+<p>When defining a method that implements a generic function for an S3 object it must have the same arguments as the generic function.</p>
+<p>It is possible to introduce new generic functions. For example, we want to do a residual analysis. No generic <code>residual_analysis</code> does yet exist and we therefore define it ourselves:</p>
+<pre class="r"><code>residual_analysis &lt;- function(x) {
+  UseMethod(&quot;residual_analysis&quot;)
+}</code></pre>
+<p>Next we implement it for our <code>simple_lin_regression</code> class:</p>
+<pre class="r"><code>residual_analysis.simple_lin_regression &lt;- function(x) {
+  predictions &lt;- x$estimate[1] + x$estimate[2] * x$regressor
+  plot(x = predictions, y = x$response - predictions,
+       xlab = expression(hat(Y)), ylab = expression(Y - hat(Y)))
+}</code></pre>
+<p>Now, we can apply the residual analysis function to our object:</p>
+<pre class="r"><code>residual_analysis(sl1)</code></pre>
+<p><img src="/sc1/functional-oo/object-oriented_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+<p>S3 classes allow for inheritance by setting the <code>class</code> attribute to a vector of class names.</p>
+<p>For an example let us create an object of class <code>ordered</code> and check its class:</p>
+<pre class="r"><code>ord_factor &lt;- ordered(c(&quot;a&quot;, &quot;b&quot;, &quot;a&quot;))
+class(ord_factor)</code></pre>
+<pre><code>## [1] &quot;ordered&quot; &quot;factor&quot;</code></pre>
+<p>You can see that the first element of the class attribute is <code>ordered</code> and the second is <code>factor</code>. This means that the class <code>ordered</code> extends the class factor. If a generic is implemented for the class ordered it will be called, but if it is not (yet) implemented the dispatch mechanism will try to find an implementation of the generic for class <code>factor</code>.</p>
+<p>Let us try this in a synthetic example:</p>
+<pre class="r"><code># define objects of class parent and child, respectively.
+P &lt;- structure(numeric(), class = &quot;parent_class&quot;)
+C &lt;- structure(numeric(), class = c(&quot;child_class&quot;, &quot;parent_class&quot;))
+
+# now implement print, first for parent_class
+print.parent_class &lt;- function(x) {
+  cat(&quot;this is print for parent_class objects&quot;)
+}
+
+print(P)</code></pre>
+<pre><code>## this is print for parent_class objects</code></pre>
+<pre class="r"><code>print(C)</code></pre>
+<pre><code>## this is print for parent_class objects</code></pre>
+<pre class="r"><code># now implement print for child_class
+print.child_class &lt;- function(x) {
+  cat(&quot;this is print for child_class objects&quot;)
+}
+
+print(P)</code></pre>
+<pre><code>## this is print for parent_class objects</code></pre>
+<pre class="r"><code>print(C)</code></pre>
+<pre><code>## this is print for child_class objects</code></pre>
+<p>It can be seen that when the first two print statements are called (before the print method for child class is implemented) both <code>C</code> and <code>P</code> are recognised as having the functionality of the parent class. But once the <code>print</code> function for the child class is available <code>C</code> is printed as a child_class object and <code>P</code> is printed as a parent class object.</p>
+<p>We stop short of explaining more details of inheritance with S3 and refer to the additional documentation.</p>
+</div>
+<div id="s4" class="section level2">
+<h2>S4</h2>
+<p>A more formal approach to OOP in R is implemented in S4 (named after version 4 of the S programming language into which it was introduced). In S4 all relevant elements as, for example, classes have to be defined explicitly. This is in sharp contrast of S3 which is largely based on conventions. While, on the one hand, this requires additional effort from the programmer, on the other hand, it can also aid to achieve more clarity and allows for build-in integrity checks. We outline how to use S4 in the rest of this section. Further information can be found in, for example, <a href="http://search.r-project.org/library/methods/html/Introduction.html">the R documentation on S4</a> and <a href="https://adv-r.hadley.nz/s4.html">Section 15 of Advanced R</a> (also see the “Learning More” section of it).</p>
+<p>The R functions related to S4 are available in the <code>methods</code> package. This package is usually loaded by default. It is nevertheless, for example to indicate to someone reading the code later, advisable to load it before you start using S4:</p>
+<pre class="r"><code>library(methods)</code></pre>
+<p>As mentioned before, S4 classes have to be declared formally. This is done by invoking the <code>setClass</code> function. As an example, we will now redo the simple linear regression example with S4:</p>
+<pre class="r"><code>setClass(&quot;simple_lin_regression&quot;,
+   slots = c(
+     response  = &quot;numeric&quot;,
+     regressor = &quot;numeric&quot;,
+     estimate  = &quot;numeric&quot;
+     )
+)</code></pre>
+<p>In the call of <code>setClass</code> above, two arguments are provided. The first argument is the name of the class that is being defined. The second argument is <code>slots</code> (more commonly referred as fields or variables) which is required to be a named character vector. Note that declaring an S4 class, where fields are declared by name and type, is more rigorous than declaring a class in S3 where any base typed object can be turned into an S3 object by adding the attribute <code>class</code> (with the name of the S3 class) to it.</p>
+<p>After defining the fields in a class, we need to define the methods. We should first define a special initialisation method. This method must be called <code>initialize</code> (note the American spelling):</p>
+<pre class="r"><code>setMethod(&quot;initialize&quot;, &quot;simple_lin_regression&quot;,
+  function(.Object, response, regressor) {
+    .Object@response  &lt;- response
+    .Object@regressor &lt;- regressor
+
+    # define design matrix
+    n &lt;- length(response)
+    D &lt;- matrix(c(rep(1, n), regressor), ncol = 2)
+
+    # compute the OLS estimate
+    b &lt;- solve(t(D) %*% D) %*% t(D) %*% response
+    .Object@estimate &lt;- as.numeric(b)
+    return(.Object)
+  }
+)</code></pre>
+<p>Explanation and some remarks regarding the above definition of <code>initialize</code> for objects of class <code>simple_lin_regression</code> are in order now. We first describe the code line by line.</p>
+<p>The first two arguments to <code>setMethod</code> are the name of the generic function that we are implementing (here: <code>initialize</code>) and the signature, i.e., the classes that some of the arguments of this function have to have for this particular implementation of the function to be invoked. <code>initialize</code> is a non-standard generic function that is called within the function <code>new</code> (which constructs a new object of this class and is called by <code>new("simple_lin_regression", response=y, regressor=x)</code>) and should at the least set the slots to the values provided as the arguments to <code>new</code>.</p>
+<p>Our implementation above will be called if the first argument <code>.Object</code>, which is the class of the object created by <code>new</code>, is of class “simple_lin_regression”. Further (cf. the second line of the call of <code>setMethod</code> above), we now require that only two additional arguments are provided in the call of <code>new("simple_lin_regression", ...)</code>: these arguments must be called <code>response</code> and <code>regressor</code> and no other argument (in particular, no <code>estimate</code>) must be given. You may want to take a look at the definitions of the generic function <code>initialize</code> and the function <code>new</code>.</p>
+<p>In lines 3 and 4 of the code above we then set the values of slots <code>response</code> and <code>regressor</code> to the values that are passed to the call of <code>new</code>. Note that slots of an object can be accessed via the <code>@</code> operator. To achieve proper encapsulation, the <code>@</code> operator should only be used within method definitions, but never from outside. To allow end-users to access the value of slots, one should instead provide getter and setter methods (more on that later).</p>
+<p>In lines 5-11 we compute the least squares estimate and in line 12 we assign the estimate to the slot <code>estimate</code>. An important observation to be made in line 12 is that the value of the variable <code>b</code> has to be cast from being a <code>matrix</code> to being a <code>numeric</code>. This is important, because the slots are all typed and assigning a matrix to a numeric without casting it before would cause an error to be thrown (try that this indeed happens).</p>
+<p>In the last line of the definition of the new <code>initialize</code> method we return the object with all its slots initialised with the correct values.</p>
+<p><strong>Note</strong>: Implementing an <code>initialize</code> method for a class also provides for a convenient and reliable way to set default values to each slot. Another way to set default values is by setting the <code>prototype</code> argument of <code>setClass</code>, but the R documentation of <code>setClass</code> contains a remark that discourages users to do so and implement the <code>initialize</code> method instead.</p>
+<p>We will also implement the <code>print</code> and <code>plot</code> method for the “simple_lin_regression” S4 class. Not that this is similar to the implementation of <code>initialize</code>, but possibly a bit easier:</p>
+<pre class="r"><code>setMethod(&quot;print&quot;, &quot;simple_lin_regression&quot;,
+  function(x, ...) {
+    cat(&quot;head(x) =&quot;, head(x@regressor), &quot;\n&quot;)
+    cat(&quot;head(y) =&quot;, head(x@response), &quot;\n\n&quot;)
+    cat(&quot;Estimated regression: E[y|x] = b0 + b1 * x\n&quot;)
+    cat(&quot;b0 = &quot;, x@estimate[1], &quot; and b1 = &quot;, x@estimate[2], &quot;.\n&quot;, sep = &quot;&quot;)
+  }
+)
+
+setMethod(&quot;plot&quot;, &quot;simple_lin_regression&quot;,
+  function(x, ...) {
+    plot(x = x@regressor, y = x@response,
+         xlab = expression(X), ylab = expression(Y))
+    abline(a = x@estimate[1], b = x@estimate[2])
+  }
+)</code></pre>
+<p>In the above implementation of the generic functions <code>print</code> and <code>plot</code> for the signature “simple_lin_regression” note that the code is almost exactly the same as the code that we used when implementing the S3 methods, but that in S4 we use the <code>@</code> operator to access the slots while in S3 we used <code>$</code>, because we were accessing named list elements (recall that the base type of our S3 implementation was <code>list()</code>).</p>
+<p>We now instantiate an object of this class by calling the function <code>new</code>. Just like in most other programming languages, it is not necessary to write an additional constructor function for the S4 implementation due to the more formal and rigorous implementation of OOP with S4. Rather, we simply call the function <code>new</code>. We also try out the <code>print</code> and <code>plot</code> functions we have defined for the class <code>simple_lin_regression</code>.</p>
+<pre class="r"><code>n  &lt;- 50
+b0 &lt;- matrix(c(2, -1), ncol = 1)
+x  &lt;- rnorm(n)
+y  &lt;- b0[1] + b0[2] * x + rnorm(n)
+slm1 &lt;- new(&quot;simple_lin_regression&quot;, response=y, regressor=x)
+str(slm1)</code></pre>
+<pre><code>## Formal class &#39;simple_lin_regression&#39; [package &quot;.GlobalEnv&quot;] with 3 slots
+##   ..@ response : num [1:50] 3.5 2.51 2.58 1.34 2.83 ...
+##   ..@ regressor: num [1:50] -0.71 0.257 -0.247 -0.348 -0.952 ...
+##   ..@ estimate : num [1:2] 2.04 -1.01</code></pre>
+<pre class="r"><code>print(slm1)</code></pre>
+<pre><code>## head(x) = -0.7104066 0.2568837 -0.2466919 -0.3475426 -0.9516186 -0.04502772 
+## head(y) = 3.498145 2.512159 2.578894 1.339166 2.832166 1.764632 
+## 
+## Estimated regression: E[y|x] = b0 + b1 * x
+## b0 = 2.036957 and b1 = -1.007284.</code></pre>
+<pre class="r"><code>plot(slm1)</code></pre>
+<p><img src="/sc1/functional-oo/object-oriented_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
+<p>Next, we implement an S4 version of <code>residual_analysis</code> that we had also discussed in the chapter on S3:</p>
+<pre class="r"><code>setGeneric(&quot;residual_analysis&quot;)</code></pre>
+<pre><code>## [1] &quot;residual_analysis&quot;</code></pre>
+<pre class="r"><code>setMethod(&quot;residual_analysis&quot;, &quot;simple_lin_regression&quot;,
+  function(x) {
+    predictions &lt;- x@estimate[1] + x@estimate[2] * x@regressor
+    plot(x=predictions, y=x@response - predictions,
+         xlab=expression(hat(Y)), ylab=expression(Y - hat(Y)))
+  }
+)
+
+residual_analysis(slm1)</code></pre>
+<p><img src="/sc1/functional-oo/object-oriented_files/figure-html/unnamed-chunk-15-1.png" width="672" /></p>
+<p>In S4, we use <code>setGeneric</code> to make the <code>residual_analysis</code> generic function available and then <code>setMethod</code> to implement it for objects of class <code>simple_lin_regression</code>. Not that we have again used the <code>@</code> operator in the implementation.</p>
+<p>Next, we will add getter and setter methods that were mentioned before. Getter and setter methods should be provided to end users when they are meant to read and write the values of slots. First we do this for the <code>response</code> slot:</p>
+<pre class="r"><code>setGeneric(&quot;response&quot;, function(x) standardGeneric(&quot;response&quot;))</code></pre>
+<pre><code>## [1] &quot;response&quot;</code></pre>
+<pre class="r"><code>setGeneric(&quot;response&lt;-&quot;, function(x, value) standardGeneric(&quot;response&lt;-&quot;))</code></pre>
+<pre><code>## [1] &quot;response&lt;-&quot;</code></pre>
+<pre class="r"><code>setMethod(&quot;response&quot;, &quot;simple_lin_regression&quot;, function(x) x@response)
+setMethod(&quot;response&lt;-&quot;, &quot;simple_lin_regression&quot;,
+  function(x, value) {
+    x@response &lt;- value
+    x &lt;- initialize(x, response = value, regressor = x@regressor)
+    validObject(x)
+    return(x)
+  }
+)</code></pre>
+<p>Note that the setter function calls the <code>initialize</code> function again before returning the updated object.
+Further, the method <code>validObject</code> is called before the modified object is returned. Calling <code>validObject(x)</code> tests if the S4 object <code>x</code> is formally valid. Having such a function in place is one of the build-in mechanisms that ensures integrity. We comment a bit more on it in one of the next paragraphs.
+Now, we can use this function to retrieve or modify the value of the <code>response</code> slot in the object. The following code prints the summary of the object <code>slm1</code>, then changes the value of the first observation of the <code>response</code> by adding 20 (making this observation an outlier), then print the summary of the updated object <code>slm1</code>:</p>
+<pre class="r"><code>print(slm1)</code></pre>
+<pre><code>## head(x) = -0.7104066 0.2568837 -0.2466919 -0.3475426 -0.9516186 -0.04502772 
+## head(y) = 3.498145 2.512159 2.578894 1.339166 2.832166 1.764632 
+## 
+## Estimated regression: E[y|x] = b0 + b1 * x
+## b0 = 2.036957 and b1 = -1.007284.</code></pre>
+<pre class="r"><code>response(slm1)[1] &lt;- response(slm1)[1] + 20
+print(slm1)</code></pre>
+<pre><code>## head(x) = -0.7104066 0.2568837 -0.2466919 -0.3475426 -0.9516186 -0.04502772 
+## head(y) = 23.49815 2.512159 2.578894 1.339166 2.832166 1.764632 
+## 
+## Estimated regression: E[y|x] = b0 + b1 * x
+## b0 = 2.388623 and b1 = -1.197652.</code></pre>
+<p>Note that we have changed the value of the <code>response</code> slot, but the <code>estimate</code> slot was updated as well (without the end user having to do anything to make this happen).</p>
+<p>Now we come back to the mechanism to check validity of an object. Besides the standard checks, it is possible to add further checks. For example, we might want to ensure that <code>response</code> and <code>regressor</code> are always vectors of the same length. Note that we don’t need to make sure that it is numerical vectors, because this is already ensured by the default mechanism, as the following code illustrates:</p>
+<pre class="r"><code>#&gt;  response(slm1) &lt;- &quot;this shouldn&#39;t be text!&quot;
+
+##  Error in (function (cl, name, valueClass)  :
+##    assignment of an object of class “character” is not valid for @‘response’
+##    in an object of class “simple_linear_regression”; is(value, #&quot;numeric&quot;)
+##    is not TRUE</code></pre>
+<p>Next we are going to implement a validitor for our class, using the <code>setValidity</code> method:</p>
+<pre class="r"><code>setValidity(&quot;simple_lin_regression&quot;,
+            function(object) {
+              if(length(object@response) == length(object@regressor)) TRUE
+              else paste(&quot;Unequal lengths of regressor and response.&quot;)
+            })</code></pre>
+<pre><code>## Class &quot;simple_lin_regression&quot; [in &quot;.GlobalEnv&quot;]
+## 
+## Slots:
+##                                     
+## Name:   response regressor  estimate
+## Class:   numeric   numeric   numeric</code></pre>
+<p>Now, if we try to set the <code>response</code> slot to a numerical vector of length different to <code>n</code> we will see an error specific to the violation of our condition:</p>
+<pre class="r"><code>#&gt;  response(slm1) &lt;- response(slm1)[1:49]
+
+## Error in validObject(x) :
+##   invalid class “simple_lin_regression” object: Unequal lengths of regressor
+##   and response.</code></pre>
+<p>Similarly to the <code>response</code> slot, we now define getter and setter methods for the <code>regressor</code> slot.
+Further, for the <code>estimate</code> slot we define a getter method. We do not define a setter method for the <code>estimate</code> slot, because end users are not supposed to change the values of <code>estimate</code>. The <code>estimate</code> is computed automatically and always corresponds to <code>response</code> and <code>regressor</code>.</p>
+<pre class="r"><code>setGeneric(&quot;regressor&quot;, function(x) standardGeneric(&quot;regressor&quot;))</code></pre>
+<pre><code>## [1] &quot;regressor&quot;</code></pre>
+<pre class="r"><code>setGeneric(&quot;regressor&lt;-&quot;, function(x, value) standardGeneric(&quot;regressor&lt;-&quot;))</code></pre>
+<pre><code>## [1] &quot;regressor&lt;-&quot;</code></pre>
+<pre class="r"><code>setMethod(&quot;regressor&quot;, &quot;simple_lin_regression&quot;, function(x) x@regressor)
+setMethod(&quot;regressor&lt;-&quot;, &quot;simple_lin_regression&quot;,
+  function(x, value) {
+    x@regressor &lt;- value
+    x &lt;- initialize(x, response = x@response, regressor = value)
+    validObject(x)
+    return(x)
+  }
+)
+
+setGeneric(&quot;estimate&quot;, function(x) standardGeneric(&quot;estimate&quot;))</code></pre>
+<pre><code>## [1] &quot;estimate&quot;</code></pre>
+<pre class="r"><code>setMethod(&quot;estimate&quot;, &quot;simple_lin_regression&quot;, function(x) x@estimate)</code></pre>
+<p>Next, we test the getter and setter for the <code>regressor</code> slot as before, but we use the getter for the <code>estimate</code> slot instead of the <code>print</code> method:</p>
+<pre class="r"><code>estimate(slm1)</code></pre>
+<pre><code>## [1]  2.388623 -1.197652</code></pre>
+<pre class="r"><code>regressor(slm1)[1] &lt;- regressor(slm1)[1] + 20
+estimate(slm1)</code></pre>
+<pre><code>## [1] 2.5684450 0.8505311</code></pre>
+<p>The residual plot nicely shows the outlier that we have introduced:</p>
+<pre class="r"><code>residual_analysis(slm1)</code></pre>
+<p><img src="/sc1/functional-oo/object-oriented_files/figure-html/unnamed-chunk-23-1.png" width="672" /></p>
+<p>We are now going to (very briefly) discuss how <a href="https://en.wikipedia.org/wiki/Class_diagram#Relationships">relationships between objects</a> can be modelled with S4. For a more depth discussion on this topic, please refer to the recommended literature.</p>
+<p>When individual objects are related to one another this can be called an <a href="https://en.wikipedia.org/wiki/Class_diagram#Instance-level_relationships">instance-level relationship</a>. To model this kind of relationship a slot is added to the two classes of which individual objects will be related and the type of the slot will be the class of the related object.</p>
+<p>When all objects of one class are related to all objects of another class in the way that one is a more general version of the other then we model <a href="https://en.wikipedia.org/wiki/Class_diagram#Generalization/Inheritance">inheritance</a>. In S4 a class is modelled to inherit from another class by adding the <code>contains</code> argument to the call of <code>setClass</code>. If a child class inherits from a parent class this implies that the child will have all slots available that are available to the parent. S4 allows for multiple inheritance such that a vector of classes to inherit from can be provided. In this case a child has all slots of all its parents available.</p>
+<p>The inheritance relationships also determine the behaviour of the object; i.e., which methods are associated with a class. The method dispatch (the process of determining which implementation of a generic is called) with S4 can become quite complicated when multiple inheritance or multiple arguments are present. But, if there is only one argument and no multiple inheritance it is quite straight forward to see which method is called: it is first tested whether the method is implemented for the classes of the argument and if not the parent is tested, then the “grand parent”, etc. You may want to refer to <code>?Methods_Details</code> or <a href="https://adv-r.hadley.nz/s4.html#s4-dispatch">Section 15.5 in Advanced R</a> for details on the method dispatch in more difficult cases.</p>
+</div>
+<div id="reference-classes" class="section level2">
+<h2>Reference Classes</h2>
+<p>While S3 and S4 are object-oriented in the sense that they provide polymorphism by the introduction of classes, generic functions and the respective method dispatch mechanism, we have also seen that encapsulation is not as consequently implemented as in other programming languages (as e.g. in C++ or Python). Reference Classes provide a model for OOP that allows for a higher degree of encapsulation where methods are not declared as generic functions and then implemented for the class, but they are implemented as part of the class definition.</p>
+<p>Another important difference between Reference Class and S3/S4 is that it allows for <a href="https://adv-r.hadley.nz/names-values.html#modify-in-place">modify-in-place</a> semantics which is different from the <a href="https://adv-r.hadley.nz/names-values.html#copy-on-modify">copy-on-modify</a> semantics that R uses in most circumstances. Note how this corresponds to more encapsulation, because it allows for the data “inside the object” to be modified by the methods of the object. We will see an example later.</p>
+<p>Instead of reimplementing the linear model example for a third time, we are now going to discuss an artificial example. In this example we will have a class <code>DataContainer</code> that has a field <code>data</code> which holds some numbers. On generation of the object the data is set, but only when a getter method for the field <code>result</code> is called will some computation be performed (think of a result that is frequently needed, but very expensive to obtain; here, we compute the mean of the data which isn’t expensive, but you get the idea). After the computation is completed a <code>flag</code> indicating that the computation is done will be set and the result is returned. If the getter is called again, <code>result</code> will be returned without the computation. Unless, new data is set, which will cause <code>flag</code> to be reset, such that if the getter method for <code>result</code> is called again the computation is redone.</p>
+<pre class="r"><code>library(methods)
+
+DataContainer &lt;- setRefClass(&quot;DataContainer&quot;,
+                             fields=c(data=&quot;numeric&quot;, flag=&quot;logical&quot;, result=&quot;numeric&quot;))
+
+DataContainer$methods(
+  initialize = function(data) {
+    .self$data &lt;- data
+    .self$flag &lt;- FALSE
+  },
+  doComputation = function() {
+    cat(&quot;MSG: doing computation now!\n&quot;)
+    .self$result &lt;- mean(.self$data)
+    .self$flag   &lt;- TRUE
+  },
+  show = function() {
+    cat(&quot;head(data) = &quot;, head(data), &quot;\n&quot;, sep = &quot;&quot;)
+    cat(&quot;result     = &quot;, result, &quot;\n&quot;, sep = &quot;&quot;)
+  },
+  getResult = function() {
+    if (!flag) {
+      .self$doComputation()
+    }
+    return(result)
+  },
+  setData = function(value) {
+    .self$initialize(data = value)
+  }
+)</code></pre>
+<p>We now briefly comment on the code above, before we show that it indeed works how it is supposed to and compare with an analogous S4 implementation that we will see does not work as this one.</p>
+<p>First note that the call of <code>setRefClass</code> is quite similar to the call of <code>setClass</code> when S4 was used. You can find the documentation by calling <code>?setRefClass</code>. Note that the fields of the class are defined via the argument <code>fields</code> (in <code>setClass</code> for S4 they were called <code>slots</code>). Many further options are available, as for example declaring inheritance relationships or a mechanism to lock fields to make them private. We will not discuss these details here any further and refer you to the documentation within R. It is important to observe that the call of <code>setRefClass</code> returns a generator function which we assign to the variable <code>DataContainer</code>. In fact, <code>setClass</code> for S4 returns a generator function as well, but for Reference Classes it is more important to be able to access it, as can be seen now. Next we define <code>methods</code> of <code>DataContainer</code>: <code>initialize</code>, <code>doComputation</code> and <code>show</code>. Further, we define in the same call to <code>methods</code> the getter <code>getResult</code> and the setter <code>setData</code>. Note that we have not used the <code>accessors</code> function of the generator as this would not allow us to implement the special behaviour we would like to see. Further, note that in the definition of the functions we use <code>.self</code> to refer to the object from within, similar to <code>self</code> in e.g. Python and <code>this</code> in C++.</p>
+<p>We call the <code>new</code> function of <code>DataContainer</code> to instantiate a new <code>DataContainer</code> object. Note that we use <code>$</code> to access methods in an object, similar to <code>.</code> in Python or C++. We will illustrate the modify-in-place behaviour of Refernce classes.</p>
+<pre class="r"><code>dC1 = DataContainer$new(data=rnorm(5))
+
+dC1             # no result set yet!</code></pre>
+<pre><code>## head(data) = 2.198811.312413-0.26514510.5431941-0.4143399
+## result     =</code></pre>
+<pre class="r"><code>dC1$getResult() # calling getResult() will compute the result</code></pre>
+<pre><code>## MSG: doing computation now!</code></pre>
+<pre><code>## [1] 0.6749865</code></pre>
+<pre class="r"><code>dC1             # now the result is set</code></pre>
+<pre><code>## head(data) = 2.198811.312413-0.26514510.5431941-0.4143399
+## result     = 0.6749865</code></pre>
+<pre class="r"><code>dC1$getResult() # calling getResult() a second time returns the result,</code></pre>
+<pre><code>## [1] 0.6749865</code></pre>
+<pre class="r"><code>                # but doesn&#39;t do the computation again
+
+# We now reset data to new numbers and then redo the above:
+dC1$setData(rnorm(5))
+
+dC1             # no result set yet!</code></pre>
+<pre><code>## head(data) = -0.4762469-0.7886028-0.59461731.650907-0.05402813
+## result     = 0.6749865</code></pre>
+<pre class="r"><code>dC1$getResult() # calling getResult() will compute the result</code></pre>
+<pre><code>## MSG: doing computation now!</code></pre>
+<pre><code>## [1] -0.05251753</code></pre>
+<pre class="r"><code>dC1             # now the result is set</code></pre>
+<pre><code>## head(data) = -0.4762469-0.7886028-0.59461731.650907-0.05402813
+## result     = -0.05251753</code></pre>
+<pre class="r"><code>dC1$getResult() # calling getResult() a second time returns the result,</code></pre>
+<pre><code>## [1] -0.05251753</code></pre>
+<pre class="r"><code>                # but doesn&#39;t do the computation again</code></pre>
+<p>Now we do the same implementation with S4 and compare what happens:</p>
+<pre class="r"><code>setClass(&quot;DataContainer_S4&quot;,
+  slots = c(data=&quot;numeric&quot;, flag=&quot;logical&quot;, result=&quot;numeric&quot;))
+
+setMethod(&quot;initialize&quot;, &quot;DataContainer_S4&quot;,
+  function(.Object, data){
+    .Object@data &lt;- data
+    .Object@flag &lt;- FALSE
+    return(.Object)
+  }
+)
+
+setGeneric(&quot;doComputation&quot;, function(x) standardGeneric(&quot;doComputation&quot;))</code></pre>
+<pre><code>## [1] &quot;doComputation&quot;</code></pre>
+<pre class="r"><code>setMethod(&quot;doComputation&quot;, &quot;DataContainer_S4&quot;,
+  function(x) {
+    cat(&quot;MSG: doing computation now!\n&quot;)
+    x@result &lt;- mean(x@data)
+    x@flag   &lt;- TRUE
+    return(x)
+  }
+)
+
+setMethod(&quot;show&quot;, &quot;DataContainer_S4&quot;,
+  function(object) {
+    cat(&quot;head(data) = &quot;, head(object@data), &quot;\n&quot;, sep = &quot;&quot;)
+    cat(&quot;result     = &quot;, object@result, &quot;\n&quot;, sep = &quot;&quot;)
+  }
+)
+
+setGeneric(&quot;result&quot;, function(x) standardGeneric(&quot;result&quot;))</code></pre>
+<pre><code>## [1] &quot;result&quot;</code></pre>
+<pre class="r"><code>setMethod(&quot;result&quot;, &quot;DataContainer_S4&quot;,
+  function(x) {
+    if (!x@flag) {
+      x &lt;- doComputation(x)
+    }
+    return(x@result)
+  }
+)
+
+setGeneric(&quot;data&lt;-&quot;, function(x, value) standardGeneric(&quot;data&lt;-&quot;))</code></pre>
+<pre><code>## [1] &quot;data&lt;-&quot;</code></pre>
+<pre class="r"><code>setMethod(&quot;data&lt;-&quot;, &quot;DataContainer_S4&quot;,
+  function(x, value) {
+    x &lt;- initialize(x, data=value)
+    return(x)
+  }
+)
+
+dC1 &lt;- new(&quot;DataContainer_S4&quot;, data=rnorm(5))
+
+dC1         # no result set yet!</code></pre>
+<pre><code>## head(data) = 0.11924520.24368741.232476-0.5160638-0.9925072
+## result     =</code></pre>
+<pre class="r"><code>result(dC1) # calling getResult() will compute the result</code></pre>
+<pre><code>## MSG: doing computation now!</code></pre>
+<pre><code>## [1] 0.01736751</code></pre>
+<pre class="r"><code>dC1         # but dC1$result is not set</code></pre>
+<pre><code>## head(data) = 0.11924520.24368741.232476-0.5160638-0.9925072
+## result     =</code></pre>
+<p>We can see that the getter for <code>result</code> does the computation and returns the correct result. Also, the slot <code>result</code> is set, but due to the modification a copy of the object <code>dC1</code> is generated which we never get to see, because <code>result</code> does not return it.</p>
+<p>This concludes the chapter on object-oriented programming in R. It shall be pointed out, though, that only a fraction of the possibilities were covered here and that you are encouraged to conceptually design your software before you start coding with the right programming paradigm in mind.</p>
+</div>
+
+
+  <footer>
+  
+
+<script src="//yihui.name/js/math-code.js"></script>
+<script async src="//mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+<script async src="//yihui.name/js/center-img.js"></script>
+
+
+<script type="text/javascript">
+var sc_project=12110974;
+var sc_invisible=1;
+var sc_security="9b171880";
+</script>
+<script type="text/javascript"
+src="https://www.statcounter.com/counter/counter.js"
+async></script>
+<noscript><div class="statcounter"><a title="Web Analytics"
+href="https://statcounter.com/" target="_blank"><img
+class="statcounter"
+src="https://c.statcounter.com/12110974/0/9b171880/1/"
+alt="Web Analytics"></a></div></noscript>
+
+
+
+
+
+
+
+
+  
+
+
+<p align=right>
+
+<a href='https://github.com/awllee/sc1/blob/master/content/functional-oo/object-oriented.Rmd'>View source</a>
+
+|
+
+<a href='https://github.com/awllee/sc1/edit/master/content/functional-oo/object-oriented.Rmd'>Edit source</a>
+
+</p>
+
+
+
+
+
+<script src="https://utteranc.es/client.js"
+        repo="awllee/sc1"
+        issue-term="pathname"
+        label="utterance"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script>
+
+
+
+  
+
+
+
+<script src="//cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+
+
+
+<script src="//cdn.bootcss.com/highlight.js/9.12.0/languages/r.min.js"></script>
+<script src="//cdn.bootcss.com/highlight.js/9.12.0/languages/yaml.min.js"></script>
+<script src="//cdn.bootcss.com/highlight.js/9.12.0/languages/tex.min.js"></script>
+<script>hljs.configure({languages: []}); hljs.initHighlightingOnLoad();</script>
+
+
+
+  
+  <hr>
+  <div class="copyright">© 2020 <a href="https://sites.google.com/view/anthonylee">Anthony Lee</a>, <a href="http://www.bristol.ac.uk/maths/people/feng-yu/index.html">Feng Yu</a>, <a href="https://people.maths.bris.ac.uk/~tk18582/">Tobias Kley</a>, <a href="https://mfasiolo.github.io/">Matteo Fasiolo</a></div>
+  
+  </footer>
+  </article>
+  
+  </body>
+</html>
+

@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <title>Monte Carlo integration - SC1</title>
+    <meta property="og:title" content="Monte Carlo integration - SC1">
+    
+    <meta name="twitter:card" content="summary">
+
+    
+      
+    
+
+    
+      
+      <meta property="description" content="Quadrature rules give excellent rates of convergence, in terms of computational cost, for one-dimensional integrals of sufficiently smooth functions. However, they quickly become prohibitively &amp;hellip;">
+      <meta property="og:description" content="Quadrature rules give excellent rates of convergence, in terms of computational cost, for one-dimensional integrals of sufficiently smooth functions. However, they quickly become prohibitively &amp;hellip;">
+      
+    
+
+    
+    
+
+    
+
+    
+    
+
+
+<link href='//cdn.bootcss.com/highlight.js/9.12.0/styles/github.min.css' rel='stylesheet' type='text/css' />
+
+
+
+    <link rel="stylesheet" href="/sc1/css/style.css" />
+    <link rel="stylesheet" href="/sc1/css/fonts.css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Arvo">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Marcellus">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Code+Pro">
+
+<link rel="stylesheet" href="/sc1/css/custom.css" />
+
+<link rel="icon" href="/sc1/favicon.ico" type="image/x-icon" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<nav class="breadcrumbs">
+    
+        <a href="https://awllee.github.io/sc1/">home / </a>
+    
+        <a href="https://awllee.github.io/sc1/integration/">integration / </a>
+    
+        <a href="https://awllee.github.io/sc1/integration/monte-carlo/">monte-carlo / </a>
+    
+</nav>
+
+  </head>
+
+  
+  <body class="sc1">
+    <header class="masthead">
+      <h1><a href="/sc1/">SC1</a></h1>
+
+<p class="tagline">Statistical Computing 1</p>
+
+      <nav class="menu">
+  <input id="menu-check" type="checkbox" />
+  <label id="menu-label" for="menu-check" class="unselectable">
+    <span class="icon close-icon">✕</span>
+    <span class="icon open-icon">☰</span>
+    <span class="text">Menu</span>
+  </label>
+  <ul>
+  
+  
+  <li><a href="/sc1/">Home</a></li>
+  
+  <li><a href="/sc1/intro-r/">Intro to R</a></li>
+  
+  <li><a href="/sc1/reproducibility/">Reproducibility</a></li>
+  
+  <li><a href="/sc1/common-r/">Common R</a></li>
+  
+  <li><a href="/sc1/tidyverse/">Tidyverse</a></li>
+  
+  <li><a href="/sc1/packages/">Packages</a></li>
+  
+  <li><a href="/sc1/functional-oo/">Functional / OO</a></li>
+  
+  <li><a href="/sc1/profile-debug/">Performance / Bugs</a></li>
+  
+  <li><a href="/sc1/matrices/">Matrices</a></li>
+  
+  <li><a href="/sc1/optimization/">Optimization</a></li>
+  
+  <li><a href="/sc1/integration/">Integration</a></li>
+  
+  
+  </ul>
+</nav>
+
+    </header>
+
+    <article class="main">
+      <header class="title">
+      
+<h1>Monte Carlo integration</h1>
+
+<h3>
+</h3>
+<hr>
+
+
+      </header>
+
+
+
+
+
+<div id="TOC">
+<ul>
+<li><a href="#monte-carlo-with-i.i.d.-random-variables">Monte Carlo with i.i.d. random variables</a><ul>
+<li><a href="#fundamental-results">Fundamental results</a></li>
+<li><a href="#error-and-comparison-with-quadrature">Error and comparison with quadrature</a></li>
+<li><a href="#perfect-sampling">Perfect sampling</a></li>
+<li><a href="#rejection-sampling">Rejection sampling</a></li>
+<li><a href="#importance-sampling">Importance sampling</a></li>
+<li><a href="#self-normalized-importance-sampling">Self-normalized importance sampling</a></li>
+</ul></li>
+<li><a href="#markov-chain-monte-carlo">Markov chain Monte Carlo</a><ul>
+<li><a href="#what-is-a-markov-chain">What is a Markov chain?</a></li>
+<li><a href="#lln-and-clt">LLN and CLT</a></li>
+<li><a href="#basic-definitions">Basic definitions</a></li>
+<li><a href="#metropolishastings">Metropolis–Hastings</a><ul>
+<li><a href="#algorithm">Algorithm</a></li>
+<li><a href="#validity">Validity</a></li>
+</ul></li>
+<li><a href="#combining-markov-kernels">Combining Markov kernels</a></li>
+</ul></li>
+</ul>
+</div>
+
+<p>Quadrature rules give excellent rates of convergence, in terms of computational cost, for one-dimensional integrals of sufficiently smooth functions. However, they quickly become prohibitively expensive in high-dimensional problems. To complement quadrature rules in low dimensions, we now consider the use of Monte Carlo algorithms in higher dimensions.</p>
+<p>Let <span class="math inline">\((\mathsf{X},\mathcal{X})\)</span> be a measurable space. We have a target probability measure <span class="math inline">\(\pi:\mathcal{X}\rightarrow[0,1]\)</span> and we would like to approximate the quantity
+<span class="math display">\[\pi(f):=\int_{\mathsf{X}}f(x)\pi({\rm d}x),\]</span>
+where <span class="math inline">\(f\in L_{1}(\mathsf{X},\pi)=\{f:\pi(|f|)&lt;\infty\}\)</span>. In other words <span class="math inline">\(\pi(f)\)</span> is the expectation of <span class="math inline">\(f(X)\)</span> when <span class="math inline">\(X \sim \pi\)</span>.</p>
+<hr />
+<p><em>Reassuring note</em>. You do not need to understand measure theory to understand most of what is said about Monte Carlo methodology. However, it allows us to present simple but general results that hold for both discrete distributions, continuous distributions and mixtures of the two. The terms probability measure and probability distribution are interchangeable. In most of what follows you can think of <span class="math inline">\(\int_{\mathsf{X}} f(x) \pi({\rm d}x)\)</span> as
+<span class="math display">\[\int_{\mathsf{X}} f(x) \pi(x) {\rm d}x,\]</span>
+if <span class="math inline">\(X \sim \pi\)</span> is a continuous random variable with probability density function <span class="math inline">\(\pi\)</span> and as
+<span class="math display">\[\sum_{x \in \mathsf{X}} f(x) \pi(x),\]</span>
+if <span class="math inline">\(X \sim \pi\)</span> is a discrete random variable with probability mass function <span class="math inline">\(\pi\)</span>.</p>
+<p>From the measure-theoretic perspective we usually think of <span class="math inline">\(\pi\)</span> in both cases as a density w.r.t. some dominating measure (e.g., Lebesgue or counting). Using the symbol <span class="math inline">\(\pi\)</span> to denote both the probability measure and its density is technically ambiguous, but it is usually not possible to confuse the two.</p>
+<hr />
+<div id="monte-carlo-with-i.i.d.-random-variables" class="section level1">
+<h1>Monte Carlo with i.i.d. random variables</h1>
+<p>Classical Monte Carlo is a very natural integral approximation method, justified at a high level by the strong law of large numbers.</p>
+<div id="fundamental-results" class="section level2">
+<h2>Fundamental results</h2>
+<p><strong>Theorem</strong> (SLLN). Let <span class="math inline">\((X_{n})_ {n \geq 1}\)</span> be a sequence of i.i.d. random variables distributed according to <span class="math inline">\(\mu\)</span>. Define
+<span class="math display">\[S_{n}(f):=\sum_{i=1}^{n}f(X_{i}),\]</span>
+for <span class="math inline">\(f\in L_{1}(\mathsf{X},\mu)\)</span>. Then
+<span class="math display">\[\lim_{n \to \infty}\frac{1}{n}S_{n}(f)=\mu(f),\]</span>
+almost surely.</p>
+<p>The random variable <span class="math inline">\(n^{-1} S_n(f)\)</span>, or a realization of it, is a <em>Monte Carlo approximation</em> of <span class="math inline">\(\mu(f)\)</span>. It is straightforward to deduce that the approximation is unbiased, i.e. <span class="math inline">\(\mathbb{E}[n^{-1}S_n(f)] = \mu(f)\)</span>.</p>
+<p>This probabilistic convergence result does not provide any information about the random error <span class="math inline">\(n^{-1}S_n(f) - \mu(f)\)</span> for finite <span class="math inline">\(n\)</span>. For <span class="math inline">\(f \in L_2(\mathsf{X}, \mu) = \{f: \mu(f^2) &lt; \infty \}\)</span>, the variance of <span class="math inline">\(n^{-1}S_n(f)\)</span> is straightforward to derive.</p>
+<p><strong>Proposition</strong> (Variance). Let <span class="math inline">\((X_{n})_ {n \geq 1}\)</span> and <span class="math inline">\(S_n(f)\)</span> be as in the SLLN, where <span class="math inline">\(f \in L_2(\mathsf{X}, \mu)\)</span>. Then
+<span class="math display">\[{\rm var} \{ n^{-1} S_n(f) \} = \frac{\mu(f^2)-\mu(f)^2}{n}.\]</span></p>
+<p>In fact, for <span class="math inline">\(f \in \in L_2(\mathsf{X}, \mu)\)</span>, the asymptotic distribution of <span class="math inline">\(\sqrt{n} \{ n^{-1} S_n(f) - \mu(f) \}\)</span> is normal, by virtue of the Central Limit Theorem. This can be used, e.g., to produce asymptotically exact confidence intervals for <span class="math inline">\(\mu(f)\)</span>.</p>
+<p><strong>Theorem</strong> (CLT). Let <span class="math inline">\((X_{n})_ {n \geq 1}\)</span> and <span class="math inline">\(S_n(f)\)</span> be as in the SLLN, where <span class="math inline">\(f \in L_2(\mathsf{X}, \mu)\)</span>. Then
+<span class="math display">\[n^{1/2} \{ n^{-1} S_n(f) - \mu(f) \} \overset{L}{\to} X \sim N(0,\mu(\bar{f}^2)),\]</span>
+where <span class="math inline">\(\bar{f} = f - \mu(f)\)</span>.</p>
+</div>
+<div id="error-and-comparison-with-quadrature" class="section level2">
+<h2>Error and comparison with quadrature</h2>
+<p>The CLT allows us to deduce that for <span class="math inline">\(f \in L_2(\mathsf{X}, \mu)\)</span>, the error <span class="math inline">\(|n^{-1} S_n(f) - \mu(f)|\)</span> is of order <span class="math inline">\(\mu(\bar{f}^2)^{1/2} n^{-1/2}\)</span>, since a standard normal random variable is within a few standard deviations of <span class="math inline">\(0\)</span> with high probability.</p>
+<p>This is of course very slow in comparison to quadrature rules in one dimension, where very fast rates of convergence can be attained for smooth functions. However, we can see that there is no mention of the dimension of <span class="math inline">\(\mathsf{X}\)</span> in the result: it could be <span class="math inline">\(\mathbb{R}^d\)</span> for a very large value of <span class="math inline">\(d\)</span>.</p>
+<p>At a first glance, one benefit of Monte Carlo is that the <span class="math inline">\(\mathcal{O}(n^{-1/2})\)</span> rate of convergence is independent of dimension. Naturally, this is not the whole story: in some cases the constant term <span class="math inline">\(\mu(\bar{f}^2)\)</span> may grow quickly with dimension, in which case the curse of dimensionality is not avoided.</p>
+<p>The other immediate observation we can make is that while the error of the quadrature rules we saw previously depends explicitly on the smoothness of the function being integrated, the error of <span class="math inline">\(n^{-1} S_n(f)\)</span> depends explicitly on <span class="math inline">\(\mu(\bar{f}^2)\)</span>, i.e. the variance of <span class="math inline">\(f(X)\)</span> when <span class="math inline">\(X \sim \mu\)</span>. There is no need for <span class="math inline">\(f\)</span> to even be continuous, but it should ideally have a second moment under <span class="math inline">\(\mu\)</span>.</p>
+<pre class="r"><code># set the seed to fix the pseudo-random numbers
+set.seed(12345)
+
+monte.carlo &lt;- function(mu, f, n) {
+  S &lt;- 0
+  for (i in 1:n) {
+    S &lt;- S + f(mu())
+  }
+  return(S/n)
+}
+
+1 - cos(1)</code></pre>
+<pre><code>## [1] 0.4596977</code></pre>
+<pre class="r"><code>vapply(1:6, function(i) monte.carlo(function() runif(1), sin, 10^i), 0)</code></pre>
+<pre><code>## [1] 0.5806699 0.4621368 0.4720845 0.4581522 0.4597137 0.4596813</code></pre>
+</div>
+<div id="perfect-sampling" class="section level2">
+<h2>Perfect sampling</h2>
+<p>Recall that we want to approximate <span class="math inline">\(\pi(f)\)</span> for some <span class="math inline">\(f \in L_1(\mathsf{X}, \pi)\)</span>. The simplest case is where we can simulate random variates with distribution <span class="math inline">\(\pi\)</span> on a computer. Then we can apply the SLLN with <span class="math inline">\(\mu = \pi\)</span>. If <span class="math inline">\(f \in L_2(\mathsf{X}, \pi)\)</span> then the CLT characterizes asymptotically the error.</p>
+<p>There are some ways of simulating according to <span class="math inline">\(\pi\)</span> in special cases, e.g.,</p>
+<ul>
+<li>inverse transform,</li>
+<li>composition,</li>
+<li>special representations in terms of random variables we can simulate easily,</li>
+<li>other methods in, e.g., Luc Devroye’s <a href="http://www.nrbook.com/devroye/">Non-Uniform Random Variate Generation</a>.</li>
+</ul>
+<p>However, in many situations these techniques are not applicable. One general purpose algorithm for doing this when one can compute the density <span class="math inline">\(\pi\)</span> pointwise and we can sample from another distribution that is “close” to <span class="math inline">\(\pi\)</span> in a specific sense is rejection sampling.</p>
+</div>
+<div id="rejection-sampling" class="section level2">
+<h2>Rejection sampling</h2>
+<p>Rejection sampling is a general purpose algorithm for simulating <span class="math inline">\(\pi\)</span>-distributed random variates when one can sample <span class="math inline">\(\mu\)</span>-distributed random variates and the ratio of densities <span class="math inline">\(\pi/\mu\)</span> satisfies <span class="math inline">\(\sup_{x \in \mathsf{X}} \pi(x)/\mu(x) \leq M &lt; \infty\)</span>.</p>
+<p>Rejection sampling algorithm:</p>
+<ol style="list-style-type: decimal">
+<li>Sample <span class="math inline">\(X \sim \mu\)</span>.</li>
+<li>With probability <span class="math inline">\(\frac{1}{M}\frac{\pi(X)}{\mu(X)}\)</span> output <span class="math inline">\(X\)</span>, otherwise go back to step 1.</li>
+</ol>
+<p><strong>Theorem</strong>. The rejection sampling algorithm outputs a <span class="math inline">\(\pi\)</span>-distributed random variable.</p>
+<p><em>Proof</em>. Let <span class="math inline">\(Y=\mathbb{I}\left(U&lt;\frac{1}{M}\frac{\pi(X)}{\mu(X)}\right)\)</span> where <span class="math inline">\(U\)</span> is uniformly distributed on <span class="math inline">\([0,1]\)</span>, so <span class="math inline">\(Y\)</span> is indeed <span class="math inline">\(1\)</span> with probability <span class="math inline">\(\frac{1}{M}\frac{\pi(X)}{\mu(X)}\)</span>. For any <span class="math inline">\(A \in \mathcal{X}\)</span>,
+<span class="math display">\[\begin{align}
+\Pr(X \in A \mid Y=1)   &amp;=  \frac{\Pr(X\in A,Y=1)}{\Pr(Y=1)} \newline
+    &amp;=  \frac{\int_{A}\frac{1}{M}\frac{\pi(x)}{\mu(x)}\mu(x){\rm d}x}{\int_{\mathsf{X}}\frac{1}{M}\frac{\pi(x)}{\mu(x)}\mu(x){\rm d}x} \newline
+    &amp;= \pi(A).
+\end{align}\]</span>
+Hence <span class="math inline">\(X \mid (Y=1)\)</span> is indeed distributed according to <span class="math inline">\(\pi\)</span>. □</p>
+<p>The rejection sampling algorithm is very simple and powerful. However, we observe that the computational cost of the algorithm in terms of the number of simulations of <span class="math inline">\(\mu\)</span>-distributed random variables is itself random. In fact, the cost is characterized by the value of <span class="math inline">\(M\)</span>.</p>
+<p><strong>Proposition</strong>. The number of simulations from <span class="math inline">\(\mu\)</span> is a <span class="math inline">\({\rm Geometric}(1/M)\)</span> random variable, and hence has expectation <span class="math inline">\(M\)</span>.</p>
+<p><em>Proof</em>. <span class="math inline">\(Y\)</span> is an independent Bernoulli random variable in each loop of the algorithm with
+<span class="math display">\[\Pr(Y=1)=\int_{\mathsf{X}}\frac{1}{M}\frac{\pi(x)}{\mu(x)}\mu(x){\rm d}x=\frac{1}{M},\]</span>
+and the algorithm stops on the first trial where <span class="math inline">\(Y=1\)</span>. □</p>
+<p>This is a simple implementation of a rejection sampler.</p>
+<pre class="r"><code># simple but not numerically stable
+# one should use log densities for high-dimensional problems
+rejection.sample &lt;- function(pi, mu, M) {
+  while (TRUE) {
+    x &lt;- mu$sample()
+    y &lt;- runif(1) &lt; pi(x)/mu$density(x)/M
+    if (y) {
+      return(x)
+    }
+  }
+}</code></pre>
+<p>As an example, we use <span class="math inline">\({\rm Laplace}(0,1)\)</span> distributed random variables to sample standard normal random variables.</p>
+<pre class="r"><code>laplace &lt;- list()
+laplace$sample &lt;- function() {
+  v &lt;- rexp(1)
+  ifelse(runif(1) &lt; 0.5, v, -v)
+}
+laplace$density &lt;- function(x) {
+  return(0.5 * exp(-abs(x)))
+}
+M &lt;- sqrt(2/pi) * exp(0.5) # worked this out theoretically
+
+xs &lt;- replicate(100000, rejection.sample(dnorm, laplace, M))
+plot(density(xs))
+vs &lt;- seq(-5,5,0.01)
+lines(vs, dnorm(vs), col=&quot;red&quot;)</code></pre>
+<p><img src="/sc1/integration/monte-carlo_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+<p><em>Warning</em>. In many practical applications <span class="math inline">\(M\)</span> is prohibitively large, and rejection sampling can easily suffer from the curse of dimensionality. For example, consider what happens as <span class="math inline">\(d\)</span> increases when for some densities <span class="math inline">\(p\)</span> and <span class="math inline">\(g\)</span>, <span class="math inline">\(\pi(x)=\prod_{i=1}^{d} p(x_{i})\)</span>, <span class="math inline">\(\mu(x) = \prod_{i=1}^{d} g(x_{i})\)</span> and <span class="math inline">\(\sup_{x} \frac{p(x)}{g(x)} &gt; 1\)</span>.</p>
+<p>For complicated <span class="math inline">\(\pi\)</span>, especially in high dimensions, we do not usually know how to find a “good” <span class="math inline">\(\mu\)</span>.</p>
+</div>
+<div id="importance-sampling" class="section level2">
+<h2>Importance sampling</h2>
+<p>Assume <span class="math inline">\(\pi(x) &gt; 0 \Rightarrow \mu(x) &gt; 0\)</span>. Importance sampling is motivated by expressing <span class="math inline">\(\pi(f)\)</span> as an integral w.r.t. <span class="math inline">\(\mu\)</span>. That is,
+<span class="math display">\[\begin{align}
+\pi(f) &amp;= \int_\mathsf{X} f(x) \pi({\rm d}x) \\
+  &amp;= \int_\mathsf{X} f(x)w(x) \mu({\rm d}x) \\
+    &amp;= \mu(f \cdot w),
+\end{align}\]</span>
+where <span class="math inline">\(w(x) = \pi(x)/\mu(x)\)</span> is the ratio of the densities of <span class="math inline">\(\pi\)</span> and <span class="math inline">\(\mu\)</span>.</p>
+<p>This justifies the use of <span class="math inline">\(n^{-1} S_n(f \cdot w)\)</span> as an approximation of <span class="math inline">\(\pi(f)\)</span>. The variance of the approximation multiplied by <span class="math inline">\(n\)</span> is
+<span class="math display">\[\begin{align}
+{\rm var}(f(X)w(X)) &amp;= \mu(\{f \cdot w\}^2) - \mu(f \cdot w)^2 \\
+  &amp;= \pi(f \cdot w^2) - \pi(f)^2.
+\end{align}\]</span></p>
+<p>In many statistical applications, importance sampling is used because it is not known how to sample <span class="math inline">\(\pi\)</span>-distributed random variables. In such cases, it is possible that <span class="math inline">\(f \cdot w \notin L^2(\mathsf{X}, \mu)\)</span> when <span class="math inline">\(f \in L^2(\mathsf{X}, \pi)\)</span>. A sufficient condition to ensure that <span class="math inline">\(f \in L^2(\mathsf{X}, \pi) \Rightarrow f \cdot w \notin L^2(\mathsf{X}, \mu)\)</span> is that <span class="math inline">\(w\)</span> is uniformly bounded.</p>
+<p>On the other hand, importance sampling can also be used as a variance reduction technique, i.e. it is possible that <span class="math inline">\(\pi(f \cdot w^2) &lt; \pi(f^2)\)</span>. You can try to work out what the optimal importance sampling distribution <span class="math inline">\(\mu\)</span> in terms of minimizing the variance of the importance sampling approximation: you might consider the case where <span class="math inline">\(f\)</span> is non-negative separately to the general case.</p>
+<p>In high-dimensional statistical applications, it is not uncommon for the variance to be prohibitively large for reasonable values of <span class="math inline">\(n\)</span>.</p>
+<pre class="r"><code>importance.sample &lt;- function(pi, mu, f, n) {
+  w &lt;- function(x) {
+    return(pi(x)/mu$density(x))
+  }
+  fw &lt;- function(x) {
+    return(f(x)*w(x))
+  }
+  monte.carlo(mu$sample, fw, n)
+}
+
+# approximate the mean of a N(2,1) r.v. using Laplace(0,1) r.v.s
+importance.sample(function(x) dnorm(x, mean=2), laplace, identity, 10000)</code></pre>
+<pre><code>## [1] 1.930252</code></pre>
+</div>
+<div id="self-normalized-importance-sampling" class="section level2">
+<h2>Self-normalized importance sampling</h2>
+<p>One feature of importance sampling is that it requires the computation of <span class="math inline">\(w(x) = \pi(x) / \mu(x)\)</span> exactly. This is problematic in cases where on can only compute <span class="math inline">\(w\)</span> up to an unknown normalizing constant, such as in Bayesian inference where <span class="math inline">\(\pi \propto p(x)L(x)\)</span> with <span class="math inline">\(p\)</span> the prior and <span class="math inline">\(L\)</span> the (observed) likelihood function.</p>
+<p>In these cases, one can instead consider the self-normalized approximation</p>
+<p><span class="math display">\[I^n_{\rm SNIS}(\pi, \mu, f) = \frac{S_n(f \cdot w)}{S_n(w)} = \frac{\sum_{i=1}^n w(X_i)f(X_i)}{\sum_{i=1}^n w(X_i)},\]</span></p>
+<p>where <span class="math inline">\(X_1,X_2,\ldots\)</span> are i.i.d. <span class="math inline">\(\mu\)</span>-distributed random variables and <span class="math inline">\(w(x) = \pi(x)/\mu(x)\)</span>. Importantly, since <span class="math inline">\(w\)</span> appears in both the numerator and the denominator, it can be computed up to an unknown normalizing constant. The self-normalized approximation is <em>not</em> unbiased in general.</p>
+<p>As suggested above, one can view <span class="math inline">\(I^n_{\rm SNIS}(\pi, \mu, f)\)</span> as a ratio of two importance sampling estimators. If <span class="math inline">\(\pi(x) &gt; 0 \Rightarrow \mu(x) &gt; 0\)</span>, one can therefore deduce that <span class="math inline">\(I^n_{\rm SNIS}(\pi, \mu, f) \to \pi(f)\)</span> almost surely. If additionally <span class="math inline">\(\int_{\mathsf{X}}\left[1+f(x)^{2}\right]\frac{\pi(x)}{\mu(x)}\pi({\rm d}x) &lt; \infty\)</span> then the approximation is asymptotically normal, i.e.</p>
+<p><span class="math display">\[\sqrt{n}\{I^n_{\rm SNIS}(\pi, \mu, f) - \pi(f)\} \overset{L}{\to} X \sim N(0, \sigma^2),\]</span></p>
+<p>where</p>
+<p><span class="math display">\[\sigma^2 = \lim_{n \to \infty} n{\rm var}(I^n_{\rm SNIS}(\pi, \mu, f)) =  \int_{\mathsf{X}}\left \{ f(x)-\pi(f)\right \}^{2}\frac{\pi(x)}{\mu(x)}\pi({\rm d}x).\]</span></p>
+<p>This can be proven using Slutsky’s lemma.</p>
+<p>Notice that the asymptotic/limiting variance <span class="math inline">\(\sigma^2\)</span> can be smaller than the corresponding asymptotic variance for importance sampling.</p>
+<p>In high-dimensional statistical applications, it is not uncommon for the variance to be prohibitively large for reasonable values of <span class="math inline">\(n\)</span>.</p>
+<pre class="r"><code>sn.importance.sample &lt;- function(pi, mu, f, n) {
+  w &lt;- function(x) {
+    return(pi(x)/mu$density(x))
+  }
+  fw &lt;- function(x) {
+    return(f(x)*w(x))
+  }
+  monte.carlo(mu$sample, fw, n) / monte.carlo(mu$sample, w, n)
+}
+
+# approximate the mean of a N(2,1) r.v. using Laplace(0,1) r.v.s
+# the input density for pi is multiplied by 10
+sn.importance.sample(function(x) dnorm(x, mean=2)*10, laplace, identity, 10000)</code></pre>
+<pre><code>## [1] 2.013923</code></pre>
+</div>
+</div>
+<div id="markov-chain-monte-carlo" class="section level1">
+<h1>Markov chain Monte Carlo</h1>
+<p>A very powerful innovation in Monte Carlo methodology was the development of approximations involving Markov chains rather than independent random variables.</p>
+<div id="what-is-a-markov-chain" class="section level2">
+<h2>What is a Markov chain?</h2>
+<p>As before we are on a measurable space <span class="math inline">\((\mathsf{X}, \mathcal{X})\)</span>. We assume that <span class="math inline">\(\mathcal{X}\)</span> is countably generated, e.g. the Borel <span class="math inline">\(\sigma\)</span>-algebra on <span class="math inline">\(\mathbb{R}^{d}\)</span>. This is what “general state space” typically means in the Markov chain context.</p>
+<p>Let <span class="math inline">\(\mathbf{X}:=(X_{n})_ {n \geq 0}\)</span> be a <strong>discrete time Markov chain</strong> evolving on <span class="math inline">\(\mathsf{X}\)</span> with some initial distribution for <span class="math inline">\(X_{0}\)</span>.</p>
+<p>This means that for <span class="math inline">\(A\in\mathcal{X}\)</span>
+<span class="math display">\[\Pr\left(X_{n}\in A\mid X_{0}=x_{0},\ldots,X_{n-1}=x_{n-1}\right)=\Pr\left(X_{n}\in A\mid X_{n-1}=x_{n-1}\right),\]</span>
+i.e. <span class="math inline">\(\mathbf{X}\)</span> possesses the Markov property.</p>
+</div>
+<div id="lln-and-clt" class="section level2">
+<h2>LLN and CLT</h2>
+<p>The fundamental motivation is an extension of the SLLN to the Markov chain setting. There are different versions of this kind of <em>ergodic theorem</em>.</p>
+<p><strong>Theorem</strong> (An LLN for Markov chains). Suppose that <span class="math inline">\(\mathbf{X}=(X_{n})_ {n\geq0}\)</span> is a <strong>time-homogeneous</strong>, <strong>positive Harris</strong> Markov chain with <strong>invariant probability measure</strong> <span class="math inline">\(\pi\)</span>. Then for any <span class="math inline">\(f \in L_{1}(\mathsf{X},\pi)=\{f:\pi(\left|f\right|)&lt;\infty\}\)</span>,
+<span class="math display">\[\lim_{n\rightarrow\infty}\frac{1}{n}S_{n}(f)=\pi(f),\]</span>
+almost surely for <strong>any initial distribution</strong> for <span class="math inline">\(X_{0}\)</span>.</p>
+<p>Similarly, there are CLTs, such as the following.</p>
+<p><strong>Theorem</strong> (A CLT for geometrically ergodic Markov chains). Assume that <span class="math inline">\(\mathbf{X}\)</span> is time-homogeneous, positive Harris and <strong>geometrically ergodic</strong> with invariant probability measure <span class="math inline">\(\pi\)</span>, and that <span class="math inline">\(\pi(|f|^{2+\delta})&lt;\infty\)</span> for some <span class="math inline">\(\delta&gt;0\)</span>. Then
+<span class="math display">\[n^{1/2} \{ n^{-1} S_{n}(f) - \pi(f) \} \overset{L}{\to} N(0,\sigma^{2}(f))\]</span>
+as <span class="math inline">\(n\rightarrow\infty\)</span>, where <span class="math inline">\(\bar{f}=f-\pi(f)\)</span> and
+<span class="math display">\[\sigma^{2}(f)=\mathsf{E}_{\pi}\left[\bar{f}(X_{0})^{2}\right]+2\sum_{k=1}^{\infty}\mathsf{E}_{\pi}\left[\bar{f}(X_{0})\bar{f}(X_{k})\right]&lt;\infty.\]</span></p>
+</div>
+<div id="basic-definitions" class="section level2">
+<h2>Basic definitions</h2>
+<p>The LLN and CLT we have seen make various assumptions about the Markov chain <span class="math inline">\(\mathbf{X}\)</span> that you may not be familiar with. For this course, it is not necessary to go into too much detail about the beautiful theory underlying Markov chains on general state spaces and corresponding ergodic averages. What is clear is that we are interested in a fairly restricted set of Markov chains. So we will just define at a high-level the basic ideas.</p>
+<p><strong>Definition</strong>. The Markov chain <span class="math inline">\(\mathbf{X}\)</span> is time-homogeneous if
+<span class="math display">\[\Pr\left(X_{n}\in A\mid X_{n-1}=x\right)=\Pr\left(X_{1}\in A\mid X_{0}=x\right),\]</span>
+for any <span class="math inline">\(n\in\mathbb{N}\)</span>.</p>
+<p>Then <span class="math inline">\(\mathbf{X}\)</span> is described by a single Markov transition kernel <span class="math inline">\(P:\mathsf{X}\times\mathcal{X}\rightarrow[0,1]\)</span> with
+<span class="math display">\[\Pr(X_{1}\in A\mid X_{0}=x)=P(x,A).\]</span></p>
+<p>We denote by <span class="math inline">\(P^{n}\)</span> the <span class="math inline">\(n\)</span>-step Markov transition kernel. That is, <span class="math inline">\(P^{1}(x,A):=P(x,A)\)</span> and
+<span class="math display">\[P^{n}(x,A):=\int_{\mathsf{X}}P(z,A)P^{n-1}(x,{\rm d}z),\quad n\geq2.\]</span></p>
+<p><strong>Definition</strong>. A Markov chain <span class="math inline">\(\mathbf{X}\)</span> has an invariant probability measure <span class="math inline">\(\mu\)</span> if <span class="math inline">\(X_0 \sim \mu\)</span> implies <span class="math inline">\(X_1 \sim \mu\)</span>. This is really a property of the Markov transition kernel <span class="math inline">\(P\)</span>, i.e. it means
+<span class="math display">\[\mu P (A) = \int P(x, A) \mu({\rm d}x) = \mu(A), \qquad A \in \mathcal{X},\]</span>
+or simply <span class="math inline">\(\mu P = \mu\)</span>.</p>
+<p><strong>Definition</strong>. A Markov chain is <span class="math inline">\(\varphi\)</span>-irreducible if <span class="math inline">\(\varphi\)</span> is a measure on <span class="math inline">\(\mathcal{X}\)</span> such that whenever <span class="math inline">\(\varphi(A) &gt; 0\)</span> and <span class="math inline">\(x \in \mathsf{X}\)</span>, there exists some <span class="math inline">\(n\)</span> possibly depending on both <span class="math inline">\(x\)</span> and <span class="math inline">\(A\)</span> such that <span class="math inline">\(P^{n}(x,A)&gt;0\)</span>.</p>
+<p><strong>Definition</strong>. A set <span class="math inline">\(A\)</span> is Harris recurrent if
+<span class="math display">\[\Pr \left (\sum_{n=1}^{\infty}\mathbb{I}\{X_{n}\in A\} =\infty  \mid X_0 = x \right ) = 1, \qquad x \in A.\]</span></p>
+<p><strong>Definition</strong>. A Markov chain is is positive Harris with invariant probability measure <span class="math inline">\(\mu\)</span> if it is <span class="math inline">\(\mu\)</span>-irreducible, every set <span class="math inline">\(A\in\mathcal{X}\)</span> such that <span class="math inline">\(\mu(A)&gt;0\)</span> is Harris recurrent, and it has <span class="math inline">\(\mu\)</span> as an invariant probability measure.</p>
+<p><strong>Definition</strong>. The total variation distance between two probability measures <span class="math inline">\(\mu\)</span> and <span class="math inline">\(\nu\)</span> on <span class="math inline">\(\mathcal{X}\)</span> is
+<span class="math display">\[\left\Vert \mu-\nu\right\Vert_{{\rm TV}}:=\sup_{A\in\mathcal{X}}|\mu(A)-\nu(A)|.\]</span></p>
+<p><strong>Definition</strong>. A Markov chain with invariant probability measure <span class="math inline">\(\pi\)</span> and Markov transition kernel <span class="math inline">\(P\)</span> is geometrically ergodic if
+<span class="math display">\[\left\Vert P^{n}(x,\cdot)-\pi\right\Vert_{{\rm TV}}\leq M(x)\rho^{n},\qquad x\in\mathsf{X}\]</span>
+for some function <span class="math inline">\(M\)</span> finite for <span class="math inline">\(\pi\)</span>-almost all <span class="math inline">\(x\in\mathsf{X}\)</span> and <span class="math inline">\(\rho&lt;1\)</span>.</p>
+</div>
+<div id="metropolishastings" class="section level2">
+<h2>Metropolis–Hastings</h2>
+<p>By far the most commonly used Markov chains in practice are constructed using Metropolis–Hastings Markov transition kernels. These owe their development to the seminal papers <a href="https://doi.org/10.1063/1.1699114">Metropolis et al. (1953)</a> and <a href="https://doi.org/10.1093/biomet/57.1.97">Hastings (1970)</a>.</p>
+<div id="algorithm" class="section level3">
+<h3>Algorithm</h3>
+<p>Assume <span class="math inline">\(\pi\)</span> has a density w.r.t. some measure <span class="math inline">\(\lambda\)</span> (e.g., counting or Lebesgue).</p>
+<p>In order to define the Metropolis–Hastings kernel for a particular target <span class="math inline">\(\pi\)</span> we require only to specify a proposal Markov kernel <span class="math inline">\(Q\)</span> admitting a density <span class="math inline">\(q\)</span> w.r.t. <span class="math inline">\(\lambda\)</span>, i.e.
+<span class="math display">\[Q(x,{\rm d}z)=q(x,z)\lambda({\rm d}z).\]</span></p>
+<p>Algorithm to simulate according to <span class="math inline">\(P_{{\rm MH}}(x,\cdot)\)</span>:</p>
+<ol style="list-style-type: decimal">
+<li><p>Simulate <span class="math inline">\(Z\sim Q(x,\cdot)\)</span>.</p></li>
+<li><p>With prob. <span class="math inline">\(\alpha_{{\rm MH}}(x,Z)\)</span> output <span class="math inline">\(Z\)</span>; otherwise, output <span class="math inline">\(x\)</span>, where
+<span class="math display">\[\alpha_{{\rm MH}}(x,z):=1\wedge\frac{\pi(z)q(z,x)}{\pi(x)q(x,z)}.\]</span></p></li>
+</ol>
+<p>We need only be able to simulate from <span class="math inline">\(Q(x, \cdot)\)</span> and know the density <span class="math inline">\(\pi\)</span> up to a normalizing constant to simulate from <span class="math inline">\(P_{\rm MH}(x, \cdot)\)</span>.</p>
+<p>Mathematically, for <span class="math inline">\(A \in \mathcal{X}\)</span>,</p>
+<p><span class="math display">\[P_{{\rm MH}}(x,A):=\int_{A}\alpha_{{\rm MH}}(x,z)Q(x,{\rm d}z)+r_{{\rm MH}}(x)\mathbf{1}_{A}(x),\]</span>
+where
+<span class="math display">\[r_{{\rm MH}}(x):=1-\int_{\mathsf{X}}\alpha_{{\rm MH}}(x,z)Q(x,{\rm d}z).\]</span></p>
+<pre class="r"><code>make.metropolis.hastings.kernel &lt;- function(pi, Q) {
+  q &lt;- Q$density
+  P &lt;- function(x) {
+    z &lt;- Q$sample(x)
+    alpha &lt;- min(1, pi(z)*q(z,x)/pi(x)/q(x,z))
+    ifelse(runif(1) &lt; alpha, z, x)
+  }
+  return(P)
+}
+
+# univariate normal proposal
+make.normal.proposal &lt;- function(sigma) {
+  Q &lt;- list()
+  Q$sample &lt;- function(x) {
+    x + sigma*rnorm(1)
+  }
+  Q$density &lt;- function(x,y) {
+    dnorm(y-x, sd=sigma)
+  }
+  return(Q)
+}
+
+# simulate a Markov chain of length n of one-dimensional points
+# initial point is x0, P simulates according to Markov kernel
+simulate.chain &lt;- function(P, x0, n) {
+  xs &lt;- rep(0, n)
+  x &lt;- x0
+  for (i in 1:n) {
+    x &lt;- P(x)
+    xs[i] &lt;- x
+  }
+  return(xs)
+}</code></pre>
+<p>We can simulate a standard normal random variable using a normal proposal.</p>
+<pre class="r"><code>P &lt;- make.metropolis.hastings.kernel(dnorm, make.normal.proposal(1.0))
+xs &lt;- simulate.chain(P, 1, 100000)
+plot(density(xs))
+vs &lt;- seq(-5,5,0.01)
+lines(vs, dnorm(vs), col=&quot;red&quot;)</code></pre>
+<p><img src="/sc1/integration/monte-carlo_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+<p>We can simulate an <span class="math inline">\({\rm Exponential}(1)\)</span> random variable using a normal proposal.</p>
+<pre class="r"><code>P &lt;- make.metropolis.hastings.kernel(dexp, make.normal.proposal(1.0))
+xs &lt;- simulate.chain(P, 1, 100000)
+plot(density(xs))
+vs &lt;- seq(0,5,0.01)
+lines(vs, dexp(vs), col=&quot;red&quot;)</code></pre>
+<p><img src="/sc1/integration/monte-carlo_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+<p>Actually, the proposal in the above two cases is “symmetric” in the sense that <span class="math inline">\(q(x,y) = q(y,x)\)</span> for any <span class="math inline">\(x,y \in \mathbb{R}\)</span>. We can check that the algorithm still works when <span class="math inline">\(q(x,y) \neq q(y,x)\)</span> and also show that it works for discrete random variables.</p>
+<pre class="r"><code>step.proposal &lt;- list()
+step.proposal$sample &lt;- function(x) x + sample(c(-1,1), 1, prob = c(0.4,0.6))
+step.proposal$density &lt;- function(x,y) ifelse(y &lt; x, 0.4, 0.6)
+
+P &lt;- make.metropolis.hastings.kernel(function(x) ifelse(x &gt;= 1 &amp;&amp; x &lt;= 10, 1/x, 0), step.proposal)
+xs &lt;- simulate.chain(P, 1, 100000)
+hist(xs, breaks=seq(min(xs)-0.5, max(xs)+0.5, 1), probability = TRUE, ylim=c(0,0.5))
+vs &lt;- seq(1,10,1)
+points(vs, 1/vs/sum(1/vs), col=&quot;red&quot;, pch=20)</code></pre>
+<p><img src="/sc1/integration/monte-carlo_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
+<p>Finally, we can visualize how the chain depends on the choice of proposal standard deviation. In particular, this controls where the chain makes frequent moderate jumps, infrequent large jumps or very frequent but very small jumps. In practice, it is important to choose the proposal variance (or covariance in multivariate settings) to control the frequency and size of jumps.</p>
+<pre class="r"><code>P &lt;- make.metropolis.hastings.kernel(dnorm, make.normal.proposal(1.0))
+xs &lt;- simulate.chain(P, 0, 1000)
+plot(xs, pch=20)</code></pre>
+<p><img src="/sc1/integration/monte-carlo_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
+<pre class="r"><code>P &lt;- make.metropolis.hastings.kernel(dnorm, make.normal.proposal(10.0))
+xs &lt;- simulate.chain(P, 0, 1000)
+plot(xs, pch=20)</code></pre>
+<p><img src="/sc1/integration/monte-carlo_files/figure-html/unnamed-chunk-10-2.png" width="672" /></p>
+<pre class="r"><code>P &lt;- make.metropolis.hastings.kernel(dnorm, make.normal.proposal(0.1))
+xs &lt;- simulate.chain(P, 0, 1000)
+plot(xs, pch=20)</code></pre>
+<p><img src="/sc1/integration/monte-carlo_files/figure-html/unnamed-chunk-10-3.png" width="672" /></p>
+</div>
+<div id="validity" class="section level3">
+<h3>Validity</h3>
+<p>In order to show that P leaves <span class="math inline">\(\pi\)</span> invariant, we need to check
+<span class="math inline">\(\pi P=\pi\)</span>, i.e.
+<span class="math display">\[\int_{\mathsf{X}}\pi({\rm d}x)P(x,A)=\pi(A),\qquad A\in\mathcal{X}.\]</span></p>
+<p>Verifying <span class="math inline">\(\pi P = \pi\)</span> is in fact extremely difficult in general, as is determining the invariant measure of a given Markov kernel. The <span class="math inline">\(\pi\)</span>-invariance of the Metropolis–Hastings Markov chain is a special case of the <span class="math inline">\(\pi\)</span>-invariance of <span class="math inline">\(\pi\)</span>-reversible Markov chains.</p>
+<p><strong>Definition</strong>. A <span class="math inline">\(\pi\)</span>-reversible Markov chain is a stationary Markov chain with invariant probability measure <span class="math inline">\(\pi\)</span> satisfying
+<span class="math display">\[\mathsf{P}_{\pi}(X_{0}\in A_{0},\ldots,X_{n}\in A_{n})=\mathsf{P}_{\pi}(X_{0}\in A_{n},\ldots,X_{n}\in A_{0}).\]</span></p>
+<p><strong>Fact</strong>. It suffices to check that for any <span class="math inline">\(A,B \in \mathcal{X}\)</span>,
+<span class="math display">\[\mathsf{P}_{\pi}(X_{0}\in A,X_{1}\in B)=\mathsf{P}_{\pi}(X_{0}\in B,X_{1}\in A),\]</span>
+i.e.
+<span class="math display">\[\int_{A}\pi({\rm d}x)P(x,B)=\int_{B}\pi({\rm d}x)P(x,A).\]</span></p>
+<p>Moreover, <span class="math inline">\(\pi\)</span>-invariance is immediate by considering <span class="math inline">\(A=\mathsf{X}\)</span>:
+<span class="math display">\[\int_{\mathsf{X}}\pi({\rm d}x)P(x,B)=\int_{B}\pi({\rm d}x)P(x,\mathsf{X})=\pi(B).\]</span></p>
+<p>That <span class="math inline">\(\int_{A}\pi({\rm d}x)P(x,B)=\int_{B}\pi({\rm d}x)P(x,A)\)</span> implies reversibility is slightly laborious in the general state space context. You can verify this for discrete <span class="math inline">\(\mathsf{X}\)</span>.</p>
+<p><strong>Theorem</strong>. Let <span class="math inline">\(P(x,A)=\int_{A}p(x,z)\lambda({\rm d}z)+r(x)\mathbf{1}_{A}(x)\)</span>. If the detailed balance condition
+<span class="math display">\[\pi(x)p(x,z)=\pi(z)p(z,x),\quad x,z\in\mathsf{X}\]</span>
+holds then <span class="math inline">\(P\)</span> defines a <span class="math inline">\(\pi\)</span>-reversible Markov chain.</p>
+<p><em>Proof</em>. We have
+<span class="math display">\[\begin{align}
+\int_{A}\pi({\rm d}x)P(x,B) &amp;=  \int_{A}\pi(x)\left[\int_{B}p(x,z)\lambda({\rm d}z)+r(x)\mathbf{1}_{B}(x)\right]\lambda({\rm d}x) \\
+    &amp;=  \int_{B}\pi(z)\left[\int_{A}p(z,x)\lambda({\rm d}x)\right]\lambda({\rm d}z)+\int_{A\cap B}\pi(x)r(x)\lambda({\rm d}x) \\
+    &amp;=  \int_{B}\pi(z)\left[\int_{A}p(z,x)\lambda({\rm d}x)+r(z)\mathbf{1}_{A}(x)\right]\lambda({\rm d}z) \\
+    &amp;=  \int_{B}\pi({\rm d}x)P(x,A).
+\end{align}\]</span></p>
+<p>The key utility of detailed balance is it need only be checked pointwise: no integrals necessary!</p>
+<p><strong>Corollary</strong>. Any Metropolis–Hastings Markov chain is <span class="math inline">\(\pi\)</span>-reversible.</p>
+<p><em>Proof</em>. We have
+<span class="math display">\[\begin{align}
+\pi(x)p_{{\rm MH}}(x,z) &amp;=  \pi(x)q(x,z)\left[1\wedge\frac{\pi(z)q(z,x)}{\pi(x)q(x,z)}\right] \\
+    &amp;=  \left[\pi(x)q(x,z)\wedge\pi(z)q(z,x)\right] \\
+    &amp;=  \pi(z)q(z,x)\left[\frac{\pi(x)q(x,z)}{\pi(z)q(z,x)}\wedge1\right] \\
+    &amp;=  \pi(z)p_{{\rm MH}}(z,x).
+\end{align}\]</span></p>
+<p>Many Markov chains used in statistics are constructed using reversible Markov transition kernels.</p>
+<p>If <span class="math inline">\(P_{{\rm MH}}\)</span> is <span class="math inline">\(\pi\)</span>-reversible and <span class="math inline">\(\pi\)</span>-irreducible then it is positive and has <span class="math inline">\(\pi\)</span> as its invariant probability measure. Verifying <span class="math inline">\(\pi\)</span>-irreducibility is often very easy. For example, <span class="math inline">\(\pi(A)&gt;0\)</span>, <span class="math inline">\(A\in\mathcal{X}\)</span> and <span class="math inline">\(q(x,A)&gt;0\)</span>, <span class="math inline">\(x\in\mathsf{X}\)</span>, <span class="math inline">\(A\in\mathcal{X}\)</span>.</p>
+<p><strong>Theorem</strong> [<a href="https://doi.org/10.1214/aos/1176325750">Tierney (1994, Corollary 2)</a>, <a href="https://doi.org/10.1214/105051606000000510">Roberts &amp; Rosenthal (2008, Theorem 8)</a>]. Every <span class="math inline">\(\pi\)</span>-irreducible, full-dimensional Metropolis–Hastings Markov chain is Harris recurrent.</p>
+</div>
+</div>
+<div id="combining-markov-kernels" class="section level2">
+<h2>Combining Markov kernels</h2>
+<p>We can easily construct <span class="math inline">\(\pi\)</span>-invariant Markov chains out of different <span class="math inline">\(\pi\)</span>-invariant Markov transition kernels. In practice, such hybrid chains are commonplace. For example, the Gibbs sampler.</p>
+<p>Generally speaking, we will have <span class="math inline">\((P_{s})_ {s \in S}\)</span> and we will try to make a mixture, cycle or combination of the two out of them.</p>
+<p><strong>Definition</strong>. A Markov kernel <span class="math inline">\(P\)</span> is a mixture of the Markov kernels <span class="math inline">\((P_{s})_{s\in S}\)</span> if
+<span class="math display">\[P(x,A)=\sum_{s\in S}w(s)P_{s}(x,A),\]</span>
+where <span class="math inline">\(w\)</span> is a p.m.f. (independent of <span class="math inline">\(x\)</span>). Alternatively, <span class="math inline">\(P=\sum_{s\in S}w(s)P_{s}\)</span>.</p>
+<p><strong>Fact</strong>. A mixture of <span class="math inline">\(\pi\)</span>-invariant Markov kernels is <span class="math inline">\(\pi\)</span>-invariant.</p>
+<p><em>Proof</em>. Let <span class="math inline">\(A \in \mathcal{X}\)</span>. Then <span class="math display">\[\pi P(A)=\sum_{s\in S}w(s)\pi P_{s}(A)=\sum_{s\in S}w(s)\pi(A)=\pi(A). □\]</span></p>
+<p><strong>Definition</strong>. A Markov kernel <span class="math inline">\(P\)</span> is a cycle of Markov kernels <span class="math inline">\(P_{1}\)</span> and <span class="math inline">\(P_{2}\)</span> if
+<span class="math display">\[P(x,A)=\int_{\mathsf{X}}P_{1}(x,{\rm d}z)P_{2}(z,A),\]</span>
+i.e., <span class="math inline">\(P=P_{1}P_{2}\)</span>.</p>
+<p><strong>Fact</strong>. A cycle of <span class="math inline">\(\pi\)</span>-invariant Markov kernels is <span class="math inline">\(\pi\)</span>-invariant.</p>
+<p><em>Proof</em>. Let <span class="math inline">\(A \in \mathcal{X}\)</span>. Then <span class="math display">\[\pi P(A)=\pi P_{1}P_{2}(A)=\pi P_{2}(A)=\pi(A). □\]</span></p>
+<p>That’s all you need to know to construct some sophisticated Markov chains!</p>
+<p>If P is <span class="math inline">\(\pi\)</span>-irreducible then so is a mixture including P with positive probability. The same is not necessarily true for cycles, but it is often true in practice.</p>
+<p>A mixture of <span class="math inline">\(\pi\)</span>-reversible Markov kernels is <span class="math inline">\(\pi\)</span>-reversible. A cycle of <span class="math inline">\(\pi\)</span>-reversible Markov kernels is generally not <span class="math inline">\(\pi\)</span>-reversible.</p>
+</div>
+</div>
+
+
+  <footer>
+  
+
+<script src="//yihui.name/js/math-code.js"></script>
+<script async src="//mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+<script async src="//yihui.name/js/center-img.js"></script>
+
+
+<script type="text/javascript">
+var sc_project=12110974;
+var sc_invisible=1;
+var sc_security="9b171880";
+</script>
+<script type="text/javascript"
+src="https://www.statcounter.com/counter/counter.js"
+async></script>
+<noscript><div class="statcounter"><a title="Web Analytics"
+href="https://statcounter.com/" target="_blank"><img
+class="statcounter"
+src="https://c.statcounter.com/12110974/0/9b171880/1/"
+alt="Web Analytics"></a></div></noscript>
+
+
+
+
+
+
+
+
+  
+
+
+<p align=right>
+
+<a href='https://github.com/awllee/sc1/blob/master/content/integration/monte-carlo.Rmd'>View source</a>
+
+|
+
+<a href='https://github.com/awllee/sc1/edit/master/content/integration/monte-carlo.Rmd'>Edit source</a>
+
+</p>
+
+
+
+
+
+<script src="https://utteranc.es/client.js"
+        repo="awllee/sc1"
+        issue-term="pathname"
+        label="utterance"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script>
+
+
+
+  
+
+
+
+<script src="//cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+
+
+
+<script src="//cdn.bootcss.com/highlight.js/9.12.0/languages/r.min.js"></script>
+<script src="//cdn.bootcss.com/highlight.js/9.12.0/languages/yaml.min.js"></script>
+<script src="//cdn.bootcss.com/highlight.js/9.12.0/languages/tex.min.js"></script>
+<script>hljs.configure({languages: []}); hljs.initHighlightingOnLoad();</script>
+
+
+
+  
+  <hr>
+  <div class="copyright">© 2020 <a href="https://sites.google.com/view/anthonylee">Anthony Lee</a>, <a href="http://www.bristol.ac.uk/maths/people/feng-yu/index.html">Feng Yu</a>, <a href="https://people.maths.bris.ac.uk/~tk18582/">Tobias Kley</a>, <a href="https://mfasiolo.github.io/">Matteo Fasiolo</a></div>
+  
+  </footer>
+  </article>
+  
+  </body>
+</html>
+

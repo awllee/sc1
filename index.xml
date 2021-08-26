@@ -7,6 +7,46 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language><atom:link href="https://awllee.github.io/sc1/index.xml" rel="self" type="application/rss+xml" />
     <item>
+      <title>Debugging</title>
+      <link>https://awllee.github.io/sc1/profile-debug/debug/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://awllee.github.io/sc1/profile-debug/debug/</guid>
+      <description>General tips An example of debugging in R   It is almost impossible to write non-trivial code without bugs, where a “bug” is any flaw that leads to a computation producing an unintended result or causing an error to be thrown. There are many types of bugs: from simple spelling mistakes to logical flaws. In some cases, the source of a bug is obvious and in others a bug arises from misunderstanding something very subtle and it can be difficult to identify the root cause of the problem.</description>
+    </item>
+    
+    <item>
+      <title>Dense Matrices</title>
+      <link>https://awllee.github.io/sc1/matrices/dense/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://awllee.github.io/sc1/matrices/dense/</guid>
+      <description>Some examples of dense matrix operations Matrix is a two dimensional data structure in R. We can specify the values of entries in a matrix by column by default, or by row if byrow=T is set. Additionally, the column and row can have names, and can be renamed without changing values of matrix.
+x = matrix(1:6, 2, 3) class(x) ## [1] &amp;quot;matrix&amp;quot; &amp;quot;array&amp;quot; attributes(x) ## $dim ## [1] 2 3 dim(x) ## [1] 2 3 x2 = matrix(1:6, 2, 3, dimnames = list(c(&amp;#39;A&amp;#39;, &amp;#39;B&amp;#39;), c(&amp;#39;K&amp;#39;, &amp;#39;L&amp;#39;, &amp;#39;M&amp;#39;))) x2 ## K L M ## A 1 3 5 ## B 2 4 6 colnames(x2) ## [1] &amp;quot;K&amp;quot; &amp;quot;L&amp;quot; &amp;quot;M&amp;quot; rownames(x2) ## [1] &amp;quot;A&amp;quot; &amp;quot;B&amp;quot; colnames(x2) = c(&amp;#39;C1&amp;#39;, &amp;#39;C2&amp;#39;, &amp;#39;C3&amp;#39;) rownames(x2) = c(&amp;#39;R1&amp;#39;, &amp;#39;R2&amp;#39;) x2 ## C1 C2 C3 ## R1 1 3 5 ## R2 2 4 6 If one obtains a row of a matrix, the result is given as a vector, not matrix.</description>
+    </item>
+    
+    <item>
+      <title>Functional programming</title>
+      <link>https://awllee.github.io/sc1/functional-oo/functional/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://awllee.github.io/sc1/functional-oo/functional/</guid>
+      <description>First-class functions Pure functions Closures Lazy evaluation   R supports many functional programming features.
+First-class functions Perhaps the most important feature is that R has first-class functions. While most programming languages involve defining functions or procedures, a language has first-class functions if in addition:
+ functions can be arguments to other functions functions can be returned by functions functions can be stored in data structures.  Essentially, functions are like any other variable.</description>
+    </item>
+    
+    <item>
+      <title>Numerical Optimisation</title>
+      <link>https://awllee.github.io/sc1/optimization/numerical-optimization/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://awllee.github.io/sc1/optimization/numerical-optimization/</guid>
+      <description>An optimisation problem is the problem of finding the best solution from all feasible solutions. There are genenally speaking two types of optimisation problems: continuous or discrete, which refers to whether the variables are continuous or discrete. We will focus on continuous optimisation problems. Without any loss of generality, just as in built in R functions, we try to minimise (rather than maximise) a function.
+The standard form of a continuous optimisation problem is as follows:</description>
+    </item>
+    
+    <item>
       <title>Projects: organizing your code</title>
       <link>https://awllee.github.io/sc1/packages/project/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
@@ -14,6 +54,16 @@
       <guid>https://awllee.github.io/sc1/packages/project/</guid>
       <description>RStudio has a nice interface for programming in R. You may have only been using it to create R scripts / RMarkdown files and execute / render them.
 It is generally a good idea to keep code for a &amp;ldquo;project&amp;rdquo; in one place. RStudio can help with this by letting you create a &amp;ldquo;Project&amp;rdquo;, which is little more than a directory with files in it. Opening a project in RStudio automatically sets R&amp;rsquo;s working directory to that directory.</description>
+    </item>
+    
+    <item>
+      <title>Quadrature</title>
+      <link>https://awllee.github.io/sc1/integration/quadrature/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://awllee.github.io/sc1/integration/quadrature/</guid>
+      <description>Polynomial interpolation Lagrange polynomials Polynomial interpolation error Composite polynomial interpolation Other polynomial interpolation schemes  Polynomial integration Changing the limits of integration Integrating the interpolating polynomial approximation Newton–Cotes rules Composite rules Gaussian quadrature Practical algorithms Multiple integrals Recursive algorithm The curse of dimensionality      Error analysis is the tithe that intelligence demands of action, but it is rarely paid.
+– Davis &amp;amp; Rabinowitz, Methods of Numerical Integration (1975), p.</description>
     </item>
     
     <item>
@@ -26,6 +76,157 @@ It is generally a good idea to keep code for a &amp;ldquo;project&amp;rdquo; in 
 &amp;ndash; Robert Gentleman. SSC 2003, Halifax.
  Reproducible research refers to being able to reproduce the analysis and conclusions of a particular investigation given the same raw data. When the analysis requires significant computation, this requires being able to recreate the same computational environment and run the same code on the data.
 It may be surprising that a lot of science involving computation is not reproducible.</description>
+    </item>
+    
+    <item>
+      <title>Using the console</title>
+      <link>https://awllee.github.io/sc1/intro-r/console/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://awllee.github.io/sc1/intro-r/console/</guid>
+      <description>Entering commands directly Entering commands from a script   Entering commands directly The console can be used to use R interactively. You can input commands at the prompt, and they will be executed if they are valid R commands. For example, an input of 1+2 at the prompt outputs [1] 3.
+1 + 2 ## [1] 3 The [1] can be ignored: [1] 3 just means that the first element of the output is 3.</description>
+    </item>
+    
+    <item>
+      <title>Vectorisation</title>
+      <link>https://awllee.github.io/sc1/common-r/vectorisation/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://awllee.github.io/sc1/common-r/vectorisation/</guid>
+      <description>Vectorisation, matrix operations, and readability Vectorisation means the same operation is applied to every single number in a vector. One avoids using loops in the code as much as possible. Why is vectorisation so important? The answer is speed: vector operations in R are much faster.
+Vectorisation is as important in R as in other interpreted languages, such as Matlab or python.
+fsum1 = function(x) { fsum = 0 for (i in 1:length(x)) { fsum = fsum + sin(x[i]) } return(fsum) } fsum2 = function(x) sum(sin(x)) We can compare the speed using system.</description>
+    </item>
+    
+    <item>
+      <title>1. A very short introduction to pipes</title>
+      <link>https://awllee.github.io/sc1/tidyverse/intro_to_pipes/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://awllee.github.io/sc1/tidyverse/intro_to_pipes/</guid>
+      <description>body { text-align: justify}  Here we introduce the pipe operator, which is provided by the magrittr R package. This introduction is extremely short, and we refer to R for Data Science for details. We start by explaining what pipes are, how they work and then we will give examples of when they are useful.
+Pipes basic The pipe operator %&amp;gt;% is quite simple, but very useful in certain situations.</description>
+    </item>
+    
+    <item>
+      <title>2. Layered visualizations with ggplot2</title>
+      <link>https://awllee.github.io/sc1/tidyverse/intro_to_ggplot2/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://awllee.github.io/sc1/tidyverse/intro_to_ggplot2/</guid>
+      <description>body { text-align: justify}  Here we introduce the main features of the ggplot2 R package, but we refer to “The Layered Grammar of Graphics” and to the relevant chapter of “R for Data Science” for more details.
+Intro to ggplot2 Let us start by considering a very simple example:
+library(MASS) data(mcycle) head(mcycle) ## times accel ## 1 2.4 0.0 ## 2 2.6 -1.3 ## 3 3.2 -2.7 ## 4 3.</description>
+    </item>
+    
+    <item>
+      <title>3. A ggplot2 case study: the mgcViz package</title>
+      <link>https://awllee.github.io/sc1/tidyverse/mgcviz_case_study/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://awllee.github.io/sc1/tidyverse/mgcviz_case_study/</guid>
+      <description>body { text-align: justify}  As we said before, ggplot2 provides a powerful framework for building visualization libraries. The best way to see why this is the case, might be to examine a real example. Here we consider the mgcViz package, with provides a layered framework for visualizing Generalized Additive Models (GAMs) using ggplot2. You might have heard about GAMs before but, if you didn’t, don’t worry because background knowledge on GAMs is not necessary to understand this section.</description>
+    </item>
+    
+    <item>
+      <title>4. Data transformation with dplyr</title>
+      <link>https://awllee.github.io/sc1/tidyverse/data_transformation_dplyr/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://awllee.github.io/sc1/tidyverse/data_transformation_dplyr/</guid>
+      <description>body { text-align: justify}  The previous two sections focussed on data visualization using ggplot2. ggplot2 assumes that your data is stored in a data.frame, so here we explain how to transform your data.frame to get it in the right format for plotting and modelling. In particular, the following section focuses on the dplyr package, which provides some convenient tools for manipulating data stored in a tabular format (i.</description>
+    </item>
+    
+    <item>
+      <title>5. Data reshaping with dplyr and tidyr</title>
+      <link>https://awllee.github.io/sc1/tidyverse/data_reshaping_tidyr/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://awllee.github.io/sc1/tidyverse/data_reshaping_tidyr/</guid>
+      <description>body { text-align: justify}  This section is the natural continuation of the previous one, which focussed on data transformation with dplyr. Here we show how to use the tidyr package, which provides tools for reshaping your data for the purpose of modelling and visualization, and we will illustrate more features of dplyr. As for the previous sections, here we cover the basics and we refer to the relevant chapter of “R for Data Science” for more details.</description>
+    </item>
+    
+    <item>
+      <title>Fundamentals</title>
+      <link>https://awllee.github.io/sc1/intro-r/fundamentals/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://awllee.github.io/sc1/intro-r/fundamentals/</guid>
+      <description>Variables and values Arithmetic Conditional statements Relational and logical operators Functions Getting help Vectors Vector types Matrices Lists Basic scoping Pass by value semantics Iteration: while and for loops Recursion Errors, warnings and messages Special values   This page provides a very brief introduction to general R programming, and is sufficient to perform very complicated computations. It is certainly not comprehensive, however, and it is expected that one will need to supplement the information here with other material, and some healthy experimentation.</description>
+    </item>
+    
+    <item>
+      <title>Literate programming</title>
+      <link>https://awllee.github.io/sc1/reproducibility/literate/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://awllee.github.io/sc1/reproducibility/literate/</guid>
+      <description>Instead of imagining that our main task is to instruct a computer what to do, let us concentrate rather on explaining to human beings what we want a computer to do.
+– Donald E. Knuth
+ Literate programming was introduced by Donald Knuth in a 1984 article featuring the quote above.
+In practice, literate programming involves writing source code that can be processed to produce
+a document explaining what the program does, a program that can be executed.</description>
+    </item>
+    
+    <item>
+      <title>Monte Carlo integration</title>
+      <link>https://awllee.github.io/sc1/integration/monte-carlo/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://awllee.github.io/sc1/integration/monte-carlo/</guid>
+      <description>Monte Carlo with i.i.d. random variables Fundamental results Error and comparison with quadrature Perfect sampling Rejection sampling Importance sampling Self-normalized importance sampling  Markov chain Monte Carlo What is a Markov chain? LLN and CLT Basic definitions Metropolis–Hastings Algorithm Validity  Combining Markov kernels    Quadrature rules give excellent rates of convergence, in terms of computational cost, for one-dimensional integrals of sufficiently smooth functions. However, they quickly become prohibitively expensive in high-dimensional problems.</description>
+    </item>
+    
+    <item>
+      <title>Object-oriented programming</title>
+      <link>https://awllee.github.io/sc1/functional-oo/object-oriented/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://awllee.github.io/sc1/functional-oo/object-oriented/</guid>
+      <description>Outlook Terminology S3 S4 Reference Classes   Outlook The purpose of this chapter is to introduce object-oriented programming (OOP) in R. Base R offers three different models for OOP:
+ S3, S4, and Reference Classes.  Further, some R packages on CRAN are available that provide additional models (e. g., R6, R.oo or proto).
+Here we focus on an introduction of the models available in base R and a discussion of their advantages and disadvantages.</description>
+    </item>
+    
+    <item>
+      <title>Profiling</title>
+      <link>https://awllee.github.io/sc1/profile-debug/profile/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://awllee.github.io/sc1/profile-debug/profile/</guid>
+      <description>Updating a list of primes The Sieve of Eratosthenes Comments   Profiling in R is fairly straightforward using the profvis package, which builds upon base R’s Rprof functionality.
+library(profvis) This is a statistical profiler: it operates by regularly (e.g. every few milliseconds) using operating system interrupts to determine what code is being executed. This enables one to build a picture of where the computation is spending most of its time, and is essentially an application of the Monte Carlo method.</description>
+    </item>
+    
+    <item>
+      <title>R apply family, sweep, map, reduce, filter</title>
+      <link>https://awllee.github.io/sc1/common-r/apply/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://awllee.github.io/sc1/common-r/apply/</guid>
+      <description>R apply family The apply family of functions consist of apply(), lapply(), sapply(), and mapply(). The basic idea of the apply family is to apply the same function repetitively across a list or a certain dimension of an array or dataframe.
+apply We start with apply(). Its syntax is apply(X, MARGIN, FUN, ...), where
+ X is an array, including a matrix. MARGIN is a vector giving the subscripts which the function will be applied over.</description>
+    </item>
+    
+    <item>
+      <title>R Optimisation Functions</title>
+      <link>https://awllee.github.io/sc1/optimization/r-optimization/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://awllee.github.io/sc1/optimization/r-optimization/</guid>
+      <description>A Two-dimensional Example To illustrate various R optimisation functions, we define a simple two-dimensional function below and make a contour plot. We use the meshgrid function from the package pracma, which gives \(x\) and \(y\) coordinates of a square grid in \(\mathbb{R}^2\).
+library(pracma) # for meshgrid function f = function(x1, x2) cos(x1-1) + cos(x2) + sin(3*x1*x2) + x1^2 + x2^2 meshgrid(seq(-2, 2, length=5)) ## $X ## [,1] [,2] [,3] [,4] [,5] ## [1,] -2 -1 0 1 2 ## [2,] -2 -1 0 1 2 ## [3,] -2 -1 0 1 2 ## [4,] -2 -1 0 1 2 ## [5,] -2 -1 0 1 2 ## ## $Y ## [,1] [,2] [,3] [,4] [,5] ## [1,] -2 -2 -2 -2 -2 ## [2,] -1 -1 -1 -1 -1 ## [3,] 0 0 0 0 0 ## [4,] 1 1 1 1 1 ## [5,] 2 2 2 2 2 x = seq(-2, 2, length=101) grid_XY = meshgrid(x) z = matrix(mapply(f, grid_XY$X, grid_XY$Y), nrow=101) min(z) ## [1] 0.</description>
+    </item>
+    
+    <item>
+      <title>Sparse Matrices</title>
+      <link>https://awllee.github.io/sc1/matrices/sparse/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://awllee.github.io/sc1/matrices/sparse/</guid>
+      <description>Matrix package The R Matrix package provides additional functions for both dense and sparse matrices that extend the basic matrix data type. In the Matrix package, dense matrices are stored as dgeMatrix objects. One useful function it adds for dense matrices is rankMatrix, which returns the rank of the input matrix, up to a certain tolerance if desired. Another useful function is rcond, which gives the condition number of a square matrix, defined to be the product of the norm of the matrix and the norm of its inverse.</description>
     </item>
     
     <item>
@@ -48,6 +249,44 @@ There are other version control systems, but we focus on git and GitHub here for
 File -&amp;gt; New Project -&amp;gt; New Directory -&amp;gt; R Package You can choose a name for your package, the parent directory for the package and whether or not you want to also initialize an empty git repository.
 The package will be populated with various files and folders.
 Package structure package/ ├── DESCRIPTION ├── LICENSE ├── LICENSE.md ├── NAMESPACE ├── R ├── man └── tests Edit DESCRIPTION  Add license, e.</description>
+    </item>
+    
+    <item>
+      <title>Data</title>
+      <link>https://awllee.github.io/sc1/intro-r/data/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://awllee.github.io/sc1/intro-r/data/</guid>
+      <description>Creating synthetic data Creating a data frame Saving and loading CSV data Saving and loading in R’s data format Performing a simple linear regression   This page introduces a few basics ways to deal with data in R.
+Creating synthetic data R has many functions for simulating random variates from common distributions, as well as evaluating their density / mass functions, distribution functions and quantile functions. For example, the Uniform(0,1) distribution is served by the functions</description>
+    </item>
+    
+    <item>
+      <title>Gradient Descent and Stochastic Gradient Descent</title>
+      <link>https://awllee.github.io/sc1/optimization/sgd/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://awllee.github.io/sc1/optimization/sgd/</guid>
+      <description>Gradient descent implementation We try to solve the previous nonlinear least squares problem using gradient descent. The difference in magnitudes of optimal parameter values for \(b\) in this example causes gradient descent algorithm to converge very slowly, if at all (have a try yourself). To illustrate the working of the gradient descent algorithm, we scale \(b_3\) by 100 in the code below so that the optimal values of \(b\) are of roughly the same magnitude.</description>
+    </item>
+    
+    <item>
+      <title>Parallel programming</title>
+      <link>https://awllee.github.io/sc1/common-r/parallel/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://awllee.github.io/sc1/common-r/parallel/</guid>
+      <description>Note. Any timing results here could be substantially different to what you would get if you ran the code on your own computer, so comments on the results may also be confusing. This is because these computations are run by Travis on nodes that may be heavily contested, as part of the website build process.
+Why parallel? Often, for large data processing jobs, a single CPU core is not enough.</description>
+    </item>
+    
+    <item>
+      <title>Performance</title>
+      <link>https://awllee.github.io/sc1/profile-debug/performance/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://awllee.github.io/sc1/profile-debug/performance/</guid>
+      <description>Optimized routines Memory management Column-major storage Example: logistic regression Example: matrix vector multiplications Writing code in another language   Optimized routines Code written in R will often fail to have good performance, in the sense that it would run faster if written in a language such as C. The main exception is when the computationally intensive code is essentially delegated to optimized library code. A primary example is linear algebra operations, which are performed by a separate library.</description>
     </item>
     
     <item>
@@ -106,6 +345,32 @@ Even in non-collaborative development, this can be useful as tests can be config
       
       <guid>https://awllee.github.io/sc1/reproducibility/reading/</guid>
       <description> Turing Way: Reproducibility Literate Programming SW Carpentry: Producing Reports With knitr R Markdown: The Definitive Guide  </description>
+    </item>
+    
+    <item>
+      <title>Problem 1: Multiples of 3 and 5</title>
+      <link>https://awllee.github.io/sc1/reproducibility/project-euler/problem1/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://awllee.github.io/sc1/reproducibility/project-euler/problem1/</guid>
+      <description>If we list all the natural numbers below 10 that are multiples of 3 or 5, we get 3, 5, 6 and 9. The sum of these multiples is 23.
+Find the sum of all the multiples of 3 or 5 below 1000.
+ A Solution
+A simple approach to this problem is to
+initialize a counter variable to 0; iterate over the integers between 1 and 999 (inclusive): if the integer is a multiple of 3 or 5, add it to the counter.</description>
+    </item>
+    
+    <item>
+      <title>Problem 2: Even Fibonacci numbers</title>
+      <link>https://awllee.github.io/sc1/reproducibility/project-euler/problem2/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://awllee.github.io/sc1/reproducibility/project-euler/problem2/</guid>
+      <description>Each new term in the Fibonacci sequence is generated by adding the previous two terms. By starting with 1 and 2, the first 10 terms will be:
+\[1, 2, 3, 5, 8, 13, 21, 34, 55, 89, \ldots\]
+By considering the terms in the Fibonacci sequence whose values do not exceed four million, find the sum of the even-valued terms.
+ A Solution
+Let \(F_1, F_2, \ldots\) denote the (non-standard) Fibonnaci sequence with \(F_1 = 1\) and \(F_2 = 2\).</description>
     </item>
     
   </channel>

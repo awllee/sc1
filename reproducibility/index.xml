@@ -19,6 +19,19 @@ It may be surprising that a lot of science involving computation is not reproduc
     </item>
     
     <item>
+      <title>Literate programming</title>
+      <link>https://awllee.github.io/sc1/reproducibility/literate/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://awllee.github.io/sc1/reproducibility/literate/</guid>
+      <description>Instead of imagining that our main task is to instruct a computer what to do, let us concentrate rather on explaining to human beings what we want a computer to do.
+– Donald E. Knuth
+ Literate programming was introduced by Donald Knuth in a 1984 article featuring the quote above.
+In practice, literate programming involves writing source code that can be processed to produce
+a document explaining what the program does, a program that can be executed.</description>
+    </item>
+    
+    <item>
       <title>Literate programming with LaTeX and LyX</title>
       <link>https://awllee.github.io/sc1/reproducibility/latex-lyx/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>

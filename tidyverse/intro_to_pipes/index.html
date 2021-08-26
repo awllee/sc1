@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <title>1. A very short introduction to pipes - SC1</title>
+    <meta property="og:title" content="1. A very short introduction to pipes - SC1">
+    
+    <meta name="twitter:card" content="summary">
+
+    
+      
+    
+
+    
+      
+      <meta property="description" content="Here we introduce the pipe operator, which is provided by the magrittr R package. This introduction is extremely short, and we refer to R for Data Science for details. We start by explaining what &amp;hellip;">
+      <meta property="og:description" content="Here we introduce the pipe operator, which is provided by the magrittr R package. This introduction is extremely short, and we refer to R for Data Science for details. We start by explaining what &amp;hellip;">
+      
+    
+
+    
+    
+
+    
+
+    
+    
+
+
+<link href='//cdn.bootcss.com/highlight.js/9.12.0/styles/github.min.css' rel='stylesheet' type='text/css' />
+
+
+
+    <link rel="stylesheet" href="/sc1/css/style.css" />
+    <link rel="stylesheet" href="/sc1/css/fonts.css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Arvo">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Marcellus">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Code+Pro">
+
+<link rel="stylesheet" href="/sc1/css/custom.css" />
+
+<link rel="icon" href="/sc1/favicon.ico" type="image/x-icon" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<nav class="breadcrumbs">
+    
+        <a href="https://awllee.github.io/sc1/">home / </a>
+    
+        <a href="https://awllee.github.io/sc1/tidyverse/">tidyverse / </a>
+    
+        <a href="https://awllee.github.io/sc1/tidyverse/intro_to_pipes/">intro_to_pipes / </a>
+    
+</nav>
+
+  </head>
+
+  
+  <body class="sc1">
+    <header class="masthead">
+      <h1><a href="/sc1/">SC1</a></h1>
+
+<p class="tagline">Statistical Computing 1</p>
+
+      <nav class="menu">
+  <input id="menu-check" type="checkbox" />
+  <label id="menu-label" for="menu-check" class="unselectable">
+    <span class="icon close-icon">✕</span>
+    <span class="icon open-icon">☰</span>
+    <span class="text">Menu</span>
+  </label>
+  <ul>
+  
+  
+  <li><a href="/sc1/">Home</a></li>
+  
+  <li><a href="/sc1/intro-r/">Intro to R</a></li>
+  
+  <li><a href="/sc1/reproducibility/">Reproducibility</a></li>
+  
+  <li><a href="/sc1/common-r/">Common R</a></li>
+  
+  <li><a href="/sc1/tidyverse/">Tidyverse</a></li>
+  
+  <li><a href="/sc1/packages/">Packages</a></li>
+  
+  <li><a href="/sc1/functional-oo/">Functional / OO</a></li>
+  
+  <li><a href="/sc1/profile-debug/">Performance / Bugs</a></li>
+  
+  <li><a href="/sc1/matrices/">Matrices</a></li>
+  
+  <li><a href="/sc1/optimization/">Optimization</a></li>
+  
+  <li><a href="/sc1/integration/">Integration</a></li>
+  
+  
+  </ul>
+</nav>
+
+    </header>
+
+    <article class="main">
+      <header class="title">
+      
+<h1>1. A very short introduction to pipes</h1>
+
+<h3>
+</h3>
+<hr>
+
+
+      </header>
+
+
+
+
+
+
+<style>
+body {
+text-align: justify}
+</style>
+<p>Here we introduce the pipe operator, which is provided by the <a href="https://cran.r-project.org/web/packages/magrittr/"><code>magrittr</code></a> <code>R</code> package. This introduction is extremely short, and we refer to <a href="https://r4ds.had.co.nz">R for Data Science</a> for details. We start by explaining what pipes are, how they work and then we will give examples of when they are useful.</p>
+<div id="pipes-basic" class="section level2">
+<h2>Pipes basic</h2>
+<p>The pipe operator <code>%&gt;%</code> is quite simple, but very useful in certain situations. In RStudio, you can use the keyboard shortcut <strong>Ctrl</strong> + <strong>Shift</strong> + <strong>M</strong> to produce <code>%&gt;%</code>. Consider the following code:</p>
+<pre class="r"><code>x &lt;- seq(0, 2*pi, by = 0.01)
+
+plot(sqrt(abs(cos(x))))</code></pre>
+<p><img src="/sc1/tidyverse/Intro_to_pipes_files/figure-html/unnamed-chunk-1-1.png" width="672" />
+which is plotting <span class="math inline">\(\sqrt(|\text{cos}(x)|)\)</span>. The piped version of this is:</p>
+<pre class="r"><code>library(magrittr)
+
+x %&gt;% cos %&gt;% abs %&gt;% sqrt %&gt;% plot</code></pre>
+<p><img src="/sc1/tidyverse/Intro_to_pipes_files/figure-html/unnamed-chunk-2-1.png" width="672" />
+As you can see, the output is the same, with the exception of the y-axis label, which is now “.” (we’ll explain the reason for that in a moment). Now, what is happening? Essentially, the pipe operator is used in expressions of the type <code>R_object %&gt;% A_function</code> and it transforms this expression into something equivalent to <code>A_function( R_object )</code>. So the function composition <code>f1(f2(x))</code> becomes <code>x %&gt;% f2 %&gt;% f1</code>.</p>
+<p>To be more precise, the code <code>x %&gt;% cos %&gt;% abs %&gt;% sqrt %&gt;% plot</code> is equivalent to:</p>
+<pre class="r"><code> myFun &lt;- function(.){ 
+  
+ . &lt;- cos( . )
+ . &lt;- abs( . )
+ . &lt;- sqrt( . )
+ plot( . )
+ 
+}
+ 
+myFun(x)</code></pre>
+<p><img src="/sc1/tidyverse/Intro_to_pipes_files/figure-html/unnamed-chunk-3-1.png" width="672" />
+that is, we are applying a sequence of functions and we are storing the partial results in the “.”. This should explain why <code>.</code> appears in the y-axis label.</p>
+<p>Now, what do we do if we want to specify some extra arguments, for example as in the code:</p>
+<pre class="r"><code>plot(x = x, y = sqrt(abs(cos(x))), ylab = &quot;y&quot;)</code></pre>
+<p><img src="/sc1/tidyverse/Intro_to_pipes_files/figure-html/unnamed-chunk-4-1.png" width="672" />
+? This is achieved as follows:</p>
+<pre class="r"><code>x %&gt;% cos %&gt;% abs %&gt;% sqrt %&gt;% plot(x = x, y = ., ylab = &quot;y&quot;)</code></pre>
+<p><img src="/sc1/tidyverse/Intro_to_pipes_files/figure-html/unnamed-chunk-5-1.png" width="672" />
+Hence, we use <code>.</code> as a placeholder for the argument that is being piped (the lhs of the pipe operator).</p>
+<p>WARNING: a clarifications is needed here. By default the placeholder <code>.</code> will be used as the first argument of the function to be applied (here <code>plot()</code>). That is, <code>x %&gt;% plot(ylab = "y")</code> is equivalent to <code>plot(., ylab = "y")</code> where <code>.</code> is equal to <code>x</code>, the lhs of the pipe. This behaviour is overridden if the placeholder appears somewhere on the rhs. For instance <code>y %&gt;% plot(x = x, col = .)</code> is not equivalent to <code>plot(., x = x, col = .)</code> with <code>. == y</code>, but it is the same as <code>plot(x = x, col = y)</code>. Hence, if we use the placeholder explicitly on the rhs of the pipe, the placeholder <code>.</code> will not be assigned to the first argument of the rhs function. However, notice that the following does not work:</p>
+<pre class="r"><code>x %&gt;% plot(x = x, y = . + 1, ylab = &quot;y&quot;)
+# Error in plot.xy(xy, type, ...) : invalid plot type</code></pre>
+<p>Why? Because here the placeholder appears only the nested expression (<code>. + 1</code>) and the above code is equivalent to <code>plot(., x = x, y = . + 1, ylab = "y")</code> with <code>. == x</code>, which leads to an error. Hence, when the placeholder appears only in nested expressions on the rhs of the pipe, the <code>%&gt;%</code> follows the default behaviour consisting of using the <code>.</code> (where <code>. == x</code> here) as the first argument of the rhs function to be applied (<code>plot</code>). To override this behaviour, we must sandwhich the rhs of the pipe using curly <code>{}</code> brackets:</p>
+<pre class="r"><code>x %&gt;% { plot(x = x, y = . + 1, ylab = &quot;y&quot;) }</code></pre>
+<p><img src="/sc1/tidyverse/Intro_to_pipes_files/figure-html/unnamed-chunk-7-1.png" width="672" />
+which makes so that the <code>.</code> is used only in the function arguments where it appears explicitly.</p>
+<p>Having clarified this, we can now show how the <code>.</code> can be used multiple times inside the rhs function, for instance:</p>
+<pre class="r"><code>3 %&gt;% { matrix(1 : (. * .), ncol = ., nrow = .) }</code></pre>
+<pre><code>##      [,1] [,2] [,3]
+## [1,]    1    4    7
+## [2,]    2    5    8
+## [3,]    3    6    9</code></pre>
+<p>is equivalent to <code>matrix(1 : (3 * 3), ncol = 3, nrow = 3)</code>. Also, we can split up the lhs of the pipe into its elements, for instance:</p>
+<pre class="r"><code>x &lt;- list(letters[1:6], 2, 3, TRUE)
+
+x %&gt;% { matrix(.[[1]], nrow = .[[2]], ncol = .[[3]], byrow = .[[4]]) }</code></pre>
+<pre><code>##      [,1] [,2] [,3]
+## [1,] &quot;a&quot;  &quot;b&quot;  &quot;c&quot; 
+## [2,] &quot;d&quot;  &quot;e&quot;  &quot;f&quot;</code></pre>
+<p>which is equivalent to <code>matrix(letters[1:6], nrow = 2, ncol = 3, byrow = TRUE)</code>.</p>
+</div>
+<div id="when-are-pipes-useful" class="section level2">
+<h2>When are pipes useful?</h2>
+<p>Having gone through the introduction to pipes, you might wonder why should you care given that you can obtain the same result using a composition of functions. Indeed, the first example where we plotted <span class="math inline">\(\sqrt(|\text{cos}(x)|)\)</span> is simple enough for explaining how pipes work, but it is not an example where pipes are useful (doing <code>plot(sqrt(abs(cos(x))))</code> might be clearer). To motivate pipes, consider the following example:</p>
+<pre class="r"><code>library(qgam)
+data(UKload)
+head(UKload)</code></pre>
+<pre><code>##     NetDemand       wM   wM_s95       Posan      Dow      Trend NetDemand.48
+## 25      38353 6.046364 5.558800 0.001369941   samedi 1293879600        38353
+## 73      41192 2.803969 3.230582 0.004109824 dimanche 1293966000        38353
+## 121     43442 2.097259 1.858198 0.006849706    lundi 1294052400        41192
+## 169     50736 3.444187 2.310408 0.009589588    mardi 1294138800        43442
+## 217     50438 5.958674 4.724961 0.012329471 mercredi 1294225200        50736
+## 265     50064 4.124248 4.589470 0.015069353    jeudi 1294311600        50438
+##     Holy Year                Date
+## 25     1 2011 2011-01-01 12:00:00
+## 73     0 2011 2011-01-02 12:00:00
+## 121    0 2011 2011-01-03 12:00:00
+## 169    0 2011 2011-01-04 12:00:00
+## 217    0 2011 2011-01-05 12:00:00
+## 265    0 2011 2011-01-06 12:00:00</code></pre>
+<p>Here we are loading data on total electricity demand in the UK. Variable <code>NetDemand</code> is the demand, <code>Posan</code> is a cyclical variable indicating the position along the year and <code>Dow</code> is the day of the week (in French!). See <code>?UKload</code> for an explanation regarding the meaning of the other variables. Now let’s look at the following code:</p>
+<pre class="r"><code>plot(NetDemand ~ Posan, 
+     transform(
+       head(
+         subset(UKload, Dow == &quot;lundi&quot;, select = c(&quot;NetDemand&quot;, &quot;Posan&quot;)), 
+         100), 
+       Posan = Posan * 365)
+     )</code></pre>
+<p><img src="/sc1/tidyverse/Intro_to_pipes_files/figure-html/unnamed-chunk-11-1.png" width="672" />
+What are we doing here? We are performing the following steps:</p>
+<ol style="list-style-type: decimal">
+<li><code>subset</code> selects the Mondays (<code>"lundi"</code>) and the <code>NetDemand</code> and <code>Posan</code> columns;</li>
+<li><code>head</code> selects the first 100 rows;</li>
+<li><code>transform</code> makes so that <code>Posan</code> takes value in <span class="math inline">\([0, 365]\)</span> rather than <span class="math inline">\([0, 1]\)</span>.</li>
+<li><code>plot</code> plots <code>NetDemand</code> vs <code>Posan</code>.</li>
+</ol>
+<p>Now, to understand what is going on here, you need to read the code from the inner-most function call (<code>subset</code>) to the outer-most one (<code>plot</code>). So the code does not clearly express the sequence of operations detailed in the numbered list above. This is an example where pipes lead to much clearer code:</p>
+<pre class="r"><code>UKload %&gt;% 
+  subset(Dow == &quot;lundi&quot;, select = c(&quot;NetDemand&quot;, &quot;Posan&quot;)) %&gt;%
+  head(100) %&gt;%
+  transform(Posan = Posan * 365) %&gt;%
+  plot(NetDemand ~ Posan, data = .)</code></pre>
+<p><img src="/sc1/tidyverse/Intro_to_pipes_files/figure-html/unnamed-chunk-12-1.png" width="672" />
+In fact, we can understand which operations are being performed by simply going from the top to the bottom line. It is also clear what arguments are being provided to each function. In summary, pipes are useful when you are calling a sequence of functions where the output of one function is going to be the input of the next one.</p>
+</div>
+<div id="advanced-piping" class="section level2">
+<h2>Advanced piping</h2>
+<p>Here we briefly mention some more exotic types of pipes.</p>
+<div id="the-assignment-pipe" class="section level3">
+<h3>The assignment pipe %&lt;&gt;%</h3>
+<p>Consider the following code:</p>
+<pre class="r"><code>x &lt;- c(5, 1, 7, 9, 3)
+
+x %&lt;&gt;% sort
+
+x</code></pre>
+<pre><code>## [1] 1 3 5 7 9</code></pre>
+<p>What happened? Here the assignment pipe <code>%&lt;&gt;%</code> is a shortcut for <code>x &lt;- x %&gt;% sort</code>. That is, it performs the pipelined operations and then it stores the result in <code>x</code>. Importantly, <code>%&lt;&gt;%</code> can only be the first pipe in a pipeline, so that:</p>
+<pre class="r"><code>x &lt;- c(5, 1, 7, 9, 3)
+
+x %&gt;% sort %&lt;&gt;% sort(decreasing = TRUE)</code></pre>
+<p>generates an error. Instead:</p>
+<pre class="r"><code>x &lt;- c(5, 1, 7, 9, 3)
+
+x %&lt;&gt;% sort %&gt;% sort(decreasing = TRUE)
+
+x</code></pre>
+<pre><code>## [1] 9 7 5 3 1</code></pre>
+<p>does modify <code>x</code>. Notice that <code>x</code> is in decreasing order, so the output of the last pipe in the pipeline is stored in <code>x</code>.</p>
+</div>
+<div id="the-tee-pipe-t" class="section level3">
+<h3>The <code>tee</code> pipe <code>%T&gt;%</code></h3>
+<p>Consider the code:</p>
+<pre class="r"><code>100 %&gt;% 
+  seq(0, 2*pi, length.out = .) %&gt;%
+  cos %&gt;%
+  plot</code></pre>
+<p><img src="/sc1/tidyverse/Intro_to_pipes_files/figure-html/unnamed-chunk-16-1.png" width="672" />
+which is plotting the <span class="math inline">\(\text{cos}(x)\)</span> at 100 values in <span class="math inline">\([0, 2\pi]\)</span>. Now, what if also we want to store the computed values of <span class="math inline">\(\text{cos}(x)\)</span>? The following would not work:</p>
+<pre class="r"><code>x &lt;- 100 %&gt;% 
+  seq(0, 2*pi, length.out = .) %&gt;%
+  cos %&gt;%
+  plot</code></pre>
+<pre class="r"><code>x</code></pre>
+<pre><code>## NULL</code></pre>
+<p>In fact, we are storing in <code>x</code> the output of the final function in the pipe, which is <code>plot</code> (and <code>plot</code> returns <code>NULL</code>). Storing partial results of the pipe requires using the <code>%T&gt;%</code> operator as follows:</p>
+<pre class="r"><code>x &lt;- 100 %&gt;% 
+  seq(0, 2*pi, length.out = .) %&gt;%
+  cos %T&gt;%
+  plot</code></pre>
+<pre class="r"><code>x[1:10]</code></pre>
+<pre><code>##  [1] 1.0000000 0.9979867 0.9919548 0.9819287 0.9679487 0.9500711 0.9283679
+##  [8] 0.9029265 0.8738494 0.8412535</code></pre>
+<p>This produces the plot (not shown) and returns the output of the call to <code>cos()</code>. The <code>%T&gt;%</code> operator differs from <code>%&gt;%</code> because it returns output of its lhs, rather than of its rhs. As a final example consider:</p>
+<pre class="r"><code>par(mfrow = c(1, 2))
+
+100 %&gt;% 
+  seq(0, pi, length.out = .) %&gt;%
+  cos %T&gt;%
+  plot(ylab = &quot;cos(x)&quot;) %&gt;%
+  acos %&gt;%
+  plot(ylab = &quot;acos(cos(x))&quot;)</code></pre>
+<p><img src="/sc1/tidyverse/Intro_to_pipes_files/figure-html/unnamed-chunk-19-1.png" width="672" />
+which clarifies that the <code>cos %T&gt;% plot</code> section of the pipeline passes the output of <code>cos()</code> to the next section. So the <code>%T&gt;%</code> operator is useful when you want to “keep piping” by skipping the output of one pipeline component. In this specific example we are not interested in the output of <code>plot</code>, which is being called only for its side effects (the plot it draws).</p>
+</div>
+<div id="the-exposition-pipe" class="section level3">
+<h3>The <code>exposition</code> pipe <code>%$%</code></h3>
+<p>This type of pipe is useful when working with named lists and data frames. Consider the example:</p>
+<pre class="r"><code>UKload %&gt;%
+  subset(Year == 2011) %&gt;% 
+  { cor(.$wM, .$NetDemand) }</code></pre>
+<pre><code>## [1] -0.6858647</code></pre>
+<p>We compute the correlation between electricity demand and temperature in 2011 (see above for explanations regarding why we need the curly brackets here). Now, we can do the same with less code by doing:</p>
+<pre class="r"><code>UKload %&gt;%
+  subset(Year == 2011) %$%
+  cor(wM, NetDemand)</code></pre>
+<pre><code>## [1] -0.6858647</code></pre>
+<p>Here the <code>%$%</code> operator makes so that the names of the object on the lhs are available in the function call on the rhs. In base <code>R</code> this would be achieved using the <code>with</code> function:</p>
+<pre class="r"><code>with(UKload %&gt;% subset(Year == 2011), cor(wM, NetDemand))</code></pre>
+<pre><code>## [1] -0.6858647</code></pre>
+<!-- Consider the data set: -->
+<!-- ```{r} -->
+<!-- library(qgam) -->
+<!-- data(UKload) -->
+<!-- # plot(transform(head(subset(UKload, Dow == "lundi", select = c("NetDemand", )), 100), Posan == Posan * 365) -->
+<!-- ``` -->
+<!-- A value can be assigned to a variable using the assignment operator `<-`. The variable is created if it doesn't already exist. -->
+</div>
+</div>
+
+
+  <footer>
+  
+
+<script src="//yihui.name/js/math-code.js"></script>
+<script async src="//mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+<script async src="//yihui.name/js/center-img.js"></script>
+
+
+<script type="text/javascript">
+var sc_project=12110974;
+var sc_invisible=1;
+var sc_security="9b171880";
+</script>
+<script type="text/javascript"
+src="https://www.statcounter.com/counter/counter.js"
+async></script>
+<noscript><div class="statcounter"><a title="Web Analytics"
+href="https://statcounter.com/" target="_blank"><img
+class="statcounter"
+src="https://c.statcounter.com/12110974/0/9b171880/1/"
+alt="Web Analytics"></a></div></noscript>
+
+
+
+
+
+
+
+
+  
+
+
+<p align=right>
+
+<a href='https://github.com/awllee/sc1/blob/master/content/tidyverse/Intro_to_pipes.Rmd'>View source</a>
+
+|
+
+<a href='https://github.com/awllee/sc1/edit/master/content/tidyverse/Intro_to_pipes.Rmd'>Edit source</a>
+
+</p>
+
+
+
+
+
+<script src="https://utteranc.es/client.js"
+        repo="awllee/sc1"
+        issue-term="pathname"
+        label="utterance"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script>
+
+
+
+  
+
+
+
+<script src="//cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+
+
+
+<script src="//cdn.bootcss.com/highlight.js/9.12.0/languages/r.min.js"></script>
+<script src="//cdn.bootcss.com/highlight.js/9.12.0/languages/yaml.min.js"></script>
+<script src="//cdn.bootcss.com/highlight.js/9.12.0/languages/tex.min.js"></script>
+<script>hljs.configure({languages: []}); hljs.initHighlightingOnLoad();</script>
+
+
+
+  
+  <hr>
+  <div class="copyright">© 2020 <a href="https://sites.google.com/view/anthonylee">Anthony Lee</a>, <a href="http://www.bristol.ac.uk/maths/people/feng-yu/index.html">Feng Yu</a>, <a href="https://people.maths.bris.ac.uk/~tk18582/">Tobias Kley</a>, <a href="https://mfasiolo.github.io/">Matteo Fasiolo</a></div>
+  
+  </footer>
+  </article>
+  
+  </body>
+</html>
+

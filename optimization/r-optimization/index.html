@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <title>R Optimisation Functions - SC1</title>
+    <meta property="og:title" content="R Optimisation Functions - SC1">
+    
+    <meta name="twitter:card" content="summary">
+
+    
+      
+    
+
+    
+      
+      <meta property="description" content="To illustrate various R optimisation functions, we define a simple two-dimensional function below and make a contour plot. We use the meshgrid function from the package pracma, which gives \(x\) and &amp;hellip;">
+      <meta property="og:description" content="To illustrate various R optimisation functions, we define a simple two-dimensional function below and make a contour plot. We use the meshgrid function from the package pracma, which gives \(x\) and &amp;hellip;">
+      
+    
+
+    
+    
+
+    
+
+    
+    
+
+
+<link href='//cdn.bootcss.com/highlight.js/9.12.0/styles/github.min.css' rel='stylesheet' type='text/css' />
+
+
+
+    <link rel="stylesheet" href="/sc1/css/style.css" />
+    <link rel="stylesheet" href="/sc1/css/fonts.css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Arvo">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Marcellus">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Code+Pro">
+
+<link rel="stylesheet" href="/sc1/css/custom.css" />
+
+<link rel="icon" href="/sc1/favicon.ico" type="image/x-icon" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<nav class="breadcrumbs">
+    
+        <a href="https://awllee.github.io/sc1/">home / </a>
+    
+        <a href="https://awllee.github.io/sc1/optimization/">optimization / </a>
+    
+        <a href="https://awllee.github.io/sc1/optimization/r-optimization/">r-optimization / </a>
+    
+</nav>
+
+  </head>
+
+  
+  <body class="sc1">
+    <header class="masthead">
+      <h1><a href="/sc1/">SC1</a></h1>
+
+<p class="tagline">Statistical Computing 1</p>
+
+      <nav class="menu">
+  <input id="menu-check" type="checkbox" />
+  <label id="menu-label" for="menu-check" class="unselectable">
+    <span class="icon close-icon">✕</span>
+    <span class="icon open-icon">☰</span>
+    <span class="text">Menu</span>
+  </label>
+  <ul>
+  
+  
+  <li><a href="/sc1/">Home</a></li>
+  
+  <li><a href="/sc1/intro-r/">Intro to R</a></li>
+  
+  <li><a href="/sc1/reproducibility/">Reproducibility</a></li>
+  
+  <li><a href="/sc1/common-r/">Common R</a></li>
+  
+  <li><a href="/sc1/tidyverse/">Tidyverse</a></li>
+  
+  <li><a href="/sc1/packages/">Packages</a></li>
+  
+  <li><a href="/sc1/functional-oo/">Functional / OO</a></li>
+  
+  <li><a href="/sc1/profile-debug/">Performance / Bugs</a></li>
+  
+  <li><a href="/sc1/matrices/">Matrices</a></li>
+  
+  <li><a href="/sc1/optimization/">Optimization</a></li>
+  
+  <li><a href="/sc1/integration/">Integration</a></li>
+  
+  
+  </ul>
+</nav>
+
+    </header>
+
+    <article class="main">
+      <header class="title">
+      
+<h1>R Optimisation Functions</h1>
+
+<h3>
+</h3>
+<hr>
+
+
+      </header>
+
+
+
+
+
+
+<div id="a-two-dimensional-example" class="section level1">
+<h1>A Two-dimensional Example</h1>
+<p>To illustrate various <code>R</code> optimisation functions, we define a simple two-dimensional function below and make a contour plot. We use the <code>meshgrid</code> function from the package <code>pracma</code>, which gives <span class="math inline">\(x\)</span> and <span class="math inline">\(y\)</span> coordinates of a square grid in <span class="math inline">\(\mathbb{R}^2\)</span>.</p>
+<pre class="r"><code>library(pracma) # for meshgrid function
+f = function(x1, x2) cos(x1-1) + cos(x2) + sin(3*x1*x2) + x1^2 + x2^2
+meshgrid(seq(-2, 2, length=5))</code></pre>
+<pre><code>## $X
+##      [,1] [,2] [,3] [,4] [,5]
+## [1,]   -2   -1    0    1    2
+## [2,]   -2   -1    0    1    2
+## [3,]   -2   -1    0    1    2
+## [4,]   -2   -1    0    1    2
+## [5,]   -2   -1    0    1    2
+## 
+## $Y
+##      [,1] [,2] [,3] [,4] [,5]
+## [1,]   -2   -2   -2   -2   -2
+## [2,]   -1   -1   -1   -1   -1
+## [3,]    0    0    0    0    0
+## [4,]    1    1    1    1    1
+## [5,]    2    2    2    2    2</code></pre>
+<pre class="r"><code>x = seq(-2, 2, length=101)
+grid_XY = meshgrid(x)
+z = matrix(mapply(f, grid_XY$X, grid_XY$Y), nrow=101)
+min(z)</code></pre>
+<pre><code>## [1] 0.5926044</code></pre>
+<pre class="r"><code>contour(x, x, z)</code></pre>
+<p><img src="/sc1/optimization/R-optimization_files/figure-html/unnamed-chunk-1-1.png" width="672" /></p>
+<div id="the-nlm-function" class="section level2">
+<h2>The <code>nlm</code> function</h2>
+<p>The <code>R</code> function <code>nlm</code> uses a Newton-type algorithm. We have the option of specifying the gradient function and the hessian function. For this, we use the <code>deriv</code> function in <code>R</code>, which takes an expression and outputs a function <span class="math inline">\(f\)</span> that returns the gradient (and hessian, if desired) of <span class="math inline">\(f\)</span> along with the value of <span class="math inline">\(f\)</span> itself.</p>
+<pre class="r"><code>f1 = deriv(expression(cos(x1-1) + cos(x2) + sin(3*x1*x2) + x1^2 + x2^2), namevec = c(&#39;x1&#39;, &#39;x2&#39;), function.arg=T, hessian=T)
+f1(0,0)</code></pre>
+<pre><code>## [1] 1.540302
+## attr(,&quot;gradient&quot;)
+##            x1 x2
+## [1,] 0.841471  0
+## attr(,&quot;hessian&quot;)
+## , , x1
+## 
+##            x1 x2
+## [1,] 1.459698  3
+## 
+## , , x2
+## 
+##      x1 x2
+## [1,]  3  1</code></pre>
+<pre class="r"><code>nlm(function(x) f1(x[1], x[2]), c(0,0))</code></pre>
+<pre><code>## $minimum
+## [1] 0.591872
+## 
+## $estimate
+## [1] -0.7366981  0.5830360
+## 
+## $gradient
+## [1] -2.415179e-12  2.897904e-12
+## 
+## $code
+## [1] 1
+## 
+## $iterations
+## [1] 7</code></pre>
+<pre class="r"><code>nlm(function(x) f1(x[1], x[2]), c(-1.5, 1.5))</code></pre>
+<pre><code>## $minimum
+## [1] 3.178075
+## 
+## $estimate
+## [1] -1.506530  1.622656
+## 
+## $gradient
+## [1] 1.207285e-08 7.978390e-08
+## 
+## $code
+## [1] 1
+## 
+## $iterations
+## [1] 4</code></pre>
+<p>We see from the results that <code>nlm</code> converges rapidly toward a local minimum that is somewhat close to the initial guess, but not necessarily toward the global minimum. If we start from the point <span class="math inline">\((0,0)\)</span>, <code>nlm</code> does converge to the global minimum 0.591872, which is actually smaller than the minimum value of <span class="math inline">\(f\)</span> on the grid we found previously. The downside of <code>nlm</code> is that it will only converge to a local minimum and in fact, it is difficult to predict what will happen if we do not start close to a local minimum, just as in the one-dimensional case.</p>
+<p>If we simply give the function to <code>nlm</code> without gradient or hessian attributes, then <code>nlm</code> will compute the derivatives numerically, which will not be as accurate as symbolic expressions.</p>
+<pre class="r"><code>nlm(function(x) f(x[1], x[2]), c(0,0))</code></pre>
+<pre><code>## $minimum
+## [1] 0.591872
+## 
+## $estimate
+## [1] -0.7366992  0.5830349
+## 
+## $gradient
+## [1]  4.019007e-08 -1.554312e-09
+## 
+## $code
+## [1] 1
+## 
+## $iterations
+## [1] 9</code></pre>
+<pre class="r"><code>nlm(function(x) f(x[1], x[2]), c(-1.5, 1.5))</code></pre>
+<pre><code>## $minimum
+## [1] 3.178075
+## 
+## $estimate
+## [1] -1.506530  1.622656
+## 
+## $gradient
+## [1]  1.143924e-07 -1.179837e-07
+## 
+## $code
+## [1] 1
+## 
+## $iterations
+## [1] 10</code></pre>
+<p>If we compare the results using explicit expression of gradient/hessian functions with results using numerical computation of gradient/hessian, we see that the numeric computation results in larger gradient values at the minimum <code>nlm</code> finds and also takes more iterations.</p>
+</div>
+<div id="the-optim-function" class="section level2">
+<h2>The <code>optim</code> function</h2>
+<p>The default method used by <code>optim</code> is Nelder-Mead.</p>
+<pre class="r"><code>optim(c(0,0), function(x) f(x[1], x[2]))</code></pre>
+<pre><code>## $par
+## [1] -0.7367403  0.5830213
+## 
+## $value
+## [1] 0.591872
+## 
+## $counts
+## function gradient 
+##       63       NA 
+## 
+## $convergence
+## [1] 0
+## 
+## $message
+## NULL</code></pre>
+<pre class="r"><code>optim(c(-1.5,1.5), function(x) f(x[1], x[2]))</code></pre>
+<pre><code>## $par
+## [1] -1.506550  1.622604
+## 
+## $value
+## [1] 3.178075
+## 
+## $counts
+## function gradient 
+##       49       NA 
+## 
+## $convergence
+## [1] 0
+## 
+## $message
+## NULL</code></pre>
+<p>We also try this method with CG, BFGS, and L-BFGS-B, all of which seem to work well.</p>
+<pre class="r"><code>optim(c(-1.5, 1.5), function(x) f(x[1], x[2]), method=&quot;CG&quot;)</code></pre>
+<pre><code>## $par
+## [1] -1.506531  1.622654
+## 
+## $value
+## [1] 3.178075
+## 
+## $counts
+## function gradient 
+##      180       35 
+## 
+## $convergence
+## [1] 0
+## 
+## $message
+## NULL</code></pre>
+<pre class="r"><code>optim(c(-1.5, 1.5), function(x) f(x[1], x[2]), method=&quot;BFGS&quot;)</code></pre>
+<pre><code>## $par
+## [1] -1.506552  1.622629
+## 
+## $value
+## [1] 3.178075
+## 
+## $counts
+## function gradient 
+##       12        6 
+## 
+## $convergence
+## [1] 0
+## 
+## $message
+## NULL</code></pre>
+<pre class="r"><code>optim(c(-1.5, 1.5), function(x) f(x[1], x[2]), method=&quot;L-BFGS-B&quot;)</code></pre>
+<pre><code>## $par
+## [1] -1.506529  1.622657
+## 
+## $value
+## [1] 3.178075
+## 
+## $counts
+## function gradient 
+##        9        9 
+## 
+## $convergence
+## [1] 0
+## 
+## $message
+## [1] &quot;CONVERGENCE: REL_REDUCTION_OF_F &lt;= FACTR*EPSMCH&quot;</code></pre>
+<pre class="r"><code>optim(c(-1.5, 1.5), function(x) f(x[1], x[2]),
+      method=&quot;L-BFGS-B&quot;, lower=c(-2, -2), upper=c(2, 1.6))</code></pre>
+<pre><code>## $par
+## [1] -1.52373  1.60000
+## 
+## $value
+## [1] 3.179766
+## 
+## $counts
+## function gradient 
+##        9        9 
+## 
+## $convergence
+## [1] 0
+## 
+## $message
+## [1] &quot;CONVERGENCE: REL_REDUCTION_OF_F &lt;= FACTR*EPSMCH&quot;</code></pre>
+<p>We observe that BFGS and L-BFGS-B requires far fewer iterations than either Nelder-Mead or CG. Finally, we try simulated annealing, the only method that claims to be able find the global minimum.</p>
+<pre class="r"><code>optim(c(-1.5, 1.5), function(x) f(x[1], x[2]), method=&quot;SANN&quot;, control=list(maxit=100))</code></pre>
+<pre><code>## $par
+## [1] -0.7147657  0.5834351
+## 
+## $value
+## [1] 0.5930714
+## 
+## $counts
+## function gradient 
+##      100       NA 
+## 
+## $convergence
+## [1] 0
+## 
+## $message
+## NULL</code></pre>
+<pre class="r"><code>optim(c(-1.5, 1.5), function(x) f(x[1], x[2]), method=&quot;SANN&quot;, control=list(maxit=1000))</code></pre>
+<pre><code>## $par
+## [1] -0.7066743  0.5969463
+## 
+## $value
+## [1] 0.5935593
+## 
+## $counts
+## function gradient 
+##     1000       NA 
+## 
+## $convergence
+## [1] 0
+## 
+## $message
+## NULL</code></pre>
+<pre class="r"><code>optim(c(-1.5, 1.5), function(x) f(x[1], x[2]), method=&quot;SANN&quot;, control=list(maxit=3000))</code></pre>
+<pre><code>## $par
+## [1] -0.7333881  0.5881557
+## 
+## $value
+## [1] 0.5919277
+## 
+## $counts
+## function gradient 
+##     3000       NA 
+## 
+## $convergence
+## [1] 0
+## 
+## $message
+## NULL</code></pre>
+<p>Simulated annealing certainly does not get stuck in the local minimum close to its starting point, but it does take a lot of iterations to get to close to the global minimum, even for such a simple function.</p>
+</div>
+</div>
+<div id="a-nonlinear-least-squares-example" class="section level1">
+<h1>A Nonlinear Least Squares Example</h1>
+<p>We use a dataset from the <code>nlmrt</code> function help file. A plot of the data as well as the fitted logistic model is shown below. We first use <code>R</code> functions that are specifically designed to solve nonlinear least squares problems, <code>nls</code> (part of base <code>R</code>) which uses the Gauss-Newton algorithm by default, and <code>nlsLM</code> (part of <code>minpack.lm</code> package) which uses the Levenberg-Marquardt algorithm.</p>
+<pre class="r"><code>ydat = c(5.308, 7.24, 9.638, 12.866, 17.069, 23.192, 31.443, 38.558, 50.156, 62.948, 75.995, 91.972)
+tdat = seq_along(ydat)
+my_data = data.frame(y=ydat, t=tdat)
+start1 = c(b1=1, b2=1, b3=1)
+my_model = y ~ b1/(1+b2*exp(-b3*t))
+try(nls(my_model, start=start1, data=my_data))</code></pre>
+<pre><code>## Error in nls(my_model, start = start1, data = my_data) : 
+##   singular gradient</code></pre>
+<pre class="r"><code>library(minpack.lm)
+out_lm = nlsLM(my_model, start=start1, data=my_data)
+out_lm</code></pre>
+<pre><code>## Nonlinear regression model
+##   model: y ~ b1/(1 + b2 * exp(-b3 * t))
+##    data: my_data
+##       b1       b2       b3 
+## 196.1863  49.0916   0.3136 
+##  residual sum-of-squares: 2.587
+## 
+## Number of iterations to convergence: 17 
+## Achieved convergence tolerance: 1.49e-08</code></pre>
+<pre class="r"><code>plot(tdat, ydat, pch=18, xlab=&#39;t&#39;, ylab=&#39;y&#39;, col=&#39;red&#39;)
+lines(tdat, out_lm$m$fitted(), pch=1, col=&#39;blue&#39;, type=&#39;b&#39;, lty=2)
+legend(1, 95, legend=c(&#39;data&#39;, &#39;fitted model&#39;), col=c(&#39;red&#39;, &#39;blue&#39;), pch=c(18,1))</code></pre>
+<p><img src="/sc1/optimization/R-optimization_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+<p>We see that the Gauss-Newton algorithm actually fails for this slightly tricky dataset and model due to singular gradients, but the Levenberg-Marquardt algorithm, which can handle singuar gradients, has no problem finding a good fit for the data.</p>
+<p>Next we define the residue function explicitly as the objective function and uses general-purpose optimisation functions for this nonlinear least squares problem.</p>
+<pre class="r"><code>f = function(b, mydata) sum((mydata$y-b[1]/(1+b[2]*exp(-b[3]*mydata$t)))^2)
+
+nlm(f, mydata=my_data, p=start1)</code></pre>
+<pre><code>## $minimum
+## [1] 2.587305
+## 
+## $estimate
+## [1] 196.2832646  49.0967439   0.3135034
+## 
+## $gradient
+## [1]  2.389191e-08 -6.393138e-08  3.163159e-05
+## 
+## $code
+## [1] 2
+## 
+## $iterations
+## [1] 45</code></pre>
+<pre class="r"><code>optim(par=start1, fn=f, mydata=my_data)</code></pre>
+<pre><code>## $par
+##        b1        b2        b3 
+##  35.52886 -28.58678  18.73764 
+## 
+## $value
+## [1] 9205.436
+## 
+## $counts
+## function gradient 
+##      156       NA 
+## 
+## $convergence
+## [1] 0
+## 
+## $message
+## NULL</code></pre>
+<pre class="r"><code>optim(par=start1, fn=f, mydata=my_data, method=&quot;CG&quot;)</code></pre>
+<pre><code>## $par
+##         b1         b2         b3 
+## 39.7789687  5.2889870  0.4890772 
+## 
+## $value
+## [1] 5336.906
+## 
+## $counts
+## function gradient 
+##      447      101 
+## 
+## $convergence
+## [1] 1
+## 
+## $message
+## NULL</code></pre>
+<pre class="r"><code>optim(par=start1, fn=f, mydata=my_data, method=&quot;BFGS&quot;)</code></pre>
+<pre><code>## $par
+##          b1          b2          b3 
+## 196.5079544  49.1138533   0.3133611 
+## 
+## $value
+## [1] 2.587543
+## 
+## $counts
+## function gradient 
+##      193       63 
+## 
+## $convergence
+## [1] 0
+## 
+## $message
+## NULL</code></pre>
+<pre class="r"><code>optim(par=start1, fn=f, mydata=my_data, method=&quot;L-BFGS-B&quot;)</code></pre>
+<pre><code>## $par
+##          b1          b2          b3 
+## 196.5325081  49.1219542   0.3133583 
+## 
+## $value
+## [1] 2.587556
+## 
+## $counts
+## function gradient 
+##      126      126 
+## 
+## $convergence
+## [1] 0
+## 
+## $message
+## [1] &quot;CONVERGENCE: REL_REDUCTION_OF_F &lt;= FACTR*EPSMCH&quot;</code></pre>
+<pre class="r"><code>optim(par=start1, fn=f, mydata=my_data, method=&quot;SANN&quot;, control=list(maxit=30000))</code></pre>
+<pre><code>## $par
+##         b1         b2         b3 
+## 95.0346962 33.2221776  0.4187198 
+## 
+## $value
+## [1] 278.1766
+## 
+## $counts
+## function gradient 
+##    30000       NA 
+## 
+## $convergence
+## [1] 0
+## 
+## $message
+## NULL</code></pre>
+<p>We see from the results that the only algorithms that succeeds in finding a reasonable solution to this problem are the Newton type methods. Both Nelder-Mead and conjugate gradient fail to get anywhere close to something reasoable. Simulated annealing also fails, despite running for 30,000 iterations and the problem being only 3-dimensional.</p>
+</div>
+
+
+  <footer>
+  
+
+<script src="//yihui.name/js/math-code.js"></script>
+<script async src="//mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+<script async src="//yihui.name/js/center-img.js"></script>
+
+
+<script type="text/javascript">
+var sc_project=12110974;
+var sc_invisible=1;
+var sc_security="9b171880";
+</script>
+<script type="text/javascript"
+src="https://www.statcounter.com/counter/counter.js"
+async></script>
+<noscript><div class="statcounter"><a title="Web Analytics"
+href="https://statcounter.com/" target="_blank"><img
+class="statcounter"
+src="https://c.statcounter.com/12110974/0/9b171880/1/"
+alt="Web Analytics"></a></div></noscript>
+
+
+
+
+
+
+
+
+  
+
+
+<p align=right>
+
+<a href='https://github.com/awllee/sc1/blob/master/content/optimization/R-optimization.Rmd'>View source</a>
+
+|
+
+<a href='https://github.com/awllee/sc1/edit/master/content/optimization/R-optimization.Rmd'>Edit source</a>
+
+</p>
+
+
+
+
+
+<script src="https://utteranc.es/client.js"
+        repo="awllee/sc1"
+        issue-term="pathname"
+        label="utterance"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script>
+
+
+
+  
+
+
+
+<script src="//cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+
+
+
+<script src="//cdn.bootcss.com/highlight.js/9.12.0/languages/r.min.js"></script>
+<script src="//cdn.bootcss.com/highlight.js/9.12.0/languages/yaml.min.js"></script>
+<script src="//cdn.bootcss.com/highlight.js/9.12.0/languages/tex.min.js"></script>
+<script>hljs.configure({languages: []}); hljs.initHighlightingOnLoad();</script>
+
+
+
+  
+  <hr>
+  <div class="copyright">© 2020 <a href="https://sites.google.com/view/anthonylee">Anthony Lee</a>, <a href="http://www.bristol.ac.uk/maths/people/feng-yu/index.html">Feng Yu</a>, <a href="https://people.maths.bris.ac.uk/~tk18582/">Tobias Kley</a>, <a href="https://mfasiolo.github.io/">Matteo Fasiolo</a></div>
+  
+  </footer>
+  </article>
+  
+  </body>
+</html>
+

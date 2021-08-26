@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <title>Sparse Matrices - SC1</title>
+    <meta property="og:title" content="Sparse Matrices - SC1">
+    
+    <meta name="twitter:card" content="summary">
+
+    
+      
+    
+
+    
+      
+      <meta property="description" content="The R Matrix package provides additional functions for both dense and sparse matrices that extend the basic matrix data type. In the Matrix package, dense matrices are stored as dgeMatrix objects. One &amp;hellip;">
+      <meta property="og:description" content="The R Matrix package provides additional functions for both dense and sparse matrices that extend the basic matrix data type. In the Matrix package, dense matrices are stored as dgeMatrix objects. One &amp;hellip;">
+      
+    
+
+    
+    
+
+    
+
+    
+    
+
+
+<link href='//cdn.bootcss.com/highlight.js/9.12.0/styles/github.min.css' rel='stylesheet' type='text/css' />
+
+
+
+    <link rel="stylesheet" href="/sc1/css/style.css" />
+    <link rel="stylesheet" href="/sc1/css/fonts.css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Arvo">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Marcellus">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Code+Pro">
+
+<link rel="stylesheet" href="/sc1/css/custom.css" />
+
+<link rel="icon" href="/sc1/favicon.ico" type="image/x-icon" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<nav class="breadcrumbs">
+    
+        <a href="https://awllee.github.io/sc1/">home / </a>
+    
+        <a href="https://awllee.github.io/sc1/matrices/">matrices / </a>
+    
+        <a href="https://awllee.github.io/sc1/matrices/sparse/">sparse / </a>
+    
+</nav>
+
+  </head>
+
+  
+  <body class="sc1">
+    <header class="masthead">
+      <h1><a href="/sc1/">SC1</a></h1>
+
+<p class="tagline">Statistical Computing 1</p>
+
+      <nav class="menu">
+  <input id="menu-check" type="checkbox" />
+  <label id="menu-label" for="menu-check" class="unselectable">
+    <span class="icon close-icon">✕</span>
+    <span class="icon open-icon">☰</span>
+    <span class="text">Menu</span>
+  </label>
+  <ul>
+  
+  
+  <li><a href="/sc1/">Home</a></li>
+  
+  <li><a href="/sc1/intro-r/">Intro to R</a></li>
+  
+  <li><a href="/sc1/reproducibility/">Reproducibility</a></li>
+  
+  <li><a href="/sc1/common-r/">Common R</a></li>
+  
+  <li><a href="/sc1/tidyverse/">Tidyverse</a></li>
+  
+  <li><a href="/sc1/packages/">Packages</a></li>
+  
+  <li><a href="/sc1/functional-oo/">Functional / OO</a></li>
+  
+  <li><a href="/sc1/profile-debug/">Performance / Bugs</a></li>
+  
+  <li><a href="/sc1/matrices/">Matrices</a></li>
+  
+  <li><a href="/sc1/optimization/">Optimization</a></li>
+  
+  <li><a href="/sc1/integration/">Integration</a></li>
+  
+  
+  </ul>
+</nav>
+
+    </header>
+
+    <article class="main">
+      <header class="title">
+      
+<h1>Sparse Matrices</h1>
+
+<h3>
+</h3>
+<hr>
+
+
+      </header>
+
+
+
+
+
+
+<div id="matrix-package" class="section level2">
+<h2><code>Matrix</code> package</h2>
+<p>The R <code>Matrix</code> package provides additional functions for both dense and sparse matrices that extend the basic matrix data type. In the <code>Matrix</code> package, dense matrices are stored as <code>dgeMatrix</code> objects. One useful function it adds for dense matrices is <code>rankMatrix</code>, which returns the rank of the input matrix, up to a certain tolerance if desired. Another useful function is <code>rcond</code>, which gives the condition number of a square matrix, defined to be the product of the norm of the matrix and the norm of its inverse.</p>
+<pre class="r"><code>library(Matrix)
+A = Matrix(c(1,2,1,2), nrow=2, ncol=2)
+B = Matrix(c(1,2,1,2) + rnorm(4)/1e8, nrow=2, ncol=2)
+C = Matrix(rnorm(4), nrow=2, ncol=2)
+c(rankMatrix(A), rankMatrix(B), rankMatrix(B, tol=1e-7))</code></pre>
+<pre><code>## [1] 1 2 1</code></pre>
+<pre class="r"><code>c(rcond(A), rcond(B), rcond(C), rcond(C/1e5))</code></pre>
+<pre><code>## [1] 0.000000e+00 2.300369e-10 8.318264e-02 8.318264e-02</code></pre>
+<p>A sparse matrix is one where most entries will be 0. It is inefficient to store all these 0’s in memory.</p>
+<pre class="r"><code>set.seed(7)
+nrows = 1000
+ncols = 1000
+vals = sample(x=c(0, 1, 2), prob=c(0.98, 0.01, 0.01), size=nrows*ncols, replace=TRUE)
+m1 = matrix(vals, nrow=nrows, ncol=ncols)
+m2 = Matrix(vals, nrow=nrows, ncol=ncols, sparse = TRUE)
+m1[1:2, 1:10]</code></pre>
+<pre><code>##      [,1] [,2] [,3] [,4] [,5] [,6] [,7] [,8] [,9] [,10]
+## [1,]    2    0    0    0    0    0    0    0    0     0
+## [2,]    0    0    0    0    0    0    0    0    0     0</code></pre>
+<pre class="r"><code>m2[1:2, 1:10]</code></pre>
+<pre><code>## 2 x 10 sparse Matrix of class &quot;dgCMatrix&quot;
+##                         
+## [1,] 2 . . . . . . . . .
+## [2,] . . . . . . . . . .</code></pre>
+<pre class="r"><code>c(object.size(m1), object.size(m2))</code></pre>
+<pre><code>## [1] 8000216  245856</code></pre>
+<p>By default, a sparse matrix in R is stored as a <code>dgCMatrix</code>, “d” for digit, “g” for general (i.e. not triangular or symmetric), “C” for column (not row or triplet). If one converts a sparse matrix to a dense <code>dgeMatrix</code>, then one loses the advantage in terms of memory storage. A <code>dgCMatrix</code> is stored using compressed sparse column (CSC) format. An alternative is the compressed sparse row (CSR) format, <code>dgRMatrix</code>, or triplets <code>dgTMatrix</code>. One can coerce a <code>dgCMatrix</code> into a <code>dgTMatrix</code> (and from <code>dgTMatrix</code> to <code>dgCMatrix</code>), but not a <code>dgRMatrix</code> from either <code>dgCMatrix</code> or <code>dgTMatrix</code> .</p>
+<pre class="r"><code>str(m2, max.level=1)</code></pre>
+<pre><code>## Formal class &#39;dgCMatrix&#39; [package &quot;Matrix&quot;] with 6 slots</code></pre>
+<pre class="r"><code>str(m2)</code></pre>
+<pre><code>## Formal class &#39;dgCMatrix&#39; [package &quot;Matrix&quot;] with 6 slots
+##   ..@ i       : int [1:20029] 0 18 22 24 158 360 362 513 524 550 ...
+##   ..@ p       : int [1:1001] 0 23 46 68 90 110 127 142 165 188 ...
+##   ..@ Dim     : int [1:2] 1000 1000
+##   ..@ Dimnames:List of 2
+##   .. ..$ : NULL
+##   .. ..$ : NULL
+##   ..@ x       : num [1:20029] 2 2 1 2 1 2 1 1 1 1 ...
+##   ..@ factors : list()</code></pre>
+<pre class="r"><code>which(m2[,1]&gt;0)</code></pre>
+<pre><code>##  [1]   1  19  23  25 159 361 363 514 525 551 561 610 645 652 719 737 754 762 763
+## [20] 816 878 910 963</code></pre>
+<pre class="r"><code>object.size(as(m2, &#39;dgeMatrix&#39;))</code></pre>
+<pre><code>## 8001176 bytes</code></pre>
+<pre class="r"><code>m3 = as(m1, &#39;dgRMatrix&#39;)
+object.size(m3)</code></pre>
+<pre><code>## 245856 bytes</code></pre>
+<pre class="r"><code>m3[1:2, 1:10]</code></pre>
+<pre><code>## 2 x 10 sparse Matrix of class &quot;dgTMatrix&quot;
+##                         
+## [1,] 2 . . . . . . . . .
+## [2,] . . . . . . . . . .</code></pre>
+</div>
+<div id="basic-operations-of-sparse-matrices" class="section level2">
+<h2>Basic Operations of sparse matrices</h2>
+<pre class="r"><code>A = as(matrix(c(1,0,0,0,2,0), nrow=3, ncol=2), &#39;dgCMatrix&#39;)
+A / 10</code></pre>
+<pre><code>## 3 x 2 sparse Matrix of class &quot;dgCMatrix&quot;
+##             
+## [1,] 0.1 .  
+## [2,] .   0.2
+## [3,] .   .</code></pre>
+<pre class="r"><code>A + 10 # + or - operation turns a dgCMatrix into a dgeMatrix</code></pre>
+<pre><code>## 3 x 2 Matrix of class &quot;dgeMatrix&quot;
+##      [,1] [,2]
+## [1,]   11   10
+## [2,]   10   12
+## [3,]   10   10</code></pre>
+<pre class="r"><code>A %*% c(1, 0) # matrix multiplication by a dense vector outputs a dgeMatrix</code></pre>
+<pre><code>## 3 x 1 Matrix of class &quot;dgeMatrix&quot;
+##      [,1]
+## [1,]    1
+## [2,]    0
+## [3,]    0</code></pre>
+<pre class="r"><code>A %*% Matrix(c(1, 0), nrow=2, ncol=1, sparse=TRUE)</code></pre>
+<pre><code>## 3 x 1 sparse Matrix of class &quot;dgCMatrix&quot;
+##       
+## [1,] 1
+## [2,] .
+## [3,] .</code></pre>
+<pre class="r"><code>A %*% t(A)</code></pre>
+<pre><code>## 3 x 3 sparse Matrix of class &quot;dgCMatrix&quot;
+##           
+## [1,] 1 . .
+## [2,] . 4 .
+## [3,] . . .</code></pre>
+<pre class="r"><code>rbind(A, A)</code></pre>
+<pre><code>## 6 x 2 sparse Matrix of class &quot;dgCMatrix&quot;
+##         
+## [1,] 1 .
+## [2,] . 2
+## [3,] . .
+## [4,] 1 .
+## [5,] . 2
+## [6,] . .</code></pre>
+</div>
+<div id="obtaining-the-dependency-graph-of-r-packages" class="section level2">
+<h2>Obtaining the dependency graph of R packages</h2>
+<p>We use the <code>miniCRAN</code> package to build an <code>R</code> package dependency graph. A graph <span class="math inline">\(G=(V,E)\)</span>, where <span class="math inline">\(V\)</span> denotes the set of vertices, and <span class="math inline">\(E\)</span> denotes the set of edges, can also be represented by an adjacency matrix <span class="math inline">\(M\)</span>. The matrix <span class="math inline">\(M\)</span> is square with each row and column corresponding to a vertex. If there is an edge <span class="math inline">\((i,j)\)</span>, then <span class="math inline">\(M_{ij}=1\)</span>; all other entries in <span class="math inline">\(M\)</span> are 0. Thus one can often expect <span class="math inline">\(M\)</span> to be quite sparse. The following piece of code reads the package dependency information and constructs the corresponding adjacency matrix.</p>
+<pre class="r"><code>library(miniCRAN) # for obtaining dependency relations of R packages
+load(&#39;matrix_packages.RData&#39;)
+pkg = &#39;igraph&#39;
+pkgDep(pkg, suggests=FALSE, enhances=FALSE, includeBasePkgs=TRUE)</code></pre>
+<pre><code>##  [1] &quot;igraph&quot;    &quot;methods&quot;   &quot;graphics&quot;  &quot;grDevices&quot; &quot;magrittr&quot;  &quot;Matrix&quot;   
+##  [7] &quot;pkgconfig&quot; &quot;stats&quot;     &quot;utils&quot;     &quot;grid&quot;      &quot;lattice&quot;</code></pre>
+<pre class="r"><code>plot(g1, vertex.size=20)</code></pre>
+<p><img src="/sc1/matrices/sparse_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<pre class="r"><code>m_pkg1</code></pre>
+<pre><code>## 11 x 11 sparse Matrix of class &quot;dgCMatrix&quot;</code></pre>
+<pre><code>##    [[ suppressing 11 column names &#39;igraph&#39;, &#39;methods&#39;, &#39;graphics&#39; ... ]]</code></pre>
+<pre><code>##                                
+## igraph    . . . . . . . . . . .
+## methods   1 . . . . . . . . 1 .
+## graphics  1 . . . . . 1 . . 1 .
+## grid      . . . . . . 1 . . 1 .
+## stats     1 . . . . . 1 . . 1 .
+## utils     1 . . . . . 1 . . 1 1
+## lattice   . . . . . . . . . 1 .
+## grDevices 1 . . . . . 1 . . . .
+## magrittr  1 . . . . . . . . . .
+## Matrix    1 . . . . . . . . . .
+## pkgconfig 1 . . . . . . . . . .</code></pre>
+<p>The file <code>matrix_packages.RData</code> is generated by the following piece of code.</p>
+<pre class="r"><code>library(Matrix)
+library(miniCRAN)
+library(igraph) # for turning a graph into an adjacency matrix
+#pkgs_db = available.packages(&#39;https://mran.revolutionanalytics.com/snapshot/2019-08-19/src/contrib&#39;,
+pkgs_db = available.packages(&#39;https://cran.microsoft.com/snapshot/2020-11-17/src/contrib/&#39;, type=&#39;source&#39;, filters=NULL)
+g1 = makeDepGraph(&#39;igraph&#39;, includeBasePkgs=TRUE, suggests=FALSE, enhances=FALSE)
+# here we obtain graphs of &quot;enhancement&quot;, e.g. Rcpp is enhanced by many packages but enhances none
+g2 = makeDepGraph(pkgs_db[, &#39;Package&#39;], availPkgs=pkgs_db, includeBasePkgs=FALSE, suggests=FALSE, enhances=TRUE)
+m_pkg1 = get.adjacency(g1, type=&quot;both&quot;, attr=NULL, names=TRUE, sparse=TRUE)
+# take transpose since our convention is storage by row
+m_pkg2 = t(get.adjacency(g2, type=&quot;both&quot;, attr=NULL, names=TRUE, sparse=TRUE))
+save(g1, g2, m_pkg1, m_pkg2, file = &#39;matrix_packages.RData&#39;)</code></pre>
+</div>
+<div id="the-pagerank-algorithm" class="section level2">
+<h2>The Pagerank algorithm</h2>
+<p>The pagerank algorithm is an iterative algorithm that takes a (directed) graph as input and outputs a probability distribution on the set of vertices. The probability distribution is essentially the stationary distribution of the random walk on the graph, hence the higher the weight of a vertex, the longer a random walk spends at this vertex, hence the more “important” it is.</p>
+<p>Let <span class="math inline">\(PR^{(k)}(v_i)\)</span> be the <span class="math inline">\(k\)</span>th iterate for the calculation of pagerank of the <span class="math inline">\(i\)</span>th vertex, then the pagerank algorithm performs the following computation:
+<span class="math display">\[PR^{(k+1)}(v_i) = \frac{1-d}{N} + d \sum_{j: M_{ij}&gt;0}  \frac{PR^{(k)}(v_j)}{L(v_j)} \]</span></p>
+<p>where <span class="math inline">\(L(v_j)\)</span> is the number of outbound links of the <span class="math inline">\(j\)</span>th vertex. Here <span class="math inline">\(d\)</span> is a damping factor that has the effect of the random walk uniformly picking a vertex to visit with probability <span class="math inline">\(1-d\)</span> at each iteration. In matrix format, we can write <span class="math inline">\(PR(v_i)\)</span> as a horizontal vector, then
+<span class="math display">\[ PR^{(k+1)} = \left[\frac{1-d}{N}, \ldots, \frac{1-d}{N} \right] + d \ PR^{(k)} \ \left[
+  \begin{array}{llll}
+    M_{11}/L(v_1) &amp; M_{12}/L(v_1) &amp; \ldots &amp; M_{1N}/L(v_1) \\
+    M_{21}/L(v_2) &amp; \ddots &amp; &amp; \vdots \\
+    \vdots &amp;  &amp; M_{ij}/L(v_i) &amp; \\
+    M_{N1}/L(v_N) &amp; \cdots &amp; &amp; M_{NN}/L(v_N)
+  \end{array}
+  \right]\]</span></p>
+<pre class="r"><code>compute_pagerank = function(M) {
+  d = 0.85 # damping factor
+  name_pkgs = M@Dimnames[[1]]
+  N = dim(M)[1]
+  M_rowsum = rowSums(M)
+  for (i in which(M_rowsum==0)) M[i,i] = 1
+  M_rowsum = rowSums(M)
+  # This operation divides each column of M element-wise by M_rowsum
+  A = M / M_rowsum # A is a stochastic matrix
+  PR = rep(1/N, N)
+  for (i in 1:10) {
+    PR = (1-d)/N + d * (PR %*% A)
+    # print out 7 most important packages and their corresponding weights
+    i7 = order(PR, decreasing=TRUE)[1:7]
+    print(name_pkgs[i7])
+    print(PR[i7])
+  }
+}
+
+compute_pagerank(m_pkg1)</code></pre>
+<pre><code>## [1] &quot;igraph&quot;    &quot;Matrix&quot;    &quot;lattice&quot;   &quot;pkgconfig&quot; &quot;methods&quot;   &quot;graphics&quot; 
+## [7] &quot;grid&quot;     
+## [1] 0.47083333 0.23901515 0.16174242 0.03295455 0.01363636 0.01363636 0.01363636
+## [1] &quot;igraph&quot;    &quot;Matrix&quot;    &quot;lattice&quot;   &quot;pkgconfig&quot; &quot;methods&quot;   &quot;graphics&quot; 
+## [7] &quot;grid&quot;     
+## [1] 0.67882576 0.17333333 0.03585227 0.01653409 0.01363636 0.01363636 0.01363636
+## [1] &quot;igraph&quot;    &quot;Matrix&quot;    &quot;lattice&quot;   &quot;pkgconfig&quot; &quot;methods&quot;   &quot;graphics&quot; 
+## [7] &quot;grid&quot;     
+## [1] 0.78583239 0.06632670 0.03585227 0.01653409 0.01363636 0.01363636 0.01363636
+## [1] &quot;igraph&quot;    &quot;Matrix&quot;    &quot;lattice&quot;   &quot;pkgconfig&quot; &quot;methods&quot;   &quot;graphics&quot; 
+## [7] &quot;grid&quot;     
+## [1] 0.78583239 0.06632670 0.03585227 0.01653409 0.01363636 0.01363636 0.01363636
+## [1] &quot;igraph&quot;    &quot;Matrix&quot;    &quot;lattice&quot;   &quot;pkgconfig&quot; &quot;methods&quot;   &quot;graphics&quot; 
+## [7] &quot;grid&quot;     
+## [1] 0.78583239 0.06632670 0.03585227 0.01653409 0.01363636 0.01363636 0.01363636
+## [1] &quot;igraph&quot;    &quot;Matrix&quot;    &quot;lattice&quot;   &quot;pkgconfig&quot; &quot;methods&quot;   &quot;graphics&quot; 
+## [7] &quot;grid&quot;     
+## [1] 0.78583239 0.06632670 0.03585227 0.01653409 0.01363636 0.01363636 0.01363636
+## [1] &quot;igraph&quot;    &quot;Matrix&quot;    &quot;lattice&quot;   &quot;pkgconfig&quot; &quot;methods&quot;   &quot;graphics&quot; 
+## [7] &quot;grid&quot;     
+## [1] 0.78583239 0.06632670 0.03585227 0.01653409 0.01363636 0.01363636 0.01363636
+## [1] &quot;igraph&quot;    &quot;Matrix&quot;    &quot;lattice&quot;   &quot;pkgconfig&quot; &quot;methods&quot;   &quot;graphics&quot; 
+## [7] &quot;grid&quot;     
+## [1] 0.78583239 0.06632670 0.03585227 0.01653409 0.01363636 0.01363636 0.01363636
+## [1] &quot;igraph&quot;    &quot;Matrix&quot;    &quot;lattice&quot;   &quot;pkgconfig&quot; &quot;methods&quot;   &quot;graphics&quot; 
+## [7] &quot;grid&quot;     
+## [1] 0.78583239 0.06632670 0.03585227 0.01653409 0.01363636 0.01363636 0.01363636
+## [1] &quot;igraph&quot;    &quot;Matrix&quot;    &quot;lattice&quot;   &quot;pkgconfig&quot; &quot;methods&quot;   &quot;graphics&quot; 
+## [7] &quot;grid&quot;     
+## [1] 0.78583239 0.06632670 0.03585227 0.01653409 0.01363636 0.01363636 0.01363636</code></pre>
+<pre class="r"><code>compute_pagerank(m_pkg2)</code></pre>
+<pre><code>## [1] &quot;Rcpp&quot;     &quot;MASS&quot;     &quot;ggplot2&quot;  &quot;Matrix&quot;   &quot;dplyr&quot;    &quot;survival&quot; &quot;mvtnorm&quot; 
+## [1] 0.04544432 0.02491786 0.02007975 0.01328318 0.01251681 0.01162591 0.01088882
+## [1] &quot;Rcpp&quot;     &quot;MASS&quot;     &quot;Matrix&quot;   &quot;lattice&quot;  &quot;magrittr&quot; &quot;jsonlite&quot; &quot;mvtnorm&quot; 
+## [1] 0.08255496 0.03512211 0.02273513 0.02220904 0.01740401 0.01386460 0.01325651
+## [1] &quot;Rcpp&quot;     &quot;MASS&quot;     &quot;lattice&quot;  &quot;magrittr&quot; &quot;chron&quot;    &quot;jsonlite&quot; &quot;mvtnorm&quot; 
+## [1] 0.09199156 0.03805808 0.02260036 0.01925890 0.01906416 0.01447589 0.01371033
+## [1] &quot;Rcpp&quot;     &quot;MASS&quot;     &quot;magrittr&quot; &quot;chron&quot;    &quot;zoo&quot;      &quot;lattice&quot;  &quot;jsonlite&quot;
+## [1] 0.09352076 0.03858840 0.01983434 0.01938121 0.01805550 0.01619707 0.01455902
+## [1] &quot;Rcpp&quot;     &quot;MASS&quot;     &quot;lattice&quot;  &quot;magrittr&quot; &quot;zoo&quot;      &quot;jsonlite&quot; &quot;mvtnorm&quot; 
+## [1] 0.09373549 0.03870802 0.02267705 0.01991354 0.01807738 0.01456921 0.01417933
+## [1] &quot;Rcpp&quot;     &quot;MASS&quot;     &quot;lattice&quot;  &quot;magrittr&quot; &quot;chron&quot;    &quot;jsonlite&quot; &quot;mvtnorm&quot; 
+## [1] 0.09376950 0.03871963 0.02232004 0.01992365 0.01944531 0.01456987 0.01425596
+## [1] &quot;Rcpp&quot;     &quot;MASS&quot;     &quot;magrittr&quot; &quot;chron&quot;    &quot;lattice&quot;  &quot;zoo&quot;      &quot;jsonlite&quot;
+## [1] 0.09377607 0.03871999 0.01992479 0.01914185 0.01814680 0.01808562 0.01456989
+## [1] &quot;Rcpp&quot;     &quot;MASS&quot;     &quot;lattice&quot;  &quot;magrittr&quot; &quot;zoo&quot;      &quot;chron&quot;    &quot;jsonlite&quot;
+## [1] 0.09377831 0.03872004 0.02204347 0.01992488 0.01782642 0.01559460 0.01456989
+## [1] &quot;Rcpp&quot;     &quot;MASS&quot;     &quot;lattice&quot;  &quot;magrittr&quot; &quot;chron&quot;    &quot;zoo&quot;      &quot;jsonlite&quot;
+## [1] 0.09377940 0.03872004 0.02178517 0.01992489 0.01890677 0.01481098 0.01456989
+## [1] &quot;Rcpp&quot;     &quot;MASS&quot;     &quot;magrittr&quot; &quot;lattice&quot;  &quot;chron&quot;    &quot;zoo&quot;      &quot;jsonlite&quot;
+## [1] 0.09377989 0.03872005 0.01992489 0.01920662 0.01868721 0.01762628 0.01456989</code></pre>
+<p>As can be seen from the results, the package <code>Rcpp</code> is the most enhanced package. Even with a large graph with 14847 vertices, the convergence of the pagerank algorithm is rapid.</p>
+</div>
+<div id="solving-large-linear-systems" class="section level2">
+<h2>Solving large linear systems</h2>
+<p>When it comes to sparse systems, it becomes even worse if one tries to invert any sparse matrix, as the inverse of a sparse matrix is not guaranteed to be sparse. We illustrate this with a tri-diagonal matrix</p>
+<pre class="r"><code>n = 100
+A1 = bandSparse(n, k=c(0,1), diag=list(rep(1,n), rep(-0.2, n)), symm=T)
+A1inv = solve(A1)
+c(object.size(A1), object.size(A1inv))</code></pre>
+<pre><code>## [1]  11712 121904</code></pre>
+<pre class="r"><code>c(sum(abs(A1) &lt; 1e-100), sum(abs(A1inv) &lt; 1e-100))</code></pre>
+<pre><code>## [1] 9702    0</code></pre>
+<p>Instead, just as in the case of dense matrix, one should try to use <code>solve(A, b)</code> whenever possible.</p>
+</div>
+
+
+  <footer>
+  
+
+<script src="//yihui.name/js/math-code.js"></script>
+<script async src="//mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+<script async src="//yihui.name/js/center-img.js"></script>
+
+
+<script type="text/javascript">
+var sc_project=12110974;
+var sc_invisible=1;
+var sc_security="9b171880";
+</script>
+<script type="text/javascript"
+src="https://www.statcounter.com/counter/counter.js"
+async></script>
+<noscript><div class="statcounter"><a title="Web Analytics"
+href="https://statcounter.com/" target="_blank"><img
+class="statcounter"
+src="https://c.statcounter.com/12110974/0/9b171880/1/"
+alt="Web Analytics"></a></div></noscript>
+
+
+
+
+
+
+
+
+  
+
+
+<p align=right>
+
+<a href='https://github.com/awllee/sc1/blob/master/content/matrices/sparse.Rmd'>View source</a>
+
+|
+
+<a href='https://github.com/awllee/sc1/edit/master/content/matrices/sparse.Rmd'>Edit source</a>
+
+</p>
+
+
+
+
+
+<script src="https://utteranc.es/client.js"
+        repo="awllee/sc1"
+        issue-term="pathname"
+        label="utterance"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script>
+
+
+
+  
+
+
+
+<script src="//cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+
+
+
+<script src="//cdn.bootcss.com/highlight.js/9.12.0/languages/r.min.js"></script>
+<script src="//cdn.bootcss.com/highlight.js/9.12.0/languages/yaml.min.js"></script>
+<script src="//cdn.bootcss.com/highlight.js/9.12.0/languages/tex.min.js"></script>
+<script>hljs.configure({languages: []}); hljs.initHighlightingOnLoad();</script>
+
+
+
+  
+  <hr>
+  <div class="copyright">© 2020 <a href="https://sites.google.com/view/anthonylee">Anthony Lee</a>, <a href="http://www.bristol.ac.uk/maths/people/feng-yu/index.html">Feng Yu</a>, <a href="https://people.maths.bris.ac.uk/~tk18582/">Tobias Kley</a>, <a href="https://mfasiolo.github.io/">Matteo Fasiolo</a></div>
+  
+  </footer>
+  </article>
+  
+  </body>
+</html>
+
