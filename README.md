@@ -1,4 +1,4 @@
-[![Build Status](https://github.com/awllee/sc1/workflows/blogdown/badge.svg)](https://github.com/awllee/sc1/actions)
+[![Build Status](https://github.com/awllee/sc1/workflows/build/badge.svg)](https://github.com/awllee/sc1/actions)
 
 # Statistical Computing 1 Website
 

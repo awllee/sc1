@@ -4,7 +4,7 @@ on:
       - main
       - master
 
-name: blogdown
+name: build
 
 jobs:
   build:
@@ -20,7 +20,7 @@ jobs:
 
       - name: Install XQuartz on macOS
         if: runner.os == 'macOS'
-        run: brew install --cask xquartz 
+        run: brew install --cask xquartz
 
       - name: Install dependencies
         run: R -e 'install.packages(c(
