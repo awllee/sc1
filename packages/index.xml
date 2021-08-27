@@ -39,12 +39,12 @@ Package structure package/ ├── DESCRIPTION ├── LICENSE ├── LIC
     </item>
     
     <item>
-      <title>Testing a package using Travis</title>
-      <link>https://awllee.github.io/sc1/packages/travis/</link>
+      <title>Testing a package using GitHub Actions</title>
+      <link>https://awllee.github.io/sc1/packages/ci/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>https://awllee.github.io/sc1/packages/travis/</guid>
-      <description>An R package that is publicly available on GitHub can be tested using Travis CI (.com). CI stands for continuous integration.
+      <guid>https://awllee.github.io/sc1/packages/ci/</guid>
+      <description>An R package that is publicly available on GitHub can be tested using GitHub Actions. This is one example of continuous integration (CI).
 CI is a useful tool when developing software collaboratively because pull requests can automatically trigger tests. This means that the reviewer of the pull request can be sure that the code works, insofar as the tests pass, and focus on other aspects of the code.
 Even in non-collaborative development, this can be useful as tests can be configured to run systematically against different configurations.</description>
     </item>
