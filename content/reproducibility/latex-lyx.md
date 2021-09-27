@@ -27,7 +27,7 @@ Clicking "Compile PDF" will produce the PDF.
 
 This mostly a normal \LaTeX document.
 
-For exampole, you can use mathematics: for $i \in {1,\ldots,n}$,
+For example, you can use mathematics: for $i \in {1,\ldots,n}$,
 \[ S_n = \sum_{i=1}^n X_i. \]
 
 The difference is that you can insert R code chunks
