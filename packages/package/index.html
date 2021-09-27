@@ -139,11 +139,11 @@ File -&amp;gt; New Project -&amp;gt; New Directory -&amp;gt; R Package You can c
 
 
 <p>Creating a package in RStudio is straightforward. Just click</p>
-<pre><code>File -&gt; New Project -&gt; New Directory -&gt; R Package
+<pre tabindex="0"><code>File -&gt; New Project -&gt; New Directory -&gt; R Package
 </code></pre><p>You can choose a name for your package, the parent directory for the package and whether or not you want to also initialize an empty git repository.</p>
 <p>The package will be populated with various files and folders.</p>
 <h2 id="package-structure">Package structure</h2>
-<pre><code>package/
+<pre tabindex="0"><code>package/
 ├── DESCRIPTION
 ├── LICENSE
 ├── LICENSE.md
@@ -170,7 +170,7 @@ File -&amp;gt; New Project -&amp;gt; New Directory -&amp;gt; R Package You can c
 <p>Test suites are a mechanism for ensuring that code changes do not break existing functionality that is measured by the test suite. They involve retaining test scripts that are run collectively as part of a suite after changes have been made to code. In practice, this can be very helpful for preventing bugs. Moreover, once a test suite has been designed, running it usually takes very little programmer effort.</p>
 <p>To begin testing, install the &ldquo;testthat&rdquo; R package and then run <code>usethis::use_test(&quot;&lt;name&gt;&quot;)</code>. This will create a <code>tests</code> directory and populate it. You can add tests to the created file <code>tests/test-&lt;name&gt;.R</code>, or create more test files.</p>
 <p>Tests in the <code>tests/test-&lt;name&gt;.R</code> will often be of the form</p>
-<pre><code>test_that(&quot;&lt;feature name&gt;&quot;, {
+<pre tabindex="0"><code>test_that(&quot;&lt;feature name&gt;&quot;, {
   expect_equal(a, b)
   expect_true(c &gt;= 1)
 })
@@ -181,13 +181,13 @@ File -&amp;gt; New Project -&amp;gt; New Directory -&amp;gt; R Package You can c
 <p>Routine testing is useful for checking that changes in code do not break existing functionality, as measured by the test suite. However, there may be many lines of code that are not tested, and it is possible that these lines of code contain bugs, or even cause serious errors whenever they are run.</p>
 <p>One way to mitigate this issue, is to use automated tools for checking which lines of code have been run during the automated tests, i.e. by computing <a href="https://en.wikipedia.org/wiki/Code_coverage">code coverage</a>. This is very easy to do with R packages.</p>
 <p>Begin by installing the &ldquo;covr&rdquo; package, if it is not already installed. Then run</p>
-<pre><code>covr::report()
+<pre tabindex="0"><code>covr::report()
 </code></pre><p>A simple report with code coverage for each file will appear in R&rsquo;s viewer pane. File names can be clicked to see how many times each line is covered.</p>
 <p>Code coverage tools only tell us which lines are covered. When lines are not covered, one might introduce new tests to cover additional lines. In general, more coverage is better, but it is not uncommon for large projects to have less than 100% coverage.</p>
 <h2 id="example-package">Example package</h2>
 <p>An example R package can be found <a href="https://github.com/awllee/SC1ExamplePackage">here</a>.</p>
 <p>You can install a package from GitHub in R via</p>
-<pre><code>devtools::install_github(&quot;https://github.com/awllee/SC1ExamplePackage&quot;)
+<pre tabindex="0"><code>devtools::install_github(&quot;https://github.com/awllee/SC1ExamplePackage&quot;)
 </code></pre><p>This is why the git repository includes computer-generated content, specifically <code>NAMESPACE</code> and the <code>man</code> folder.</p>
 
 

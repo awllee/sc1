@@ -174,7 +174,7 @@ plot(counts, type=&#39;l&#39;, main=&#39;frequency of mutant&#39;, xlab=&#39;gen
 <p><img src="/sc1/common-r/parallel_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
 <pre class="r"><code>system.time(simulate_wright_fisher(5000, 10000, 0.2))</code></pre>
 <pre><code>##    user  system elapsed 
-##   0.033   0.007   0.040</code></pre>
+##   0.034   0.007   0.042</code></pre>
 <p>This simple “neutral” Wright-Fisher model can still be vectorised relatively easily, but more complicated models won’t be. This is where parallelisation comes in.</p>
 </div>
 <div id="mclapply-doesnt-work-on-windows" class="section level2">
@@ -185,24 +185,24 @@ init_freqs = rep(0.2, 3)
 res = mclapply(init_freqs, wrapper, mc.cores=2)
 res</code></pre>
 <pre><code>## [[1]]
-##  [1] 1000 1014  929  939  955  976  970  970 1011 1041
+##  [1] 1000 1000  980  944  946  995  989  964  997  992
 ## 
 ## [[2]]
-##  [1] 1000 1047 1053 1075 1110 1109 1096 1054 1012 1027
+##  [1] 1000 1012 1039 1028 1046  985  998 1035  982 1004
 ## 
 ## [[3]]
-##  [1] 1000  975  999 1004 1015 1034 1013  987  986  959</code></pre>
+##  [1] 1000 1065 1077 1074 1060 1079 1109 1115 1082 1115</code></pre>
 <pre class="r"><code>wrapper2 = function(init_freq) tail(simulate_wright_fisher(5000, 1000, init_freq), 1)
 init_freqs2 = rep(0.2, 500)
 system.time(lapply(init_freqs2, wrapper2))</code></pre>
 <pre><code>##    user  system elapsed 
-##   1.518   0.100   1.625</code></pre>
+##   1.527   0.131   1.662</code></pre>
 <pre class="r"><code>system.time(mclapply(init_freqs2, wrapper2, mc.cores=2))</code></pre>
 <pre><code>##    user  system elapsed 
-##   0.801   0.100   1.186</code></pre>
+##   0.002   0.002   0.885</code></pre>
 <pre class="r"><code>system.time(mclapply(init_freqs2, wrapper2, mc.cores=4))</code></pre>
 <pre><code>##    user  system elapsed 
-##   0.843   0.162   0.814</code></pre>
+##   1.297   0.261   0.958</code></pre>
 <p>The results show that mclapply with 2 cores is twice as fast as lapply, but increasing to 4 cores does not improve the performance of mclapply any more. The reason behind this is that on this MacBook, there are 2 physical cores but 4 virtual cores.</p>
 </div>
 <div id="foreach-and-doparallel" class="section level2">
@@ -225,8 +225,8 @@ foreach (i=1:3) %do% {
 }
 res</code></pre>
 <pre><code>##          [,1] [,2] [,3] [,4] [,5] [,6] [,7] [,8] [,9] [,10]
-## result.1 1000  993 1010 1001 1009 1008 1002 1040 1062  1027
-## result.2 1000 1005 1007  984  972  961  996  986 1007   989</code></pre>
+## result.1 1000 1019 1031 1042 1039 1015 1019 1026  987   975
+## result.2 1000 1013  943  935  936  964  925  915  903   928</code></pre>
 <p>A useful argument to add to <code>foreach</code> is <code>.final</code>, which is function of one argument that is called to return final. For sample, if we are only interested in the number of mutants in the most recent generation,</p>
 <pre class="r"><code>n_gen = 1000
 res = foreach (i=1:1000, .combine=rbind, .final=function(x) x[,n_gen]) %do% {
@@ -243,12 +243,12 @@ system.time(foreach (i=1:n_runs, .combine=rbind, .final=function(x) x[,n_gen]) %
   simulate_wright_fisher(5000, n_gen, 0.2)
 })</code></pre>
 <pre><code>##    user  system elapsed 
-##   1.671   0.080   1.755</code></pre>
+##   1.650   0.099   1.753</code></pre>
 <pre class="r"><code>system.time(foreach (i=1:n_runs, .combine=rbind, .final=function(x) x[,n_gen]) %dopar% {
   simulate_wright_fisher(5000, n_gen, 0.2)
 })</code></pre>
 <pre><code>##    user  system elapsed 
-##   1.721   0.205   1.040</code></pre>
+##   1.705   0.225   1.037</code></pre>
 <pre class="r"><code>t1 = Sys.time()
 res1= foreach (i=1:n_runs, .combine=rbind, .final=function(x) x[,n_gen]) %do% {
   simulate_wright_fisher(5000, n_gen, 0.2)
@@ -259,9 +259,9 @@ res2 = foreach (i=1:n_runs, .combine=rbind, .final=function(x) x[,n_gen]) %dopar
 }
 t3 = Sys.time()
 t2-t1</code></pre>
-<pre><code>## Time difference of 1.860187 secs</code></pre>
+<pre><code>## Time difference of 1.847762 secs</code></pre>
 <pre class="r"><code>t3-t2</code></pre>
-<pre><code>## Time difference of 1.259991 secs</code></pre>
+<pre><code>## Time difference of 0.9997551 secs</code></pre>
 <pre class="r"><code># clean up the cluster
 stopImplicitCluster()</code></pre>
 <p>Just as in the case of <code>mclapply</code>, evaluating the code in parallel with 2 cores takes about half as much time as evaluating the code sequentially.</p>

@@ -163,36 +163,36 @@
 <h2 id="installing-and-setting-up-git">Installing and setting up git</h2>
 <p>Linux users can install git using their package manager, macOS users can install Xcode (larger) or the Xcode command line tools (smaller). Once you have git on your system, it&rsquo;s a good idea to set up your identity as a global configuration parameter, as this information will be used automatically in certain git commands.</p>
 <p>To set your name, execute the following commands in a terminal.</p>
-<pre><code>git config --global user.name &quot;Your Name&quot;
+<pre tabindex="0"><code>git config --global user.name &quot;Your Name&quot;
 git config --global user.email name@domain
 </code></pre><p>You can check your global configuration.</p>
-<pre><code>git config --list --show-origin
+<pre tabindex="0"><code>git config --list --show-origin
 </code></pre><h2 id="initializing-a-git-repository">Initializing a git repository</h2>
 <p>To initialize a git repository from a terminal, go to the top-level directory you want git to track and type</p>
-<pre><code>git init
+<pre tabindex="0"><code>git init
 </code></pre><p>You can accomplish the same feat in RStudio (for a given project directory) by choosing git as a version control system in the <code>Tools -&gt; Version Control</code> menu.</p>
 <p>Initializing a repository does not cause any files to be tracked. You need to add files to the version control system to track them.</p>
 <h2 id="adding-files-to-the-staging-area">Adding files to the staging area</h2>
 <p>You can add a new file or a file which has been modified in a terminal via</p>
-<pre><code>git add &lt;filename&gt;
+<pre tabindex="0"><code>git add &lt;filename&gt;
 </code></pre><p>In the RStudio git panel, staging is accomplished by checking the appropriate box next to the file.</p>
 <p>This adds the file to the &ldquo;Staging Area&rdquo;. The change is not actually committed to the version control system.</p>
 <p>There are more advanced options, such as staging only certain lines. This can be accomplished via the command line but is also possible to do clicking RStudio&rsquo;s &ldquo;Diff&rdquo; button and then choosing lines to stage.</p>
 <h2 id="committing-changes">Committing changes</h2>
 <p>To commit changes using the terminal you can run</p>
-<pre><code>git commit
+<pre tabindex="0"><code>git commit
 </code></pre><p>which will ask you to provide a commit message.</p>
 <p>It is good practice to include in a single commit those changes that are relevant for changing a particular piece of functionality, rather than <em>all</em> changes that have been made. The commit message should ideally be informative, and it is common practice to use present tense, as it indicates what the commit does. For example, &ldquo;add residual checks&rdquo; might be used if you have added code for checking residuals.</p>
 <h2 id="reverting">Reverting</h2>
 <p>One common situation that arises is that a number of changes have been made locally without being committed, and one wishes to revert back to the last commit. To do this, one can run</p>
-<pre><code>git revert HEAD
+<pre tabindex="0"><code>git revert HEAD
 </code></pre><p>In RStudio, one can select individual files and revert (available by first clicking on the gear icon).</p>
 <h2 id="viewing-old-versions">Viewing old versions</h2>
 <p>In RStudio, you can review previous commits by clicking on the history (clock) icon.</p>
 <h2 id="creating-a-branch">Creating a branch</h2>
 <p>In some cases it is desirable to start making a number of changes to code without affecting the default &ldquo;master&rdquo; branch of the git repository.</p>
 <p>You can create and then start working on a branch by</p>
-<pre><code>git branch &lt;branch-name&gt;
+<pre tabindex="0"><code>git branch &lt;branch-name&gt;
 git checkout &lt;branch-name&gt;
 </code></pre><p>or do both together via <code>git checkout -b &lt;branch-name&gt;</code>.</p>
 <p>You can then work on both the branch and also on master. If you want to merge the changes from the <code>&lt;branch-name&gt;</code> branch into master, you can switch to master , i.e. <code>git checkout master</code>, and then merge via <code>git merge &lt;branch-name&gt;</code></p>
@@ -200,9 +200,9 @@ git checkout &lt;branch-name&gt;
 <p>To delete a branch, one can use <code>git branch -d &lt;branch-name&gt;</code></p>
 <h2 id="checking-out-an-old-version">Checking out an old version</h2>
 <p>One way to checkout an old version of the code into a new branch is to use the command</p>
-<pre><code>git checkout &lt;commit hash&gt; -b &lt;branch-name&gt;
+<pre tabindex="0"><code>git checkout &lt;commit hash&gt; -b &lt;branch-name&gt;
 </code></pre><p>where the commit hash can be found in the git log.</p>
-<pre><code>git log
+<pre tabindex="0"><code>git log
 </code></pre><h2 id="ignoring-files">Ignoring files</h2>
 <p>A file will only be added to version control if you stage it at least once. However, it can be irritating to see files in the unstaged area that you will never want to stage. Files that should never be staged can be specified in a <a href="https://git-scm.com/docs/gitignore"><code>.gitignore</code></a> file in the main directory of the git project. You can also ignore files specified using some types of <a href="https://en.wikipedia.org/wiki/Regular_expression">regular expressions</a>. For example, one can ignore all files with extension <code>.ext</code> by adding <code>*.ext</code>. If you only want to ignore files in a folder and its subfolders, you can create a <code>.gitignore</code> file in that folder. The prefix <code>!</code> can be used to negate a previous pattern. For example, <code>!</code> can be used to version control the <code>special.ext</code> file even if <code>*.ext</code> appears earlier in the <code>.gitignore</code> file.</p>
 <h2 id="more-advanced-command-line-options">More advanced command line options</h2>
@@ -216,13 +216,13 @@ git checkout &lt;branch-name&gt;
 <p><strong>New projects with no existing content</strong></p>
 <p>If you are starting a new project with no existing content, you can initialize the project with a README.md, .gitignore (choose R for a default R .gitignore file) and LICENSE file.</p>
 <p>You can then clone the repository on your system using a terminal. The repository will be a subfolder of the current working directory of the terminal.</p>
-<pre><code>git clone https://github.com/&lt;username&gt;/&lt;repository-name&gt;.git
+<pre tabindex="0"><code>git clone https://github.com/&lt;username&gt;/&lt;repository-name&gt;.git
 </code></pre><p>This essentially copies the files in the repository to your local repository, and sets the GitHub online repository as the &ldquo;origin&rdquo;. After changing your working directory to the local repository, you can check this from the terminal.</p>
-<pre><code>git remote -v
+<pre tabindex="0"><code>git remote -v
 </code></pre><p><strong>New projects from a local git repository</strong></p>
 <p>If you are planning to &ldquo;push&rdquo; from a local git repository to populate the new project, it&rsquo;s easier if you do not initialize the project with any files.</p>
 <p>Then, instead of cloning the repository, you add the GitHub repository as the remote &ldquo;origin&rdquo; repository, and push.</p>
-<pre><code>git remote add origin https://github.com/&lt;username&gt;/&lt;repository-name&gt;.git
+<pre tabindex="0"><code>git remote add origin https://github.com/&lt;username&gt;/&lt;repository-name&gt;.git
 git push -u origin master
 </code></pre><h2 id="choosing-a-software-license">Choosing a software license</h2>
 <p>When software is written in the UK, the author <a href="https://www.gov.uk/copyright">automatically receives copyright protection</a>. Making code publicly available on GitHub allows people to <a href="https://help.github.com/en/articles/github-terms-of-service#5-license-grant-to-other-users">view it and to fork the repository</a>, but does not give people the rights required to modify and distribute the code, or create derivative works, as this would constitute copyright infringement.</p>
@@ -242,14 +242,14 @@ git push -u origin master
 <h2 id="contributing-code-forks-and-pull-requests">Contributing code: forks and pull requests</h2>
 <p>One of the main collaborative mechanisms provided by GitHub is the ease with which one can fork a repository, make changes and then submit a &ldquo;pull request&rdquo;.</p>
 <p>To fork a repository, you can just click the &ldquo;Fork&rdquo; button on GitHub. This creates a personal copy of the original repository. You can clone the repository to your computer using</p>
-<pre><code>git clone https://github.com/&lt;username&gt;/&lt;fork-name&gt;.git
+<pre tabindex="0"><code>git clone https://github.com/&lt;username&gt;/&lt;fork-name&gt;.git
 </code></pre><p>or you can do this via the &ldquo;New Project -&gt; Version Control -&gt; git&rdquo; menu options in RStudio.</p>
 <p>This sets up your local repository with <strong>your fork</strong> as the remote. You can make changes locally and push them to the remote. When you have made the changes you wanted to the code, you can <em>ask</em> a maintainer of the original repository to incorporate the changes via a pull request.</p>
 <p>It is easiest to do this using GitHub&rsquo;s web interface. You can click on &ldquo;New pull request&rdquo; or &ldquo;Pull request&rdquo;, to do this. The pull request will include all the commit information and you can add information that explains why the code changes should be merged. If a maintainer approves the request, the changes can then be merged. It is not uncommon for a discussion to lead to further commits to the branch associated with the pull request; these commits will automatically update the pull request.</p>
 <p>When a pull request is made, it is possible for there to be conflicts due to other commits being made to the original repository. One common strategy to keep pull requests simple is to ensure that the pull request can be merged automatically. To do this, one should tell the local repository about the &ldquo;upstream&rdquo; (original) repository.</p>
-<pre><code>git remote add upstream &lt;upstream address&gt;
+<pre tabindex="0"><code>git remote add upstream &lt;upstream address&gt;
 </code></pre><p>You can then fetch and merge upstream changes into your branch.</p>
-<pre><code>git fetch upstream
+<pre tabindex="0"><code>git fetch upstream
 git merge upstream/master
 </code></pre><p>After merging, if you commit and then push, the pull request will automatically be updated. It is often useful to keep a fork up to date with the upstream, i.e. original repository.</p>
 
