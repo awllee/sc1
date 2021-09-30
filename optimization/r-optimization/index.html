@@ -100,13 +100,13 @@
   
   <li><a href="/sc1/reproducibility/">Reproducibility</a></li>
   
-  <li><a href="/sc1/common-r/">Common R</a></li>
-  
-  <li><a href="/sc1/tidyverse/">Tidyverse</a></li>
-  
   <li><a href="/sc1/packages/">Packages</a></li>
   
+  <li><a href="/sc1/common-r/">Common R</a></li>
+  
   <li><a href="/sc1/functional-oo/">Functional / OO</a></li>
+  
+  <li><a href="/sc1/tidyverse/">Tidyverse</a></li>
   
   <li><a href="/sc1/profile-debug/">Performance / Bugs</a></li>
   
@@ -354,10 +354,10 @@ f1(0,0)</code></pre>
 <p>We observe that BFGS and L-BFGS-B requires far fewer iterations than either Nelder-Mead or CG. Finally, we try simulated annealing, the only method that claims to be able find the global minimum.</p>
 <pre class="r"><code>optim(c(-1.5, 1.5), function(x) f(x[1], x[2]), method=&quot;SANN&quot;, control=list(maxit=100))</code></pre>
 <pre><code>## $par
-## [1] -0.6449114  0.2925262
+## [1] -0.7225572  0.5274103
 ## 
 ## $value
-## [1] 0.8487268
+## [1] 0.6031981
 ## 
 ## $counts
 ## function gradient 
@@ -370,10 +370,10 @@ f1(0,0)</code></pre>
 ## NULL</code></pre>
 <pre class="r"><code>optim(c(-1.5, 1.5), function(x) f(x[1], x[2]), method=&quot;SANN&quot;, control=list(maxit=1000))</code></pre>
 <pre><code>## $par
-## [1] -0.7265809  0.5562883
+## [1] -0.7406539  0.5535960
 ## 
 ## $value
-## [1] 0.5949236
+## [1] 0.5941223
 ## 
 ## $counts
 ## function gradient 
@@ -386,10 +386,10 @@ f1(0,0)</code></pre>
 ## NULL</code></pre>
 <pre class="r"><code>optim(c(-1.5, 1.5), function(x) f(x[1], x[2]), method=&quot;SANN&quot;, control=list(maxit=3000))</code></pre>
 <pre><code>## $par
-## [1] -0.6956855  0.6260980
+## [1] -0.7261678  0.5799240
 ## 
 ## $value
-## [1] 0.5964032
+## [1] 0.5922743
 ## 
 ## $counts
 ## function gradient 
@@ -519,11 +519,11 @@ nlm(f, mydata=my_data, p=start1)</code></pre>
 ## [1] &quot;CONVERGENCE: REL_REDUCTION_OF_F &lt;= FACTR*EPSMCH&quot;</code></pre>
 <pre class="r"><code>optim(par=start1, fn=f, mydata=my_data, method=&quot;SANN&quot;, control=list(maxit=30000))</code></pre>
 <pre><code>## $par
-##         b1         b2         b3 
-## 97.9773783 36.2892983  0.4215446 
+##        b1        b2        b3 
+## 97.621315 33.526603  0.416624 
 ## 
 ## $value
-## [1] 220.8463
+## [1] 243.2993
 ## 
 ## $counts
 ## function gradient 

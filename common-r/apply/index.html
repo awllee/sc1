@@ -100,13 +100,13 @@
   
   <li><a href="/sc1/reproducibility/">Reproducibility</a></li>
   
-  <li><a href="/sc1/common-r/">Common R</a></li>
-  
-  <li><a href="/sc1/tidyverse/">Tidyverse</a></li>
-  
   <li><a href="/sc1/packages/">Packages</a></li>
   
+  <li><a href="/sc1/common-r/">Common R</a></li>
+  
   <li><a href="/sc1/functional-oo/">Functional / OO</a></li>
+  
+  <li><a href="/sc1/tidyverse/">Tidyverse</a></li>
   
   <li><a href="/sc1/profile-debug/">Performance / Bugs</a></li>
   
@@ -277,13 +277,13 @@ ftest1_loop = function(x) {
 }
 system.time(ftest1_apply(x))</code></pre>
 <pre><code>##    user  system elapsed 
-##   1.045   0.038   1.088</code></pre>
+##   1.060   0.043   1.135</code></pre>
 <pre class="r"><code>system.time(ftest1_loop(x))</code></pre>
 <pre><code>##    user  system elapsed 
-##   0.705   0.013   0.718</code></pre>
+##   0.755   0.007   0.766</code></pre>
 <pre class="r"><code>system.time(ftest1(x))</code></pre>
 <pre><code>##    user  system elapsed 
-##   0.012   0.000   0.012</code></pre>
+##   0.012   0.000   0.013</code></pre>
 <p>The results show that sapply is the slowest, with for loop being twice as fast as sapply. But obviously applying the function directly (hence vectorized) is the fastest by far.</p>
 </div>
 </div>
