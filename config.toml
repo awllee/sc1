@@ -21,19 +21,19 @@ footnotereturnlinkcontents = "↩"
 [[menu.main]]
     name = "Packages"
     url = "/packages/"
-    weight = 6
+    weight = 4
 [[menu.main]]
     name = "Common R"
     url = "/common-r/"
-    weight = 4
+    weight = 5
 [[menu.main]]
     name = "Functional / OO"
     url = "/functional-oo/"
-    weight = 7
+    weight = 6
 [[menu.main]]
     name = "Tidyverse"
     url = "/tidyverse/"
-    weight = 5
+    weight = 7
 [[menu.main]]
     name = "Performance / Bugs"
     url = "/profile-debug/"
