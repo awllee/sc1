@@ -146,12 +146,12 @@
 <h3>apply</h3>
 <p>We start with <code>apply()</code>. Its syntax is <code>apply(X, MARGIN, FUN, ...)</code>, where</p>
 <ul>
-<li><code>X</code> is an array, including a matrix.</li>
-<li><code>MARGIN</code> is a vector giving the subscripts which the function will be applied over. For example, for a matrix 1 indicates rows (i.e. output has length equal to number of rows), 2 indicates columns (i.e. output has length equal to number of columns), <code>c(1, 2)</code> indicates rows and columns (i.e. output remains a matrix of the same dimension).</li>
+<li><code>X</code> is an array of dimension <span class="math inline">\(\ge 2\)</span>, including a 2-d matrix.</li>
+<li><code>MARGIN</code> is a vector giving the subscripts which the function will be applied over. E.g., for a matrix 1 indicates rows (i.e. output has length equal to number of rows), 2 indicates columns (i.e. output has length equal to number of columns), <code>c(1, 2)</code> indicates rows and columns (i.e. output remains a matrix of the same dimension).</li>
 <li><code>FUN</code> is the function to be applied</li>
 </ul>
 <p>As an example, we construct a matrix of all 1’s and sum across rows and columns:</p>
-<pre class="r"><code>x = matrix(1, nrow=3, ncol=4)
+<pre class="r"><code>x &lt;- matrix(1, nrow=3, ncol=4)
 apply(x, 1, sum)</code></pre>
 <pre><code>## [1] 4 4 4</code></pre>
 <pre class="r"><code>apply(x, 2, sum)</code></pre>
@@ -172,7 +172,7 @@ apply(x, 1, sum)</code></pre>
 </div>
 <div id="lapply" class="section level3">
 <h3>lapply</h3>
-<p>In contrast to <code>apply</code>, which must be applied to data of higher than one dimension, <code>lapply</code> applies a function over a list or vector and outputs a list. Its basic usage is <code>lapply(X, FUN, ...)</code>. For example,</p>
+<p>In contrast to <code>apply</code>, which must be applied to data of higher than one dimension, <code>lapply</code> applies a function over a list or vector and outputs a list. Its basic usage is <code>lapply(X, FUN, …)</code>. For example,</p>
 <pre class="r"><code>lapply(rep(1,5), exp)</code></pre>
 <pre><code>## [[1]]
 ## [1] 2.718282
@@ -188,7 +188,7 @@ apply(x, 1, sum)</code></pre>
 ## 
 ## [[5]]
 ## [1] 2.718282</code></pre>
-<pre class="r"><code>x = list(a=1:10, b=exp(-3:3), c=c(TRUE,FALSE,FALSE,TRUE))
+<pre class="r"><code>x &lt;- list(a=1:10, b=exp(-3:3), c=c(TRUE,FALSE,FALSE,TRUE))
 lapply(x, mean)</code></pre>
 <pre><code>## $a
 ## [1] 5.5
@@ -242,7 +242,7 @@ lapply(x, mean)</code></pre>
 ## 
 ## [[4]]
 ## [1] 4</code></pre>
-<pre class="r"><code>mapply(rep, times = 1:4, x = 4:1)</code></pre>
+<pre class="r"><code>mapply(rep, times=1:4, x=4:1)</code></pre>
 <pre><code>## [[1]]
 ## [1] 4
 ## 
@@ -264,38 +264,38 @@ lapply(x, mean)</code></pre>
 ## $c
 ## [1] -9 -8 -7</code></pre>
 </div>
-<div id="speed-vs-for-loop" class="section level3">
-<h3>Speed vs for loop</h3>
-<p>To compare the performance of a piece of code written using apply vs foor loop, we use the following simple function</p>
-<pre class="r"><code>ftest1 = function(x) log(0.43 * x + 1)
-x = 1:1e6 #runif(1e+06, min = -1, max = 1)
-ftest1_apply = function(x) sapply(x, ftest1)
-ftest1_loop = function(x) {
-  y = rep(NA, length(x))
-  for (i in 1:length(x)) y[i] = ftest1(x[i])
+</div>
+<div id="speed-vs-for-loop" class="section level2">
+<h2>Speed vs for loop</h2>
+<p>To compare the performance of a piece of code written using <code>lapply</code> vs <code>for</code> loop, we use the following simple function</p>
+<pre class="r"><code>ftest1 &lt;- function(x) log(0.43 * x + 1)
+x &lt;- 1:1e6 #runif(1e+06, min=-1, max=1)
+ftest1_apply &lt;- function(x) lapply(x, ftest1)
+ftest1_loop &lt;- function(x) {
+  y &lt;- rep(NA, length(x))
+  for (i in 1:length(x)) y[i] &lt;- ftest1(x[i])
   y
 }
 system.time(ftest1_apply(x))</code></pre>
 <pre><code>##    user  system elapsed 
-##   1.060   0.043   1.135</code></pre>
+##   0.998   0.079   1.289</code></pre>
 <pre class="r"><code>system.time(ftest1_loop(x))</code></pre>
 <pre><code>##    user  system elapsed 
-##   0.755   0.007   0.766</code></pre>
+##   0.704   0.011   1.011</code></pre>
 <pre class="r"><code>system.time(ftest1(x))</code></pre>
 <pre><code>##    user  system elapsed 
-##   0.012   0.000   0.013</code></pre>
-<p>The results show that sapply is the slowest, with for loop being twice as fast as sapply. But obviously applying the function directly (hence vectorized) is the fastest by far.</p>
-</div>
+##   0.011   0.000   0.011</code></pre>
+<p>The results show that <code>lapply</code> is the slowest, with for loop being twice as fast as <code>lapply</code>. But obviously applying the function directly (hence vectorised) is the fastest by far.</p>
 </div>
 <div id="map-reduce-and-filter" class="section level2">
 <h2>Map, Reduce and Filter</h2>
 <p>First, a word on the lambda notation, which is a short, typically one-line, definition of a function:
-<code>{function add1(x, y) x+y}</code>. Note that this alone makes no sense in R. It has to be used in Map, Reduce or Filter. Note also that the first letter of these functions are capped.</p>
+<code>{function add1(x, y) x+y}</code>. Note that this alone does nothing in <code>R</code>. It has to be used in Map, Reduce, Filter, or another function that takes another function as an input argument. Note also that the first letter of these functions are capped.</p>
 <div id="map" class="section level3">
 <h3>Map</h3>
 <p>The function <code>Map</code> maps the same function to every element in a vector. For example,</p>
-<pre class="r"><code>x = 1:6
-y = Map({function(a) a*a}, x)
+<pre class="r"><code>x &lt;- 1:6
+y &lt;- Map({function(a) a*a}, x)
 y</code></pre>
 <pre><code>## [[1]]
 ## [1] 1
@@ -329,11 +329,11 @@ y</code></pre>
 <div id="filter" class="section level3">
 <h3>Filter</h3>
 <p>The function <code>Filter</code> goes down a vector and only keep elements that satisfies the condition determined by the function. For example,</p>
-<pre class="r"><code>Filter(function(x) x%%2==0, x)</code></pre>
+<pre class="r"><code>Filter(function(x) x %% 2 == 0, x)</code></pre>
 <pre><code>## [1] 2 4 6</code></pre>
 <pre class="r"><code>Filter(function(x) x&gt;3, x)</code></pre>
 <pre><code>## [1] 4 5 6</code></pre>
-<pre class="r"><code>Filter(function(x) x-1, x)</code></pre>
+<pre class="r"><code>Filter(function(x) x-1, x) # bad style</code></pre>
 <pre><code>## [1] 2 3 4 5 6</code></pre>
 <p>Note that in R, 0 is treated as <code>FALSE</code>, whereas any non-zero number is treated as <code>TRUE</code></p>
 </div>

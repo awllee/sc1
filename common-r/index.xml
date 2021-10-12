@@ -12,9 +12,9 @@
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>https://awllee.github.io/sc1/common-r/vectorisation/</guid>
-      <description>Vectorisation, matrix operations, and readability Vectorisation means the same operation is applied to every single number in a vector. One avoids using loops in the code as much as possible. Why is vectorisation so important? The answer is speed: vector operations in R are much faster.
-Vectorisation is as important in R as in other interpreted languages, such as Matlab or python.
-fsum1 = function(x) { fsum = 0 for (i in 1:length(x)) { fsum = fsum + sin(x[i]) } return(fsum) } fsum2 = function(x) sum(sin(x)) We can compare the speed using system.</description>
+      <description>Vectorisation, matrix operations, and readability Vectorisation means the same operation is applied to every single number in a vector. Why is vectorisation so important? The answer is speed: vector operations in R are much faster.
+Vectorisation is as important in R as in other interpreted languages, such as Matlab or python. Generally speaking, one should avoid using explicit loops in an interpreted language as much as possible.
+fsum1 &amp;lt;- function(x) { fsum &amp;lt;- 0 for (i in 1:length(x)) { fsum &amp;lt;- fsum + sin(x[i]) } return(fsum) } fsum2 &amp;lt;- function(x) sum(sin(x)) We can compare the speed using system.</description>
     </item>
     
     <item>
@@ -25,7 +25,7 @@ fsum1 = function(x) { fsum = 0 for (i in 1:length(x)) { fsum = fsum + sin(x[i]) 
       <guid>https://awllee.github.io/sc1/common-r/apply/</guid>
       <description>R apply family The apply family of functions consist of apply(), lapply(), sapply(), and mapply(). The basic idea of the apply family is to apply the same function repetitively across a list or a certain dimension of an array or dataframe.
 apply We start with apply(). Its syntax is apply(X, MARGIN, FUN, ...), where
- X is an array, including a matrix. MARGIN is a vector giving the subscripts which the function will be applied over.</description>
+ X is an array of dimension \(\ge 2\), including a 2-d matrix. MARGIN is a vector giving the subscripts which the function will be applied over.</description>
     </item>
     
     <item>
