@@ -170,12 +170,12 @@ a2 &lt;- rep(0,10000)
 library(microbenchmark)
 microbenchmark(add.one(a1))</code></pre>
 <pre><code>## Unit: microseconds
-##         expr     min       lq     mean  median      uq      max neval
-##  add.one(a1) 275.019 308.8855 520.8981 313.413 318.012 21087.93   100</code></pre>
+##         expr     min      lq     mean  median       uq     max neval
+##  add.one(a1) 274.988 290.001 568.2903 303.679 312.8915 21040.9   100</code></pre>
 <pre class="r"><code>microbenchmark(add.one(a2))</code></pre>
 <pre><code>## Unit: microseconds
-##         expr    min       lq    mean   median       uq     max neval
-##  add.one(a2) 572.03 593.2955 603.983 604.3725 616.1765 649.194   100</code></pre>
+##         expr     min       lq     mean  median      uq    max neval
+##  add.one(a2) 572.435 603.8045 608.5947 609.122 620.819 650.87   100</code></pre>
 <p>On the other hand, small changes in the code (that would not affect performance in languages that pass by reference) can cause many copies of the array to made.</p>
 <pre class="r"><code>add.one.bad &lt;- function(x) {
   y &lt;- x
@@ -200,16 +200,16 @@ add.one.slow &lt;- function(x) {
 
 system.time(add.one.bad(a1))</code></pre>
 <pre><code>##    user  system elapsed 
-##   0.060   0.066   0.127</code></pre>
+##   0.060   0.067   0.126</code></pre>
 <pre class="r"><code>system.time(add.one.bad(a2))</code></pre>
 <pre><code>##    user  system elapsed 
-##   0.204   0.239   0.444</code></pre>
+##   0.202   0.238   0.442</code></pre>
 <pre class="r"><code>system.time(add.one.slow(a1))</code></pre>
 <pre><code>##    user  system elapsed 
-##   0.075   0.067   0.143</code></pre>
+##   0.072   0.067   0.140</code></pre>
 <pre class="r"><code>system.time(add.one.slow(a2))</code></pre>
 <pre><code>##    user  system elapsed 
-##   0.307   0.250   0.559</code></pre>
+##   0.304   0.252   0.557</code></pre>
 </div>
 <div id="column-major-storage" class="section level2">
 <h2>Column-major storage</h2>
@@ -236,10 +236,10 @@ fill.by.row &lt;- function(n) {
 <pre class="r"><code>n &lt;- 10000
 system.time(Y1 &lt;- fill.by.column(n))</code></pre>
 <pre><code>##    user  system elapsed 
-##   0.459   0.367   0.826</code></pre>
+##   0.457   0.372   0.829</code></pre>
 <pre class="r"><code>system.time(Y2 &lt;- fill.by.row(n))</code></pre>
 <pre><code>##    user  system elapsed 
-##   2.795   0.384   3.199</code></pre>
+##   2.060   0.438   2.503</code></pre>
 <p>Filling the matrix column by column is faster because reading and writing memory in contiguous blocks is faster than reading and writing memory locations that are far apart.</p>
 </div>
 <div id="example-logistic-regression" class="section level2">
@@ -319,22 +319,22 @@ X &lt;- matrix(rnorm(n*(d-1)), n, d-1)
 X &lt;- cbind(1, X)
 theta.true &lt;- rnorm(d)
 theta.true</code></pre>
-<pre><code>##  [1]  0.1773218 -0.0283264  0.1050234  1.2876213 -0.3319780 -1.3973527
-##  [7]  0.1538906  0.9817362  0.0436934 -0.1582091</code></pre>
+<pre><code>##  [1] -0.21916672  1.03870894  0.03825122  0.35771449  0.58497793 -0.09006545
+##  [7] -0.30950494 -0.09913882 -1.11860886 -0.66581629</code></pre>
 <pre class="r"><code>y &lt;- generate.y(X, theta.true)
 
 system.time(mle &lt;- maximize.ell(ell, score, X, y, rep(0,d)))</code></pre>
 <pre><code>##    user  system elapsed 
-##   0.153   0.029   0.183</code></pre>
+##   0.146   0.036   0.182</code></pre>
 <pre class="r"><code>mle</code></pre>
-<pre><code>##  [1]  0.17935497 -0.02222799  0.13100684  1.29964953 -0.34628669 -1.44098097
-##  [7]  0.13595125  0.96866628  0.01357084 -0.19274327</code></pre>
+<pre><code>##  [1] -0.20104167  1.01434619  0.02644039  0.29490578  0.57967359 -0.08959529
+##  [7] -0.28504372 -0.09849992 -1.07263355 -0.65017794</code></pre>
 <pre class="r"><code>system.time(mle &lt;- maximize.ell(ell.slow, score.slow, X, y, rep(0,d)))</code></pre>
 <pre><code>##    user  system elapsed 
-##   8.880   0.025   8.930</code></pre>
+##   5.715   0.020   5.749</code></pre>
 <pre class="r"><code>mle</code></pre>
-<pre><code>##  [1]  0.17935499 -0.02222792  0.13100682  1.29964955 -0.34628672 -1.44098094
-##  [7]  0.13595122  0.96866631  0.01357083 -0.19274318</code></pre>
+<pre><code>##  [1] -0.20104167  1.01434619  0.02644039  0.29490578  0.57967359 -0.08959529
+##  [7] -0.28504372 -0.09849993 -1.07263355 -0.65017794</code></pre>
 </div>
 <div id="example-matrix-vector-multiplications" class="section level2">
 <h2>Example: matrix vector multiplications</h2>
@@ -356,10 +356,10 @@ foo &lt;- function(A, B) {
 
 system.time(C &lt;- A%*%B)</code></pre>
 <pre><code>##    user  system elapsed 
-##   0.763   0.015   0.778</code></pre>
+##   0.766   0.018   0.789</code></pre>
 <pre class="r"><code>system.time(C.alt &lt;- foo(A, B))</code></pre>
 <pre><code>##    user  system elapsed 
-##   1.626   0.041   1.674</code></pre>
+##   1.600   0.045   1.649</code></pre>
 <pre class="r"><code>norm(C-C.alt)</code></pre>
 <pre><code>## [1] 0</code></pre>
 <p>Clearly, the matrix-matrix multiplication is more computationally efficient. This is because the implementation of matrix multiplication is <a href="https://en.wikipedia.org/wiki/Matrix_multiplication_algorithm">highly optimized</a> and is not implemented by performing several matrix-vector multiplications.</p>
