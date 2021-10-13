@@ -67,7 +67,7 @@ longDat %>% object.size %>% format(units = "MB")
 The memory saving occurs because we store only one copy of the factor levels (which are character strings). This can be done directly in the call to `pivot_longer`, by specifying that the `names` must be transformed into a factor:
 
 ```{r}
-longDat <- indCons %>% pivot_longer(cols = everything(), names_to = "ID", values_to = "dem", names_transform = list(ID = as.factor))
+longDat <- indCons %>% pivot_longer(cols = everything(), names_to = "ID", values_to = "dem", names_transform = list(ID = as.factor)) %>% dplyr::arrange(ID)
 longDat %>% object.size %>% format(units = "MB")
 ```
 
