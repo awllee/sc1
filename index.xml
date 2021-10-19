@@ -185,7 +185,7 @@ a document explaining what the program does, a program that can be executed.</de
       
       <guid>https://awllee.github.io/sc1/functional-oo/object-oriented/</guid>
       <description>Outlook Terminology S3 S4 Reference Classes   Outlook The purpose of this chapter is to introduce object-oriented programming (OOP) in R. Base R offers three different models for OOP:
- S3, S4, and Reference Classes.  Further, some R packages on CRAN are available that provide additional models (e. g., R6, R.oo or proto).
+ S3, S4, and Reference Classes.  Further, some R packages on CRAN are available that provide additional models (e.g., R6, R.oo or proto).
 Here we focus on an introduction of the models available in base R and a discussion of their advantages and disadvantages.</description>
     </item>
     
