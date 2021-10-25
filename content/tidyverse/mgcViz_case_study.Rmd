@@ -8,13 +8,13 @@ body {
 text-align: justify}
 </style>
 
-As we said before, `ggplot2` provides a powerful framework for building visualization libraries. The best way to see why this is the case, might be to examine a real example. Here we consider the `mgcViz` package, with provides a layered framework for visualizing Generalized Additive Models (GAMs) using `ggplot2`. You might have heard about GAMs before but, if you didn't, don't worry because background knowledge on GAMs is not necessary to understand this section. 
+As we said before, `ggplot2` provides a powerful framework for building visualization libraries. The best way to see why this is the case, might be to examine a real example. Here we consider the `mgcViz` package, which provides a layered framework for visualizing Generalized Additive Models (GAMs) using `ggplot2`. You might have heard about GAMs before but, if you didn't, don't worry because background knowledge on GAMs is not necessary to understand this section. 
 
 GAMs are an extension of Generalized Linear Models (GLMs), which allow using spline-based smooth effects in addition to the usual linear effects used in GLMs. For example, a Poisson GLM might have the following structure
 $$
 y \sim \text{Pois}\{\mu({\bf x})\}, \;\;\; \log \mu({\bf x}) = \beta_0 + \beta_1 x_1 + \beta_2 x_2,
 $$
-where ${\bf x} = \{x_1, x_2\}$ are indipendent variables (covariates) and $\beta_0, \beta_1, \beta_2$ are regression coefficients. Here we are modelling the log-rate of a Poisson distribution, using linear effects for variables $x_1$ and $x_2$. A GAM extension of such model could be
+where ${\bf x} = \{x_1, x_2\}$ are indipendent variables (covariates) and $\beta_0, \beta_1, \beta_2$ are regression coefficients. Here we are modelling the log-rate of a Poisson distribution, using linear effects for variables $x_1$ and $x_2$. A GAM extension of such a model could be
 $$
 \log \mu({\bf x}) = \beta_0 + f_1(x_1) + f_2(x_2),
 $$
@@ -22,7 +22,7 @@ where $f_1$ and $f_2$ are non-linear functions, built using spline basis expansi
 $$
 f_1(x_1) = \sum_{j=1}^{K_1} \beta^1_j b_j^1(x_1), 
 $$
-where $b_1^1(x_1), \dots, b_{K_1}^1(x_1)$ are known basis functions and $\beta_1^1, \dots, \beta_{K_1}^1$ are unknown regression coefficients (to be estimated). Effect $f_2$ is defined similarly. There are many classes of effects, for example they can be multidimensional, such as
+where $b_1^1(x_1), \dots, b_{K_1}^1(x_1)$ are known basis functions and $\beta_1^1, \dots, \beta_{K_1}^1$ are unknown regression coefficients (to be estimated). The effect $f_2$ is defined similarly. There are many classes of effects, for example they can be multidimensional, such as
 $$
 \log \mu({\bf x}) = \beta_0 + f(x_1, x_2),
 $$
@@ -73,9 +73,9 @@ plot(fitG, select = 3, scale = FALSE, residuals = TRUE, ylim = c(-2000, 2000))
 plot(fitG, select = 3, scale = FALSE, residuals = TRUE, pch = 1, ylim = c(-2000, 2000))
 ```
 
-Here the points representing the residuals are always plotted over the fitted effect and confidence intervals so, if you change the size of the points, they will completely hide the fit, as on the plot on the right. We could probably live with the limitations mentioned so far, but the biggest issue is that it is quite hard to add new features to the plots offered by `plot.gam`. In fact, `plot.gam` is a big multi-purpose function, and adding a new graphical features requires looking at its source code, understanding what is going on, and modifing the whole function (e.g. we need to add new arguments, choose at which point within `plot.gam` the new graphical layer should be rendered, etc). So adding new features is a rather involved process. 
+Here the points representing the residuals are always plotted over the fitted effect and confidence intervals so, if you change the size of the points, they will completely hide the fit, as on the plot on the right. We could probably live with the limitations mentioned so far, but a more important issue is that it is quite hard to add new features to the plots offered by `plot.gam`. In fact, `plot.gam` is a big multi-purpose function, and adding a new graphical features requires looking at its source code, understanding what is going on, and modifing the whole function (e.g. we need to add new arguments, choose at which point within `plot.gam` the new graphical layer should be rendered, etc). So adding new features is a rather involved process. 
 
-The good news is that the limitations just mentioned make of `plot.gam` a very good case study for illustrating the usefulness of layer-based framework provided by `ggplot2`. In particular, let's see how the `mgcViz` package solves these issues by adopting the layered system based on `ggplot2`. To use it, we need to convert the output of `gam` to an object of class `gamViz`:
+The good news is that the limitations just mentioned make `plot.gam` a very good case study for illustrating the usefulness of layer-based framework provided by `ggplot2`. In particular, let's see how the `mgcViz` package solves these issues by adopting the layered system based on `ggplot2`. To use it, we need to convert the output of `gam` to an object of class `gamViz`:
 ```{r, message = F, warning = FALSE}
 library(mgcViz)
 fitG_v <- getViz(fitG)

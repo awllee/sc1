@@ -45,7 +45,7 @@ Now, suppose that we want to plot the consumption of some of the customers over 
 ```{r, fig.width = 7, fig.height = 5, fig.align = 'center'}
 matplot(indCons[1:(48*7), 1:3], type = 'l')
 ```
-Here we are plotting the consumption of the first three customers over the first 7 days (we have 48 observations per day). To do the same in `ggplot2` we need to put the data in a "long" format, that is we need a `data.frame` where one columns contains the demand values and another indicates to which customer each demand value belongs to. This can be achieved easily using `tidyr::pivot_longer`:
+Here we are plotting the consumption of the first three customers over the first 7 days (we have 48 observations per day). To do the same in `ggplot2` we need to put the data in a "long" format, that is we need a `data.frame` where one column contains the demand values and another indicates to which customer each demand value belongs to. This can be achieved easily using `tidyr::pivot_longer`:
 
 ```{r}
 longDat <- indCons %>% pivot_longer(cols = everything(), names_to = "ID", values_to = "dem") %>% dplyr::arrange(ID)
@@ -238,11 +238,11 @@ so the total memory used is less than 15MB. But:
 ```{r}
 allDat %>% object.size() %>% format("MB")
 ```
-so the long data set must contain quite a lot of redundant information! For instance, the data in `extra` is repeated 100 times (once per customer) in `allDat`, and that alone should cost us around 60 MB. This is something to keep in mind when working with larger data sets.
+so the long data set must contain quite a lot of redundant information! For instance, the data in `extra` is repeated 100 times (once per customer) in `allDat`, and that alone should cost us around 70 MB. This is something to keep in mind when working with larger data sets.
 
 ## Further topics
 
-Here we presented the main tools provided by `dplyr` and `tidyr` for data trasformation and reshaping. Other `tidyr` functions that you might find useful are:
+Here we presented the main tools provided by `dplyr` and `tidyr` for data transformation and reshaping. Other `tidyr` functions that you might find useful are:
 
    - `separate` which allows you to break a variable (e.g. age_sex = "20_male") into its components (age = 20 and sex = "male");
    - `unite` which does the opposite;
