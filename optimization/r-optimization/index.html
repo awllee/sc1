@@ -354,10 +354,10 @@ f1(0,0)</code></pre>
 <p>We observe that BFGS and L-BFGS-B requires far fewer iterations than either Nelder-Mead or CG. Finally, we try simulated annealing, the only method that claims to be able find the global minimum.</p>
 <pre class="r"><code>optim(c(-1.5, 1.5), function(x) f(x[1], x[2]), method=&quot;SANN&quot;, control=list(maxit=100))</code></pre>
 <pre><code>## $par
-## [1]  0.5394024 -0.8350448
+## [1]  0.4855802 -0.5233091
 ## 
 ## $value
-## [1] 1.579184
+## [1] 1.555784
 ## 
 ## $counts
 ## function gradient 
@@ -370,10 +370,10 @@ f1(0,0)</code></pre>
 ## NULL</code></pre>
 <pre class="r"><code>optim(c(-1.5, 1.5), function(x) f(x[1], x[2]), method=&quot;SANN&quot;, control=list(maxit=1000))</code></pre>
 <pre><code>## $par
-## [1] -0.7124974  0.6306809
+## [1] -0.6746132  0.6597851
 ## 
 ## $value
-## [1] 0.5965097
+## [1] 0.6045144
 ## 
 ## $counts
 ## function gradient 
@@ -386,10 +386,10 @@ f1(0,0)</code></pre>
 ## NULL</code></pre>
 <pre class="r"><code>optim(c(-1.5, 1.5), function(x) f(x[1], x[2]), method=&quot;SANN&quot;, control=list(maxit=3000))</code></pre>
 <pre><code>## $par
-## [1] -0.7213326  0.5734720
+## [1] -0.7258195  0.5910945
 ## 
 ## $value
-## [1] 0.593139
+## [1] 0.5921121
 ## 
 ## $counts
 ## function gradient 
@@ -519,11 +519,11 @@ nlm(f, mydata=my_data, p=start1)</code></pre>
 ## [1] &quot;CONVERGENCE: REL_REDUCTION_OF_F &lt;= FACTR*EPSMCH&quot;</code></pre>
 <pre class="r"><code>optim(par=start1, fn=f, mydata=my_data, method=&quot;SANN&quot;, control=list(maxit=30000))</code></pre>
 <pre><code>## $par
-##        b1        b2        b3 
-## 96.402125 34.136135  0.421039 
+##          b1          b2          b3 
+##  2.85660816 -0.81662207 -0.01446451 
 ## 
 ## $value
-## [1] 252.6507
+## [1] 853.3134
 ## 
 ## $counts
 ## function gradient 

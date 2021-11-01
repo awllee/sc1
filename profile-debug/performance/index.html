@@ -171,11 +171,11 @@ library(microbenchmark)
 microbenchmark(add.one(a1))</code></pre>
 <pre><code>## Unit: microseconds
 ##         expr     min       lq     mean   median      uq      max neval
-##  add.one(a1) 343.104 364.2805 630.5608 375.6315 388.125 25826.51   100</code></pre>
+##  add.one(a1) 359.099 377.5925 647.4732 378.7365 383.781 26944.72   100</code></pre>
 <pre class="r"><code>microbenchmark(add.one(a2))</code></pre>
 <pre><code>## Unit: microseconds
-##         expr     min      lq    mean  median      uq     max neval
-##  add.one(a2) 657.291 695.838 719.157 715.502 746.067 807.535   100</code></pre>
+##         expr    min       lq     mean  median      uq    max neval
+##  add.one(a2) 745.47 748.4485 754.3032 750.906 755.975 815.53   100</code></pre>
 <p>On the other hand, small changes in the code (that would not affect performance in languages that pass by reference) can cause many copies of the array to made.</p>
 <pre class="r"><code>add.one.bad &lt;- function(x) {
   y &lt;- x
@@ -200,16 +200,16 @@ add.one.slow &lt;- function(x) {
 
 system.time(add.one.bad(a1))</code></pre>
 <pre><code>##    user  system elapsed 
-##   0.072   0.076   0.148</code></pre>
+##   0.074   0.083   0.157</code></pre>
 <pre class="r"><code>system.time(add.one.bad(a2))</code></pre>
 <pre><code>##    user  system elapsed 
-##   0.241   0.276   0.517</code></pre>
+##   0.249   0.294   0.543</code></pre>
 <pre class="r"><code>system.time(add.one.slow(a1))</code></pre>
 <pre><code>##    user  system elapsed 
-##   0.088   0.082   0.171</code></pre>
+##   0.094   0.088   0.183</code></pre>
 <pre class="r"><code>system.time(add.one.slow(a2))</code></pre>
 <pre><code>##    user  system elapsed 
-##   0.342   0.287   0.629</code></pre>
+##   0.376   0.321   0.701</code></pre>
 </div>
 <div id="column-major-storage" class="section level2">
 <h2>Column-major storage</h2>
@@ -236,10 +236,10 @@ fill.by.row &lt;- function(n) {
 <pre class="r"><code>n &lt;- 10000
 system.time(Y1 &lt;- fill.by.column(n))</code></pre>
 <pre><code>##    user  system elapsed 
-##   0.536   0.452   0.990</code></pre>
+##   0.554   0.428   0.983</code></pre>
 <pre class="r"><code>system.time(Y2 &lt;- fill.by.row(n))</code></pre>
 <pre><code>##    user  system elapsed 
-##   2.656   0.533   3.192</code></pre>
+##   2.684   0.551   3.242</code></pre>
 <p>Filling the matrix column by column is faster because reading and writing memory in contiguous blocks is faster than reading and writing memory locations that are far apart.</p>
 </div>
 <div id="example-logistic-regression" class="section level2">
@@ -251,18 +251,18 @@ where <span class="math inline">\(x_1,\ldots,x_n\)</span> are <span class="math 
 The data consists of observed realizations of <span class="math inline">\((Y_1,\ldots,Y_n)\)</span>, <span class="math inline">\(y = (y_1,\ldots,y_n)\)</span>, as well as <span class="math inline">\((x_1,\ldots,x_n)\)</span>. We define the <span class="math inline">\(n \times d\)</span> matrix <span class="math inline">\(X = (x_{ij})\)</span>.</p>
 <p>It is a nice little exercise to derive the log-likelihood, as well as its gradient (i.e. the score) and Hessian, using the fact that <span class="math inline">\(\sigma&#39;(z) = \sigma(z)[1-\sigma(z)]\)</span>.</p>
 <p><span class="math display">\[\ell(\theta ; y) = \sum_{i=1}^n y_i \log (\sigma(\theta^Tx_i)) + (1-y_i) \log (1 - \sigma(\theta^Tx_i)).\]</span></p>
-<p><span class="math display">\[\begin{equation}
-\label{eq:scorecomponent}
+<p><span class="math display" id="eq:scorecomponent">\[\begin{equation}
+\tag{1}
 \frac{\partial \ell (\theta ; y)}{\partial \theta_j} = \sum_{i=1}^n [y_i - \sigma(\theta^T x_i)] x_{ij},\qquad j \in \{1,\ldots,d \}.
 \end{equation}\]</span></p>
-<p><span class="math display">\[\begin{equation}
-\label{eq:hessiancomponents}
+<p><span class="math display" id="eq:hessiancomponents">\[\begin{equation}
+\tag{2}
 \frac{\partial^2 \ell (\theta ; y)}{\partial \theta_j \partial \theta_k} = - \sum_{i=1}^n \sigma(\theta^T x_i) [1 - \sigma(\theta^T x_i)] x_{ij} x_{ik},\qquad j,k \in \{1,\ldots,d \}.
 \end{equation}\]</span></p>
-<p>In fact,  implies that the score can be written as
+<p>In fact, <a href="#eq:scorecomponent">(1)</a> implies that the score can be written as
 <span class="math display">\[\nabla \ell(\theta; y) = X^T [y - p(\theta)],\]</span>
 where <span class="math inline">\(p(\theta)\)</span> is the vector <span class="math inline">\((p_1(\theta),\ldots,p_n(\theta)\)</span> where <span class="math inline">\(p_i(\theta) = \sigma(\theta^T x_i)\)</span>.</p>
-<p>Similarly,  implies that the Hessian can be written as
+<p>Similarly, <a href="#eq:hessiancomponents">(2)</a> implies that the Hessian can be written as
 <span class="math display">\[\nabla^2 \ell(\theta; y) = - X^T D(\theta) X,\]</span>
 where <span class="math inline">\(D(\theta)\)</span> is the <span class="math inline">\(n \times n\)</span> diagonal matrix where the <span class="math inline">\(i\)</span>th diagonal entry is <span class="math inline">\(p_i(\theta)[1-p_i(\theta)]\)</span> for <span class="math inline">\(i \in \{1,\ldots,d\}\)</span>.</p>
 <p>It is not hard to see that R functions which perform matrix-vector multiplications have much better performance than equivalent functions relying on for loops.</p>
@@ -319,22 +319,22 @@ X &lt;- matrix(rnorm(n*(d-1)), n, d-1)
 X &lt;- cbind(1, X)
 theta.true &lt;- rnorm(d)
 theta.true</code></pre>
-<pre><code>##  [1] -0.7599201  0.3563609 -0.4276343  0.8174026  0.2753319  0.3274225
-##  [7]  0.4172207  0.1644936  0.7904547  0.7183213</code></pre>
+<pre><code>##  [1]  0.2496196 -0.9199187 -1.1361995  0.2283034  0.8711488  1.5368576
+##  [7] -0.1658187  0.1457898  0.7185157  0.3551180</code></pre>
 <pre class="r"><code>y &lt;- generate.y(X, theta.true)
 
 system.time(mle &lt;- maximize.ell(ell, score, X, y, rep(0,d)))</code></pre>
 <pre><code>##    user  system elapsed 
-##   0.127   0.020   0.147</code></pre>
+##   0.119   0.018   0.138</code></pre>
 <pre class="r"><code>mle</code></pre>
-<pre><code>##  [1] -0.7196560  0.3444120 -0.4004045  0.7793932  0.2727718  0.3149074
-##  [7]  0.4132970  0.1087015  0.8325557  0.6679825</code></pre>
+<pre><code>##  [1]  0.2887780 -0.9157379 -1.1280998  0.2628063  0.8434017  1.5626581
+##  [7] -0.1788130  0.1262436  0.6784713  0.3100394</code></pre>
 <pre class="r"><code>system.time(mle &lt;- maximize.ell(ell.slow, score.slow, X, y, rep(0,d)))</code></pre>
 <pre><code>##    user  system elapsed 
-##   3.651   0.013   3.666</code></pre>
+##   7.371   0.024   7.405</code></pre>
 <pre class="r"><code>mle</code></pre>
-<pre><code>##  [1] -0.7196560  0.3444120 -0.4004045  0.7793932  0.2727718  0.3149074
-##  [7]  0.4132971  0.1087015  0.8325557  0.6679825</code></pre>
+<pre><code>##  [1]  0.2887781 -0.9157379 -1.1280998  0.2628063  0.8434017  1.5626581
+##  [7] -0.1788129  0.1262436  0.6784713  0.3100395</code></pre>
 </div>
 <div id="example-matrix-vector-multiplications" class="section level2">
 <h2>Example: matrix vector multiplications</h2>
@@ -356,10 +356,10 @@ foo &lt;- function(A, B) {
 
 system.time(C &lt;- A%*%B)</code></pre>
 <pre><code>##    user  system elapsed 
-##   0.771   0.011   0.783</code></pre>
+##   0.783   0.013   0.797</code></pre>
 <pre class="r"><code>system.time(C.alt &lt;- foo(A, B))</code></pre>
 <pre><code>##    user  system elapsed 
-##   1.692   0.035   1.728</code></pre>
+##   1.745   0.036   1.782</code></pre>
 <pre class="r"><code>norm(C-C.alt)</code></pre>
 <pre><code>## [1] 0</code></pre>
 <p>Clearly, the matrix-matrix multiplication is more computationally efficient. This is because the implementation of matrix multiplication is <a href="https://en.wikipedia.org/wiki/Matrix_multiplication_algorithm">highly optimized</a> and is not implemented by performing several matrix-vector multiplications.</p>
