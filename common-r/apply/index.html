@@ -278,19 +278,19 @@ ftest1_loop &lt;- function(x) {
 }
 system.time(ftest1_apply(x))</code></pre>
 <pre><code>##    user  system elapsed 
-##   1.182   0.044   1.697</code></pre>
+##   0.988   0.126   1.114</code></pre>
 <pre class="r"><code>system.time(ftest1_loop(x))</code></pre>
 <pre><code>##    user  system elapsed 
-##   0.853   0.011   1.455</code></pre>
+##   0.693   0.020   0.713</code></pre>
 <pre class="r"><code>system.time(ftest1(x))</code></pre>
 <pre><code>##    user  system elapsed 
-##   0.014   0.000   0.014</code></pre>
+##   0.012   0.000   0.012</code></pre>
 <p>The results show that <code>lapply</code> is the slowest, with for loop being twice as fast as <code>lapply</code>. But obviously applying the function directly (hence vectorised) is the fastest by far.</p>
 </div>
 <div id="map-reduce-and-filter" class="section level2">
 <h2>Map, Reduce and Filter</h2>
 <p>First, a word on the lambda notation, which is a short, typically one-line, definition of a function:
-<code>{function add1(x, y) x+y}</code>. Note that this alone does nothing in <code>R</code>. It has to be used in Map, Reduce, Filter, or another function that takes another function as an input argument. Note also that the first letter of these functions are capped.</p>
+<code>{function (x) x+1}</code>. Such a function is also known as an anonymous function as there is no name attached to it. Note that this alone does nothing in <code>R</code>. It has to be used in Map, Reduce, Filter, or another function that takes functions as inputs. Note also that the first letter of the following functions are capped.</p>
 <div id="map" class="section level3">
 <h3>Map</h3>
 <p>The function <code>Map</code> maps the same function to every element in a vector. For example,</p>
