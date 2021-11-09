@@ -94,7 +94,7 @@ The results show that `lapply` is the slowest, with for loop being twice as fast
 ## Map, Reduce and Filter
 
 First, a word on the lambda notation, which is a short, typically one-line, definition of a function:
-`{function add1(x, y) x+y}`. Note that this alone does nothing in `R`. It has to be used in Map, Reduce, Filter, or another function that takes another function as an input argument. Note also that the first letter of these functions are capped.
+`{function (x) x+1}`. Such a function is also known as an anonymous function as there is no name attached to it. Note that this alone does nothing in `R`. It has to be used in Map, Reduce, Filter, or another function that takes functions as inputs. Note also that the first letter of the following functions are capped.
 
 ### Map
 
