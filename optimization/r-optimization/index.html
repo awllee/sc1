@@ -143,7 +143,7 @@
 <h1>A Two-dimensional Example</h1>
 <p>To illustrate various <code>R</code> optimisation functions, we define a simple two-dimensional function below and make a contour plot. We use the <code>meshgrid</code> function from the package <code>pracma</code>, which gives <span class="math inline">\(x\)</span> and <span class="math inline">\(y\)</span> coordinates of a square grid in <span class="math inline">\(\mathbb{R}^2\)</span>.</p>
 <pre class="r"><code>library(pracma) # for meshgrid function
-f = function(x1, x2) cos(x1-1) + cos(x2) + sin(3*x1*x2) + x1^2 + x2^2
+f &lt;- function(x1, x2) cos(x1-1) + cos(x2) + sin(3*x1*x2) + x1^2 + x2^2
 meshgrid(seq(-2, 2, length=5))</code></pre>
 <pre><code>## $X
 ##      [,1] [,2] [,3] [,4] [,5]
@@ -160,17 +160,18 @@ meshgrid(seq(-2, 2, length=5))</code></pre>
 ## [3,]    0    0    0    0    0
 ## [4,]    1    1    1    1    1
 ## [5,]    2    2    2    2    2</code></pre>
-<pre class="r"><code>x = seq(-2, 2, length=101)
-grid_XY = meshgrid(x)
-z = matrix(mapply(f, grid_XY$X, grid_XY$Y), nrow=101)
+<pre class="r"><code>x &lt;- seq(-2, 2, length=101)
+grid_XY &lt;- meshgrid(x)
+z &lt;- matrix(mapply(f, grid_XY$X, grid_XY$Y), nrow=101)
 min(z)</code></pre>
 <pre><code>## [1] 0.5926044</code></pre>
-<pre class="r"><code>contour(x, x, z)</code></pre>
+<pre class="r"><code>contour(x, x, z, nlevels=20)</code></pre>
 <p><img src="/sc1/optimization/R-optimization_files/figure-html/unnamed-chunk-1-1.png" width="672" /></p>
 <div id="the-nlm-function" class="section level2">
 <h2>The <code>nlm</code> function</h2>
 <p>The <code>R</code> function <code>nlm</code> uses a Newton-type algorithm. We have the option of specifying the gradient function and the hessian function. For this, we use the <code>deriv</code> function in <code>R</code>, which takes an expression and outputs a function <span class="math inline">\(f\)</span> that returns the gradient (and hessian, if desired) of <span class="math inline">\(f\)</span> along with the value of <span class="math inline">\(f\)</span> itself.</p>
-<pre class="r"><code>f1 = deriv(expression(cos(x1-1) + cos(x2) + sin(3*x1*x2) + x1^2 + x2^2), namevec = c(&#39;x1&#39;, &#39;x2&#39;), function.arg=T, hessian=T)
+<pre class="r"><code>f1 &lt;- deriv(expression(cos(x1-1) + cos(x2) + sin(3*x1*x2) + x1^2 + x2^2),
+  namevec = c(&#39;x1&#39;, &#39;x2&#39;), function.arg=T, hessian=T)
 f1(0,0)</code></pre>
 <pre><code>## [1] 1.540302
 ## attr(,&quot;gradient&quot;)
@@ -354,10 +355,10 @@ f1(0,0)</code></pre>
 <p>We observe that BFGS and L-BFGS-B requires far fewer iterations than either Nelder-Mead or CG. Finally, we try simulated annealing, the only method that claims to be able find the global minimum.</p>
 <pre class="r"><code>optim(c(-1.5, 1.5), function(x) f(x[1], x[2]), method=&quot;SANN&quot;, control=list(maxit=100))</code></pre>
 <pre><code>## $par
-## [1] -0.38561331 -0.09203425
+## [1] -0.1065055 -0.1073793
 ## 
 ## $value
-## [1] 1.44333
+## [1] 1.499206
 ## 
 ## $counts
 ## function gradient 
@@ -370,10 +371,10 @@ f1(0,0)</code></pre>
 ## NULL</code></pre>
 <pre class="r"><code>optim(c(-1.5, 1.5), function(x) f(x[1], x[2]), method=&quot;SANN&quot;, control=list(maxit=1000))</code></pre>
 <pre><code>## $par
-## [1] -0.7827466  0.5735581
+## [1] -0.7503670  0.5538086
 ## 
 ## $value
-## [1] 0.5962407
+## [1] 0.5937428
 ## 
 ## $counts
 ## function gradient 
@@ -386,10 +387,10 @@ f1(0,0)</code></pre>
 ## NULL</code></pre>
 <pre class="r"><code>optim(c(-1.5, 1.5), function(x) f(x[1], x[2]), method=&quot;SANN&quot;, control=list(maxit=3000))</code></pre>
 <pre><code>## $par
-## [1] -0.7458700  0.6029792
+## [1] -0.7194955  0.5887697
 ## 
 ## $value
-## [1] 0.5938201
+## [1] 0.5924435
 ## 
 ## $counts
 ## function gradient 
@@ -406,16 +407,16 @@ f1(0,0)</code></pre>
 <div id="a-nonlinear-least-squares-example" class="section level1">
 <h1>A Nonlinear Least Squares Example</h1>
 <p>We use a dataset from the <code>nlmrt</code> function help file. A plot of the data as well as the fitted logistic model is shown below. We first use <code>R</code> functions that are specifically designed to solve nonlinear least squares problems, <code>nls</code> (part of base <code>R</code>) which uses the Gauss-Newton algorithm by default, and <code>nlsLM</code> (part of <code>minpack.lm</code> package) which uses the Levenberg-Marquardt algorithm.</p>
-<pre class="r"><code>ydat = c(5.308, 7.24, 9.638, 12.866, 17.069, 23.192, 31.443, 38.558, 50.156, 62.948, 75.995, 91.972)
-tdat = seq_along(ydat)
-my_data = data.frame(y=ydat, t=tdat)
-start1 = c(b1=1, b2=1, b3=1)
-my_model = y ~ b1/(1+b2*exp(-b3*t))
+<pre class="r"><code>ydat &lt;- c(5.308, 7.24, 9.638, 12.866, 17.069, 23.192, 31.443, 38.558, 50.156, 62.948, 75.995, 91.972)
+tdat &lt;- seq_along(ydat)
+my_data &lt;- data.frame(y=ydat, t=tdat)
+start1 &lt;- c(b1=1, b2=1, b3=1)
+my_model &lt;- y ~ b1/(1+b2*exp(-b3*t))
 try(nls(my_model, start=start1, data=my_data))</code></pre>
 <pre><code>## Error in nls(my_model, start = start1, data = my_data) : 
 ##   singular gradient</code></pre>
 <pre class="r"><code>library(minpack.lm)
-out_lm = nlsLM(my_model, start=start1, data=my_data)
+out_lm &lt;- nlsLM(my_model, start=start1, data=my_data)
 out_lm</code></pre>
 <pre><code>## Nonlinear regression model
 ##   model: y ~ b1/(1 + b2 * exp(-b3 * t))
@@ -432,7 +433,7 @@ legend(1, 95, legend=c(&#39;data&#39;, &#39;fitted model&#39;), col=c(&#39;red&#
 <p><img src="/sc1/optimization/R-optimization_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
 <p>We see that the Gauss-Newton algorithm actually fails for this slightly tricky dataset and model due to singular gradients, but the Levenberg-Marquardt algorithm, which can handle singuar gradients, has no problem finding a good fit for the data.</p>
 <p>Next we define the residue function explicitly as the objective function and uses general-purpose optimisation functions for this nonlinear least squares problem.</p>
-<pre class="r"><code>f = function(b, mydata) sum((mydata$y-b[1]/(1+b[2]*exp(-b[3]*mydata$t)))^2)
+<pre class="r"><code>f &lt;- function(b, mydata) sum((mydata$y-b[1]/(1+b[2]*exp(-b[3]*mydata$t)))^2)
 
 nlm(f, mydata=my_data, p=start1)</code></pre>
 <pre><code>## $minimum
@@ -449,7 +450,7 @@ nlm(f, mydata=my_data, p=start1)</code></pre>
 ## 
 ## $iterations
 ## [1] 45</code></pre>
-<pre class="r"><code>optim(par=start1, fn=f, mydata=my_data)</code></pre>
+<pre class="r"><code>optim(par=start1, fn=f, mydata=my_data) # default method is Nelder-Mead</code></pre>
 <pre><code>## $par
 ##        b1        b2        b3 
 ##  35.52886 -28.58678  18.73764 
@@ -520,10 +521,10 @@ nlm(f, mydata=my_data, p=start1)</code></pre>
 <pre class="r"><code>optim(par=start1, fn=f, mydata=my_data, method=&quot;SANN&quot;, control=list(maxit=30000))</code></pre>
 <pre><code>## $par
 ##         b1         b2         b3 
-## 96.0966527 34.3463484  0.4207035 
+## 98.1569218 30.9885739  0.4045519 
 ## 
 ## $value
-## [1] 255.1348
+## [1] 257.7268
 ## 
 ## $counts
 ## function gradient 
@@ -534,7 +535,7 @@ nlm(f, mydata=my_data, p=start1)</code></pre>
 ## 
 ## $message
 ## NULL</code></pre>
-<p>We see from the results that the only algorithms that succeeds in finding a reasonable solution to this problem are the Newton type methods. Both Nelder-Mead and conjugate gradient fail to get anywhere close to something reasoable. Simulated annealing also fails, despite running for 30,000 iterations and the problem being only 3-dimensional.</p>
+<p>We see from the results that the only algorithms that succeeds in finding a reasonable solution to this problem are the Newton type methods. Both Nelder-Mead and conjugate gradient fail to get anywhere close to something reasonable. Simulated annealing also fails, despite running for 30,000 iterations and the problem being only 3-dimensional.</p>
 </div>
 
 

@@ -139,7 +139,7 @@
 
 
 
-<p>An optimisation problem is the problem of finding the best solution from all feasible solutions. There are genenally speaking two types of optimisation problems: continuous or discrete, which refers to whether the variables are continuous or discrete. We will focus on continuous optimisation problems. Without any loss of generality, just as in built in <code>R</code> functions, we try to minimise (rather than maximise) a function.</p>
+<p>An optimisation problem is the problem of finding the best solution from all feasible solutions. There are genenally speaking two types of optimisation problems: continuous or discrete, which refers to whether the variables are continuous or discrete. We will focus on continuous optimisation problems. Without any loss of generality, just as in <code>R</code> functions, we try to minimise (rather than maximise) a function.</p>
 <p>The standard form of a continuous optimisation problem is as follows:</p>
 <p><span class="math display">\[ \begin{eqnarray}
   \arg\min_x f(x) \ \mathrm{ subject \ to } \
@@ -148,11 +148,11 @@
   \end{eqnarray}
 \]</span>
 where <span class="math inline">\(f:\mathbb{R}^N \to \mathbb{R}\)</span> is the objective function and <span class="math inline">\(g_i\)</span> and <span class="math inline">\(h_j\)</span> are constraints.</p>
-<p>We will mainly discuss optimisation without constraints here, although we note that the <code>R</code> function <code>optim</code> can deal with with box constraints if we choose the L-BFGS-B algorithm. The most common <code>R</code> function to deal with constrained optimisation problem is <code>constrOptim</code>.</p>
+<p>We will mainly discuss optimisation without constraints here, although we note that the <code>R</code> function <code>optim</code> can deal with box constraints if we choose the L-BFGS-B algorithm. The most common <code>R</code> function to deal with constrained optimisation problem is <code>constrOptim</code>.</p>
 <div id="one-dimensional-optimisation" class="section level1">
 <h1>One-Dimensional Optimisation</h1>
 <p>We start with the one-dimensional case where we can graph the function easily.</p>
-<pre class="r"><code>f = function(x) cos(x) + cos(2*x) + sin(3*x)
+<pre class="r"><code>f &lt;- function(x) cos(x) + cos(2*x) + sin(3*x)
 curve(f, from=0, to=2*pi)</code></pre>
 <p><img src="/sc1/optimization/numerical-optimization_files/figure-html/unnamed-chunk-1-1.png" width="672" /></p>
 <div id="the-optimize-function" class="section level2">
@@ -171,7 +171,7 @@ curve(f, from=0, to=2*pi)</code></pre>
 ## 
 ## $objective
 ## [1] -2.038528</code></pre>
-<p>It seems using <code>optimize</code> is a hit or miss affair even with a simple function as above. What algorithm is behind this function? According to the documentation, the method is based on golden section search, which is known to work well for a uni-modal function where the minimum is within the search interval. If the search interval contains multiple extrema, the golden search algorithm will converge to one of these extrema. But a plus is that no evaluation of derivatives is necessary.</p>
+<p>It seems using <code>optimize</code> is a hit or miss affair even with a simple function as above. What algorithm is behind this function? According to the documentation, the method is based on golden section search, which is known to work well for a uni-modal function where the minimum is within the search interval. If the search interval contains multiple extrema, the golden section search algorithm will converge to one of these extrema. But a plus is that no evaluation of derivatives is necessary.</p>
 <p>We can also specify a paramter <code>tol</code> for <code>optimize</code>, which will stop the search once tolerance is reached.</p>
 <pre class="r"><code>optimize(f, interval=c(0,1.5*pi), tol=1e-2)</code></pre>
 <pre><code>## $minimum
@@ -193,12 +193,12 @@ The idea of Newton is simply to iteratively apply the formula
 <span class="math display">\[ x \leftarrow x - \frac{g(x)}{g&#39;(x)}. \]</span>
 There is a nice animation on <a href="https://en.wikipedia.org/wiki/Newton%27s_method#Description">wikipedia</a> to show how Newton’s method works.</p>
 <p>In order to apply it to the optimisation problem, we solve for <span class="math inline">\(f&#39;(x)=0\)</span>.</p>
-<pre class="r"><code>f_sym = expression(cos(x) + cos(2*x) + sin(3*x))
-f1_sym = D(f_sym, &#39;x&#39;); f1 = function(x) eval(f1_sym)
-f2_sym = D(f1_sym, &#39;x&#39;); f2 = function(x) eval(f2_sym)
-x = 2
+<pre class="r"><code>f_sym &lt;- expression(cos(x) + cos(2*x) + sin(3*x))
+f1_sym &lt;- D(f_sym, &#39;x&#39;); f1 &lt;- function(x) eval(f1_sym)
+f2_sym &lt;- D(f1_sym, &#39;x&#39;); f2 &lt;- function(x) eval(f2_sym)
+x &lt;- 2
 for (i in 1:6) {
-  x = x - f1(x) / f2(x); cat(x, &#39;\n&#39;)
+  x &lt;- x - f1(x) / f2(x); cat(x, &#39;\n&#39;)
 }</code></pre>
 <pre><code>## 1.371591 
 ## 1.686732 
@@ -206,9 +206,9 @@ for (i in 1:6) {
 ## 1.648062 
 ## 1.648062 
 ## 1.648062</code></pre>
-<pre class="r"><code>x = 1
+<pre class="r"><code>x &lt;- 1
 for (i in 1:6) {
-  x = x - f1(x) / f2(x); cat(x, &#39;\n&#39;)
+  x &lt;- x - f1(x) / f2(x); cat(x, &#39;\n&#39;)
 }</code></pre>
 <pre><code>## -37.61615 
 ## -37.2677 
@@ -216,11 +216,11 @@ for (i in 1:6) {
 ## -37.3609 
 ## -37.3609 
 ## -37.3609</code></pre>
-<p>As one can see, if the initial guess is somewhat close to a local minimum, then convergence to that minimum is rapid. But if the initial guess is not that close (which is hard to know before hand), then the value Newton’s method converges to seems to be quite willful. Let’s see what the function is like near -37:</p>
+<p>As one can see, if the initial guess is somewhat close to a local minimum, then convergence to that minimum is rapid. But if the initial guess is not that close (which is hard to know beforehand), then the value Newton’s method converges to seems to be quite willful. Let’s see what the function is like near -37:</p>
 <pre class="r"><code>curve(f, from=-40, to=-30)</code></pre>
 <p><img src="/sc1/optimization/numerical-optimization_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
 <p>It seems -37.36 is a local maximum, which is not surprising since Newton’s method doesn’t distinguish between mimima and maxima. Another downside of Newton’s method is the requirement of second derivatives, which may not be available all the time.</p>
-<p>One dimensional optimisation problems should be easy, but as we have seen, even these “easy”" problems can be troublesome for algorithms if we simply apply them blindly.</p>
+<p>One dimensional optimisation problems should be easy, but as we have seen, even these “easy” problems can be troublesome for algorithms if we simply apply them blindly.</p>
 </div>
 </div>
 <div id="multi-dimensional-optimisation" class="section level1">
@@ -244,7 +244,7 @@ for (i in 1:6) {
 </div>
 <div id="newton-type-methods" class="section level2">
 <h2>Newton type methods</h2>
-<p>Recall that with Newton’s method for one-dimensional functions, we need the first two derivatives of the function we try to minimize. For multi-dimensional function, Newton’s method becomes <span class="math display">\[x \leftarrow x - [Hf(x)]^{-1} \nabla f(x),\]</span> where we need to compute the matrix inverse of the Hessian, which can be expensive for multi-dimensional problems since the Hessian matrix may be very large. Numerically computing the inverse of the Hessian matrix is in any case undesirable. Quasi-Newton methods aim to replace the inverse Hessian matrix by a reasonable estimate.</p>
+<p>Recall that with Newton’s method for one-dimensional functions, we need the first two derivatives of the function we try to minimise. For multi-dimensional function, Newton’s method becomes <span class="math display">\[x \leftarrow x - [Hf(x)]^{-1} \nabla f(x),\]</span> where we need to compute the matrix inverse of the Hessian, which can be expensive for multi-dimensional problems since the Hessian matrix may be very large. Numerically computing the inverse of the Hessian matrix is in any case undesirable. Quasi-Newton methods aim to replace the inverse Hessian matrix by a reasonable estimate.</p>
 <p>The most common quasi-Newton method is BFGS and its close relative L-BFGS. Details regarding the BFGS algorithm can be found on <a href="https://en.wikipedia.org/wiki/Broyden%E2%80%93Fletcher%E2%80%93Goldfarb%E2%80%93Shanno_algorithm">wikipedia</a>, where <span class="math inline">\(B_k\)</span> is an approximation to the Hessian matrix and its inverse is never computed. Rather, <span class="math inline">\(B_{k+1}^{-1}\)</span> is computed using <span class="math inline">\(B_k^{-1}\)</span>, without performing an explicit matrix inversion.</p>
 <p>The BFGS algorithm will store both <span class="math inline">\(B_k\)</span> and <span class="math inline">\(B_k^{-1}\)</span>, which are likely to be dense matrices. This causes memory problems when the dimension is higher than say 1000. The low memory version of BFGS, L-BFGS, solves this problem by storing a few vectors (rather than the full approximate Hessian matrix and its inverse) that represents <span class="math inline">\(B_k\)</span>.</p>
 </div>
@@ -263,7 +263,7 @@ for (i in 1:6) {
 <div id="stochastic-gradient-descent" class="section level1">
 <h1>Stochastic Gradient Descent</h1>
 <p>Methods such as BFGS and Levenberg-Marquardt are highly efficient but they compute the gradient vectors taking into account all of the dataset. Such methods are known as batch methods. In many big data applications, however, the dataset can be too large to hold in computer memory at the same time. This is the main motivation behind stochastic gradient descent (SGD), which changes the parameter in the negative gradient direction taking into account only a few data samples. SGD is especially popular for the training of neural networks, where the full back propagation over the full training set can be very expensive computationally.</p>
-<p>In the simplest form, SGD takes on the following form: <span class="math display">\[\beta \leftarrow \beta - \gamma r_i \nabla r_i(\beta),\]</span> where <span class="math inline">\(i\)</span> cycles through all data points in a deterministic or random fashion. One can also combine a number of data samples into “minibatches” and update the parameter <span class="math inline">\(\beta\)</span> using samples in each minibatch.</p>
+<p>In the simplest form, SGD takes on the following form: <span class="math display">\[\beta \leftarrow \beta - \gamma r_i \nabla r_i(\beta),\]</span> where <span class="math inline">\(i\)</span> cycles through all data points in a deterministic or random fashion. One can also combine a number of data samples into “mini-batches” and update the parameter <span class="math inline">\(\beta\)</span> using samples in each minibatch.</p>
 </div>
 
 
