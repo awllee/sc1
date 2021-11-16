@@ -7,7 +7,7 @@ weight: 1
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-An optimisation problem is the problem of finding the best solution from all feasible solutions. There are genenally speaking two types of optimisation problems: continuous or discrete, which refers to whether the variables are continuous or discrete. We will focus on continuous optimisation problems. Without any loss of generality, just as in built in `R` functions, we try to minimise (rather than maximise) a function.
+An optimisation problem is the problem of finding the best solution from all feasible solutions. There are genenally speaking two types of optimisation problems: continuous or discrete, which refers to whether the variables are continuous or discrete. We will focus on continuous optimisation problems. Without any loss of generality, just as in `R` functions, we try to minimise (rather than maximise) a function.
 
 The standard form of a continuous optimisation problem is as follows:
 
@@ -19,14 +19,14 @@ $$ \begin{eqnarray}
 $$
 where $f:\mathbb{R}^N \to \mathbb{R}$ is the objective function and $g_i$ and $h_j$ are constraints.
 
-We will mainly discuss optimisation without constraints here, although we note that the `R` function `optim` can deal with with box constraints if we choose the L-BFGS-B algorithm. The most common `R` function to deal with constrained optimisation problem is `constrOptim`.
+We will mainly discuss optimisation without constraints here, although we note that the `R` function `optim` can deal with box constraints if we choose the L-BFGS-B algorithm. The most common `R` function to deal with constrained optimisation problem is `constrOptim`.
 
 # One-Dimensional Optimisation
 
 We start with the one-dimensional case where we can graph the function easily.
 
 ```{R}
-f = function(x) cos(x) + cos(2*x) + sin(3*x)
+f <- function(x) cos(x) + cos(2*x) + sin(3*x)
 curve(f, from=0, to=2*pi)
 ```
 
@@ -44,7 +44,7 @@ We see that the `optimize` function finds a local minimum at 3.82, but not the g
 optimize(f, interval=c(0, 1.5*pi))
 ```
 
-It seems using `optimize` is a hit or miss affair even with a simple function as above. What algorithm is behind this function? According to the documentation, the method is based on golden section search, which is known to work well for a uni-modal function where the minimum is within the search interval. If the search interval contains multiple extrema, the golden search algorithm will converge to one of these extrema. But a plus is that no evaluation of derivatives is necessary.
+It seems using `optimize` is a hit or miss affair even with a simple function as above. What algorithm is behind this function? According to the documentation, the method is based on golden section search, which is known to work well for a uni-modal function where the minimum is within the search interval. If the search interval contains multiple extrema, the golden section search algorithm will converge to one of these extrema. But a plus is that no evaluation of derivatives is necessary.
 
 We can also specify a paramter `tol` for `optimize`, which will stop the search once tolerance is reached.
 
@@ -68,20 +68,20 @@ There is a nice animation on [wikipedia](https://en.wikipedia.org/wiki/Newton%27
 In order to apply it to the optimisation problem, we solve for $f'(x)=0$.
 
 ```{R}
-f_sym = expression(cos(x) + cos(2*x) + sin(3*x))
-f1_sym = D(f_sym, 'x'); f1 = function(x) eval(f1_sym)
-f2_sym = D(f1_sym, 'x'); f2 = function(x) eval(f2_sym)
-x = 2
+f_sym <- expression(cos(x) + cos(2*x) + sin(3*x))
+f1_sym <- D(f_sym, 'x'); f1 <- function(x) eval(f1_sym)
+f2_sym <- D(f1_sym, 'x'); f2 <- function(x) eval(f2_sym)
+x <- 2
 for (i in 1:6) {
-  x = x - f1(x) / f2(x); cat(x, '\n')
+  x <- x - f1(x) / f2(x); cat(x, '\n')
 }
-x = 1
+x <- 1
 for (i in 1:6) {
-  x = x - f1(x) / f2(x); cat(x, '\n')
+  x <- x - f1(x) / f2(x); cat(x, '\n')
 }
 ```
 
-As one can see, if the initial guess is somewhat close to a local minimum, then convergence to that minimum is rapid. But if the initial guess is not that close (which is hard to know before hand), then the value Newton's method converges to seems to be quite willful. Let's see what the function is like near -37:
+As one can see, if the initial guess is somewhat close to a local minimum, then convergence to that minimum is rapid. But if the initial guess is not that close (which is hard to know beforehand), then the value Newton's method converges to seems to be quite willful. Let's see what the function is like near -37:
 
 ```{R}
 curve(f, from=-40, to=-30)
@@ -89,7 +89,7 @@ curve(f, from=-40, to=-30)
 
 It seems -37.36 is a local maximum, which is not surprising since Newton's method doesn't distinguish between mimima and maxima. Another downside of Newton's method is the requirement of second derivatives, which may not be available all the time.
 
-One dimensional optimisation problems should be easy, but as we have seen, even these "easy"" problems can be troublesome for algorithms if we simply apply them blindly.
+One dimensional optimisation problems should be easy, but as we have seen, even these "easy" problems can be troublesome for algorithms if we simply apply them blindly.
 
 # Multi-dimensional Optimisation
 
@@ -115,7 +115,7 @@ A well-known improved gradient type method is the conjugate gradient (CG) algori
 
 ## Newton type methods
 
-Recall that with Newton's method for one-dimensional functions, we need the first two derivatives of the function we try to minimize. For multi-dimensional function, Newton's method becomes $$x \leftarrow x - [Hf(x)]^{-1} \nabla f(x),$$ where we need to compute the matrix inverse of the Hessian, which can be expensive for multi-dimensional problems since the Hessian matrix may be very large. Numerically computing the inverse of the Hessian matrix is in any case undesirable. Quasi-Newton methods aim to replace the inverse Hessian matrix by a reasonable estimate.
+Recall that with Newton's method for one-dimensional functions, we need the first two derivatives of the function we try to minimise. For multi-dimensional function, Newton's method becomes $$x \leftarrow x - [Hf(x)]^{-1} \nabla f(x),$$ where we need to compute the matrix inverse of the Hessian, which can be expensive for multi-dimensional problems since the Hessian matrix may be very large. Numerically computing the inverse of the Hessian matrix is in any case undesirable. Quasi-Newton methods aim to replace the inverse Hessian matrix by a reasonable estimate.
 
 The most common quasi-Newton method is BFGS and its close relative L-BFGS. Details regarding the BFGS algorithm can be found on [wikipedia](https://en.wikipedia.org/wiki/Broyden%E2%80%93Fletcher%E2%80%93Goldfarb%E2%80%93Shanno_algorithm), where $B_k$ is an approximation to the Hessian matrix and its inverse is never computed. Rather, $B_{k+1}^{-1}$ is computed using $B_k^{-1}$, without performing an explicit matrix inversion.
 
@@ -139,4 +139,4 @@ The Levenberg-Marquardt algorithm address this problem by damping. It pretends t
 
 Methods such as BFGS and Levenberg-Marquardt are highly efficient but they compute the gradient vectors taking into account all of the dataset. Such methods are known as batch methods. In many big data applications, however, the dataset can be too large to hold in computer memory at the same time. This is the main motivation behind stochastic gradient descent (SGD), which changes the parameter in the negative gradient direction taking into account only a few data samples. SGD is especially popular for the training of neural networks, where the full back propagation over the full training set can be very expensive computationally.
 
-In the simplest form, SGD takes on the following form: $$\beta \leftarrow \beta - \gamma r_i \nabla r_i(\beta),$$ where $i$ cycles through all data points in a deterministic or random fashion. One can also combine a number of data samples into "minibatches" and update the parameter $\beta$ using samples in each minibatch.
+In the simplest form, SGD takes on the following form: $$\beta \leftarrow \beta - \gamma r_i \nabla r_i(\beta),$$ where $i$ cycles through all data points in a deterministic or random fashion. One can also combine a number of data samples into "mini-batches" and update the parameter $\beta$ using samples in each minibatch.
