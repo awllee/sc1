@@ -43,7 +43,7 @@ This probabilistic convergence result does not provide any information about the
 **Proposition** (Variance). Let $(X_{n})_ {n \geq 1}$ and $S_n(f)$ be as in the SLLN, where $f \in L_2(\mathsf{X}, \mu)$. Then
 $${\rm var} \{ n^{-1} S_n(f) \} = \frac{\mu(f^2)-\mu(f)^2}{n}.$$
 
-In fact, for $f \in \in L_2(\mathsf{X}, \mu)$, the asymptotic distribution of $\sqrt{n} \{ n^{-1} S_n(f) - \mu(f) \}$ is normal, by virtue of the Central Limit Theorem. This can be used, e.g., to produce asymptotically exact confidence intervals for $\mu(f)$.
+In fact, for $f \in L_2(\mathsf{X}, \mu)$, the asymptotic distribution of $\sqrt{n} \{ n^{-1} S_n(f) - \mu(f) \}$ is normal, by virtue of the Central Limit Theorem. This can be used, e.g., to produce asymptotically exact confidence intervals for $\mu(f)$.
 
 **Theorem** (CLT). Let $(X_{n})_ {n \geq 1}$ and $S_n(f)$ be as in the SLLN, where $f \in L_2(\mathsf{X}, \mu)$. Then
 $$n^{1/2} \{ n^{-1} S_n(f) - \mu(f) \} \overset{L}{\to} X \sim N(0,\mu(\bar{f}^2)),$$
