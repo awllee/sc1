@@ -355,10 +355,10 @@ f1(0,0)</code></pre>
 <p>We observe that BFGS and L-BFGS-B requires far fewer iterations than either Nelder-Mead or CG. Finally, we try simulated annealing, the only method that claims to be able find the global minimum.</p>
 <pre class="r"><code>optim(c(-1.5, 1.5), function(x) f(x[1], x[2]), method=&quot;SANN&quot;, control=list(maxit=100))</code></pre>
 <pre><code>## $par
-## [1] -0.1065055 -0.1073793
+## [1] -0.6810281  0.5776396
 ## 
 ## $value
-## [1] 1.499206
+## [1] 0.6005426
 ## 
 ## $counts
 ## function gradient 
@@ -371,10 +371,10 @@ f1(0,0)</code></pre>
 ## NULL</code></pre>
 <pre class="r"><code>optim(c(-1.5, 1.5), function(x) f(x[1], x[2]), method=&quot;SANN&quot;, control=list(maxit=1000))</code></pre>
 <pre><code>## $par
-## [1] -0.7503670  0.5538086
+## [1] -0.6831140  0.5557141
 ## 
 ## $value
-## [1] 0.5937428
+## [1] 0.6047532
 ## 
 ## $counts
 ## function gradient 
@@ -387,10 +387,10 @@ f1(0,0)</code></pre>
 ## NULL</code></pre>
 <pre class="r"><code>optim(c(-1.5, 1.5), function(x) f(x[1], x[2]), method=&quot;SANN&quot;, control=list(maxit=3000))</code></pre>
 <pre><code>## $par
-## [1] -0.7194955  0.5887697
+## [1] -0.7388159  0.5737927
 ## 
 ## $value
-## [1] 0.5924435
+## [1] 0.5920779
 ## 
 ## $counts
 ## function gradient 
@@ -521,10 +521,10 @@ nlm(f, mydata=my_data, p=start1)</code></pre>
 <pre class="r"><code>optim(par=start1, fn=f, mydata=my_data, method=&quot;SANN&quot;, control=list(maxit=30000))</code></pre>
 <pre><code>## $par
 ##         b1         b2         b3 
-## 98.1569218 30.9885739  0.4045519 
+## 99.4066804 32.4344387  0.4058306 
 ## 
 ## $value
-## [1] 257.7268
+## [1] 231.5146
 ## 
 ## $counts
 ## function gradient 
