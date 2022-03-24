@@ -14,43 +14,43 @@ Below we define the function to be minimised $f$ as well as the residue function
 
 ```{r}
 # data
-ydat = c(5.308, 7.24, 9.638, 12.866, 17.069, 23.192, 31.443, 38.558, 50.156, 62.948, 75.995, 91.972)
-tdat = seq_along(ydat)
-n_iter = 20000
-f_val_trace = matrix(NA, n_iter, 2) # to keep track of value of functions
+ydat <- c(5.308, 7.24, 9.638, 12.866, 17.069, 23.192, 31.443, 38.558, 50.156, 62.948, 75.995, 91.972)
+tdat <- seq_along(ydat)
+n_iter <- 20000
+f_val_trace <- matrix(NA, n_iter, 2) # to keep track of value of functions
 
 # define the function and the gradient of residue
-f = function(b, tdat, ydat) sum((ydat - b[1]/(1+b[2]*exp(-b[3]/100*tdat)))^2)
-r1 = deriv(expression( (y - b1/(1+b2*exp(-b3/100*x)))^2), namevec = c('b1','b2','b3','x','y'), function.arg=T)
+f <- function(b, tdat, ydat) sum((ydat -     b[1]/(1+b[2]*exp(-b[3]/100*tdat)))^2)
+r1 <- deriv(expression( (y - b1/(1+b2*exp(-b3/100*x)))^2), namevec = c('b1','b2','b3','x','y'), function.arg=T)
 
 # steepest descent algorithm with line search
-b = c(10, 10, 10) # initial values of b
-gammas = 0.1 / (2^(1:10)) # the gammas to try in the line search
-f_vals = numeric(length(gammas)) # to store values of f in the line search
-ndat = length(tdat)
-temp = matrix(NA, nrow=ndat, ncol=4) # to store partial derivatives for each data point
+b <- c(10, 10, 10) # initial values of b
+gammas <- 0.1 / (2^(1:10)) # the gammas to try in the line search
+f_vals <- numeric(length(gammas)) # to store values of f in the line search
+ndat <- length(tdat)
+temp <- matrix(NA, nrow=ndat, ncol=4) # to store partial derivatives for each data point
 for (k in 1:n_iter) { # number of iterations
   # compute partial derivatives
   for (i in 1:ndat) {
-    g_out = r1(b[1], b[2], b[3], tdat[i], ydat[i])
-    temp[i,4] = as.numeric(g_out) # store value of function at 4th position
-    temp[i,1:3] = attr(g_out, 'gradient')[1:3]
+    g_out <- r1(b[1], b[2], b[3], tdat[i], ydat[i])
+    temp[i,4] <- as.numeric(g_out) # store value of function at 4th position
+    temp[i,1:3] <- attr(g_out, 'gradient')[1:3]
   }
   # gradient vector
-  f_grad_val = colSums(temp)
+  f_grad_val <- colSums(temp)
   # line search
   for (i_gamma in 1:length(gammas)) {
-    f_vals[i_gamma] = f(b-gammas[i_gamma]*f_grad_val[1:3], tdat, ydat)
+    f_vals[i_gamma] <- f(b-gammas[i_gamma]*f_grad_val[1:3], tdat, ydat)
   }
-  i_gamma = which.min(f_vals)
+  i_gamma <- which.min(f_vals)
   if (f_vals[i_gamma] < f_grad_val[4]) {
-    b = b - gammas[i_gamma] * f_grad_val[1:3]
+    b <- b - gammas[i_gamma] * f_grad_val[1:3]
   } else {
     # if function value cannot be decreased, stop with a warning
     warning('Unable to decrease residue')
     break
   }
-  f_val_trace[k, 1] = f_grad_val[4]
+  f_val_trace[k, 1] <- f_grad_val[4]
   # print every 1000 iterations
   if (k %% 1000 == 0)
     cat('k=', k, ', f_value=', f_grad_val[4], ', gamma=', gammas[i_gamma], ',  b=', b, '\n')
@@ -62,19 +62,19 @@ Upon running this steepest search algorithm, we see that it is much slower than 
 Even though there is no need to use stochastic gradient descent on a dataset with so few points, we nevertheless implement it below to have a rough idea of how things work. I have picked $\gamma=0.0005$ below, which is as large as possible for the function value trace plot not to have multiple weird spikes.
 
 ```{r}
-b = c(10, 10, 10)
-gamma = 0.0005 # we use a fixed gamma without line search
-ndat = length(tdat)
-temp = matrix(NA, nrow=ndat, ncol=4)
+b <- c(10, 10, 10)
+gamma <- 0.0005 # we use a fixed gamma without line search
+ndat <- length(tdat)
+temp <- matrix(NA, nrow=ndat, ncol=4)
 for (k in 1:n_iter) {
   # here we can also randomly choose an order to apply the dataset using sample.int
   for (i in 1:ndat) {
-    r_grad_val = r1(b[1], b[2], b[3], tdat[i], ydat[i])
-    temp[i,4] = as.numeric(r_grad_val)
-    temp[i,1:3] = attr(r_grad_val, 'gradient')[1:3]
-    b = b - gamma * temp[i,1:3]
+    r_grad_val <- r1(b[1], b[2], b[3], tdat[i], ydat[i])
+    temp[i,4] <- as.numeric(r_grad_val)
+    temp[i,1:3] <- attr(r_grad_val, 'gradient')[1:3]
+    b <- b - gamma * temp[i,1:3]
   }
-  f_val_trace[k, 2] = f(b, tdat, ydat)
+  f_val_trace[k, 2] <- f(b, tdat, ydat)
   if (k %% 1000 == 0) cat('k=', k, ', f_value=', f_val_trace[k, 2], ',  b=', b, '\n')
 }
 
@@ -84,4 +84,4 @@ lines(f_val_trace[, 1], col='blue')
 legend(n_iter/50, max(f_val_trace)*0.95, legend=c('SGD', 'steepest descent'), col=c('red', 'blue'), lty=c(1,1))
 ```
 
-We see that in this problem SGD does not compare favourably to steepest descent, whose performance is already woeful compare to Levenberg-Marquardt. In fact, SGD does not converge even after 300,000 iterations. But one thing to keep in mind is that here the size of the dataset is very small and the parameter optimisation problem quite hard. With a much larger dataset, SGD performs reasonably well and is moreover, easy to implement. Furthermore, in real-world applications, whether the algorithm converges is not as important as the out-of-sample performance of the model. In reality, the SGD algorithm would have been stopped when out-of-sample performance begins to deteteriorate, long before convergence.
+We see that in this problem SGD does not compare favourably to steepest descent, whose performance is already woeful compare to Levenberg-Marquardt. In fact, SGD does not converge even after 300,000 iterations. But one thing to keep in mind is that here the size of the dataset is very small and the parameter optimisation problem quite hard. With a much larger dataset, SGD performs reasonably well and is moreover, easy to implement. Furthermore, in real-world applications, whether the algorithm converges is not as important as the out-of-sample performance of the model. In reality, the SGD algorithm would have been stopped when out-of-sample performance begins to deteriorate, long before convergence.

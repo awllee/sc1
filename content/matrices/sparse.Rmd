@@ -9,14 +9,14 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## `Matrix` package
 
-The R `Matrix` package provides additional functions for both dense and sparse matrices that extend the basic matrix data type. In the `Matrix` package, dense matrices are stored as `dgeMatrix` objects. One useful function it adds for dense matrices is `rankMatrix`, which returns the rank of the input matrix, up to a certain tolerance if desired. Another useful function is `rcond`, which gives the condition number of a square matrix, defined to be the product of the norm of the matrix and the norm of its inverse.
+The `R` `Matrix` package provides additional functions for both dense and sparse matrices that extend the basic matrix data type. In the `Matrix` package, dense matrices are stored as `dgeMatrix` objects. One useful function it adds for dense matrices is `rankMatrix`, which returns the rank of the input matrix, up to a certain tolerance if desired. Another useful function is `rcond`, which gives the condition number of a square matrix, defined to be the product of the norm of the matrix and the norm of its inverse.
 
 
 ```{r}
 library(Matrix)
-A = Matrix(c(1,2,1,2), nrow=2, ncol=2)
-B = Matrix(c(1,2,1,2) + rnorm(4)/1e8, nrow=2, ncol=2)
-C = Matrix(rnorm(4), nrow=2, ncol=2)
+A <- Matrix(c(1,2,1,2), nrow=2, ncol=2)
+B <- Matrix(c(1,2,1,2) + rnorm(4)/1e8, nrow=2, ncol=2)
+C <- Matrix(rnorm(4), nrow=2, ncol=2)
 c(rankMatrix(A), rankMatrix(B), rankMatrix(B, tol=1e-7))
 c(rcond(A), rcond(B), rcond(C), rcond(C/1e5))
 ```
@@ -25,31 +25,33 @@ A sparse matrix is one where most entries will be 0. It is inefficient to store 
 
 ```{r}
 set.seed(7)
-nrows = 1000
-ncols = 1000
-vals = sample(x=c(0, 1, 2), prob=c(0.98, 0.01, 0.01), size=nrows*ncols, replace=TRUE)
-m1 = matrix(vals, nrow=nrows, ncol=ncols)
-m2 = Matrix(vals, nrow=nrows, ncol=ncols, sparse = TRUE)
+nrows <- 1000
+ncols <- 1000
+vals <- sample(x=c(0, 1, 2), prob=c(0.98, 0.01, 0.01), size=nrows*ncols, replace=TRUE)
+m1 <- matrix(vals, nrow=nrows, ncol=ncols)
+m2 <- Matrix(vals, nrow=nrows, ncol=ncols, sparse=TRUE)
 m1[1:2, 1:10]
 m2[1:2, 1:10]
 c(object.size(m1), object.size(m2))
 ```
 
-By default, a sparse matrix in R is stored as a `dgCMatrix`, "d" for digit, "g" for general (i.e. not triangular or symmetric), "C" for column (not row or triplet). If one converts a sparse matrix to a dense `dgeMatrix`, then one loses the advantage in terms of memory storage. A `dgCMatrix` is stored using compressed sparse column (CSC) format. An alternative is the compressed sparse row (CSR) format, `dgRMatrix`, or triplets `dgTMatrix`. One can coerce a `dgCMatrix` into a `dgTMatrix` (and from `dgTMatrix` to `dgCMatrix`), but not a `dgRMatrix` from either `dgCMatrix` or `dgTMatrix` .
+By default, a sparse matrix in `R` is stored as a `dgCMatrix`, "d" for digit, "g" for general (i.e. not triangular or symmetric), "C" for column (not row or triplet). If one converts a sparse matrix to a dense `dgeMatrix`, then one loses the advantage in terms of memory storage. A `dgCMatrix` is stored using compressed sparse column (CSC) format. An alternative is the compressed sparse row (CSR) format, `dgRMatrix`, or triplets `dgTMatrix`. One can coerce a `dgCMatrix` into a `dgTMatrix` (and from `dgTMatrix` to `dgCMatrix`), but not a `dgRMatrix` from either `dgCMatrix` or `dgTMatrix` .
 
 ```{r}
 str(m2, max.level=1)
 str(m2)
 which(m2[,1]>0)
 object.size(as(m2, 'dgeMatrix'))
-m3 = as(m1, 'dgRMatrix')
+m3 <- as(m1, 'dgRMatrix')
 object.size(m3)
 m3[1:2, 1:10]
 ```
 
+Note that even though `m3` is a `dgRMatrix`, `m3[1:2, 1:10]` returns a `dgTMatrix`.
+
 ## Basic Operations of sparse matrices
 ```{r}
-A = as(matrix(c(1,0,0,0,2,0), nrow=3, ncol=2), 'dgCMatrix')
+A <- as(matrix(c(1,0,0,0,2,0), nrow=3, ncol=2), 'dgCMatrix')
 A / 10
 A + 10 # + or - operation turns a dgCMatrix into a dgeMatrix
 A %*% c(1, 0) # matrix multiplication by a dense vector outputs a dgeMatrix
@@ -57,14 +59,15 @@ A %*% Matrix(c(1, 0), nrow=2, ncol=1, sparse=TRUE)
 A %*% t(A)
 rbind(A, A)
 ```
-## Obtaining the dependency graph of R packages
+
+## Obtaining the dependency graph of `R` packages
 
 We use the `miniCRAN` package to build an `R` package dependency graph. A graph $G=(V,E)$, where $V$ denotes the set of vertices, and $E$ denotes the set of edges, can also be represented by an adjacency matrix $M$. The matrix $M$ is square with each row and column corresponding to a vertex. If there is an edge $(i,j)$, then $M_{ij}=1$; all other entries in $M$ are 0. Thus one can often expect $M$ to be quite sparse. The following piece of code reads the package dependency information and constructs the corresponding adjacency matrix.
 
 ```{r}
 library(miniCRAN) # for obtaining dependency relations of R packages
 load('matrix_packages.RData')
-pkg = 'igraph'
+pkg <- 'igraph'
 pkgDep(pkg, suggests=FALSE, enhances=FALSE, includeBasePkgs=TRUE)
 plot(g1, vertex.size=20)
 m_pkg1
@@ -78,13 +81,13 @@ library(miniCRAN)
 library(igraph) # for turning a graph into an adjacency matrix
 #pkgs_db = available.packages('https://mran.revolutionanalytics.com/snapshot/2019-08-19/src/contrib',
 pkgs_db = available.packages('https://cran.microsoft.com/snapshot/2020-11-17/src/contrib/', type='source', filters=NULL)
-g1 = makeDepGraph('igraph', includeBasePkgs=TRUE, suggests=FALSE, enhances=FALSE)
+g1 <- makeDepGraph('igraph', includeBasePkgs=TRUE, suggests=FALSE, enhances=FALSE)
 # here we obtain graphs of "enhancement", e.g. Rcpp is enhanced by many packages but enhances none
-g2 = makeDepGraph(pkgs_db[, 'Package'], availPkgs=pkgs_db, includeBasePkgs=FALSE, suggests=FALSE, enhances=TRUE)
-m_pkg1 = get.adjacency(g1, type="both", attr=NULL, names=TRUE, sparse=TRUE)
+g2 <- makeDepGraph(pkgs_db[, 'Package'], availPkgs=pkgs_db, includeBasePkgs=FALSE, suggests=FALSE, enhances=TRUE)
+m_pkg1 <- get.adjacency(g1, type="both", attr=NULL, names=TRUE, sparse=TRUE)
 # take transpose since our convention is storage by row
-m_pkg2 = t(get.adjacency(g2, type="both", attr=NULL, names=TRUE, sparse=TRUE))
-save(g1, g2, m_pkg1, m_pkg2, file = 'matrix_packages.RData')
+m_pkg2 <- t(get.adjacency(g2, type="both", attr=NULL, names=TRUE, sparse=TRUE))
+save(g1, g2, m_pkg1, m_pkg2, file='matrix_packages.RData')
 ```
 
 ## The Pagerank algorithm
@@ -105,20 +108,20 @@ $$ PR^{(k+1)} = \left[\frac{1-d}{N}, \ldots, \frac{1-d}{N} \right] + d \ PR^{(k)
   \right]$$
 
 ```{r}
-compute_pagerank = function(M) {
-  d = 0.85 # damping factor
-  name_pkgs = M@Dimnames[[1]]
-  N = dim(M)[1]
-  M_rowsum = rowSums(M)
+compute_pagerank <- function(M) {
+  d <- 0.85 # damping factor
+  name_pkgs <- M@Dimnames[[1]]
+  N <- dim(M)[1]
+  M_rowsum <- rowSums(M)
   for (i in which(M_rowsum==0)) M[i,i] = 1
-  M_rowsum = rowSums(M)
+  M_rowsum <- rowSums(M)
   # This operation divides each column of M element-wise by M_rowsum
-  A = M / M_rowsum # A is a stochastic matrix
-  PR = rep(1/N, N)
+  A <- M / M_rowsum # A is a stochastic matrix
+  PR <- rep(1/N, N)
   for (i in 1:10) {
-    PR = (1-d)/N + d * (PR %*% A)
+    PR <- (1-d)/N + d * (PR %*% A)
     # print out 7 most important packages and their corresponding weights
-    i7 = order(PR, decreasing=TRUE)[1:7]
+    i7 <- order(PR, decreasing=TRUE)[1:7]
     print(name_pkgs[i7])
     print(PR[i7])
   }
@@ -128,16 +131,16 @@ compute_pagerank(m_pkg1)
 compute_pagerank(m_pkg2)
 ```
 
-As can be seen from the results, the package `Rcpp` is the most enhanced package. Even with a large graph with 14847 vertices, the convergence of the pagerank algorithm is rapid.
+As can be seen from the results, the package `Rcpp` is the most enhanced package. Even with a large graph with 16236 vertices, the convergence of the pagerank algorithm is rapid.
 
 ## Solving large linear systems
 
 When it comes to sparse systems, it becomes even worse if one tries to invert any sparse matrix, as the inverse of a sparse matrix is not guaranteed to be sparse. We illustrate this with a tri-diagonal matrix
 
 ```{r}
-n = 100
-A1 = bandSparse(n, k=c(0,1), diag=list(rep(1,n), rep(-0.2, n)), symm=T)
-A1inv = solve(A1)
+n <- 100
+A1 <- bandSparse(n, k=c(0,1), diag=list(rep(1,n), rep(-0.2, n)), symm=T)
+A1inv <- solve(A1)
 c(object.size(A1), object.size(A1inv))
 c(sum(abs(A1) < 1e-100), sum(abs(A1inv) < 1e-100))
 ```

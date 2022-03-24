@@ -113,20 +113,20 @@ It is a nice little exercise to derive the log-likelihood, as well as its gradie
 $$\ell(\theta ; y) = \sum_{i=1}^n y_i \log (\sigma(\theta^Tx_i)) + (1-y_i) \log (1 - \sigma(\theta^Tx_i)).$$
 
 \begin{equation}
-\label{eq:scorecomponent}
+(\#eq:scorecomponent)
 \frac{\partial \ell (\theta ; y)}{\partial \theta_j} = \sum_{i=1}^n [y_i - \sigma(\theta^T x_i)] x_{ij},\qquad j \in \{1,\ldots,d \}.
 \end{equation}
 
 \begin{equation}
-\label{eq:hessiancomponents}
+(\#eq:hessiancomponents)
 \frac{\partial^2 \ell (\theta ; y)}{\partial \theta_j \partial \theta_k} = - \sum_{i=1}^n \sigma(\theta^T x_i) [1 - \sigma(\theta^T x_i)] x_{ij} x_{ik},\qquad j,k \in \{1,\ldots,d \}.
 \end{equation}
 
-In fact, \autoref{eq:scorecomponent} implies that the score can be written as
+In fact, \@ref(eq:scorecomponent) implies that the score can be written as
 $$\nabla \ell(\theta; y) = X^T [y - p(\theta)],$$
 where $p(\theta)$ is the vector $(p_1(\theta),\ldots,p_n(\theta)$ where $p_i(\theta) = \sigma(\theta^T x_i)$.
 
-Similarly, \autoref{eq:hessiancomponents} implies that the Hessian can be written as
+Similarly, \@ref(eq:hessiancomponents) implies that the Hessian can be written as
 $$\nabla^2 \ell(\theta; y) = - X^T D(\theta) X,$$
 where $D(\theta)$ is the $n \times n$ diagonal matrix where the $i$th diagonal entry is $p_i(\theta)[1-p_i(\theta)]$ for $i \in \{1,\ldots,d\}$.
 

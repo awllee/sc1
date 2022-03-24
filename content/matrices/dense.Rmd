@@ -12,16 +12,16 @@ knitr::opts_chunk$set(echo = TRUE)
 Matrix is a two dimensional data structure in `R`. We can specify the values of entries in a matrix by column by default, or by row if `byrow=T` is set. Additionally, the column and row can have names, and can be renamed without changing values of matrix.
 
 ```{r}
-x = matrix(1:6, 2, 3)
+x <- matrix(1:6, 2, 3)
 class(x)
 attributes(x)
 dim(x)
-x2 = matrix(1:6, 2, 3, dimnames = list(c('A', 'B'), c('K', 'L', 'M')))
+x2 <- matrix(1:6, 2, 3, dimnames = list(c('A', 'B'), c('K', 'L', 'M')))
 x2
 colnames(x2)
 rownames(x2)
-colnames(x2) = c('C1', 'C2', 'C3')
-rownames(x2) = c('R1', 'R2')
+colnames(x2) <- c('C1', 'C2', 'C3')
+rownames(x2) <- c('R1', 'R2')
 x2
 ```
 
@@ -34,7 +34,7 @@ x[1, ,drop=F]
 
 `R` also has higher dimensional data structures, which is known as arrays.
 ```{r}
-y = array(1:6, c(2,4,2))
+y <- array(1:6, c(2,4,2))
 dim(y)
 y[,,1]
 y[,,2]
@@ -42,38 +42,37 @@ y[,,2]
 
 ## Solve linear systems
 
-If one would like to solve a linear system $Ax = b$, there are two ways in `R` to write the code. One way is to invert the matrix $A$ first and then multiple by $b$, i.e. `solve(A) %*% b`. The other way is to use `solve` directly to solve for $x$. We run an experiment with a Hilbert matrix of size 9. Hilbert matrices are know to be close to singular. We use the package `Matrix` here only to access the Hilbert matrix function. We will discuss the `Matrix` package in more detail when we discuss sparse matrices.
+If one would like to solve a linear system $Ax = b$, there are two ways in `R` to write the code. One way is to invert the matrix $A$ first and then multiply by $b$, i.e. `solve(A) %*% b`. The other way is to use `solve` directly to solve for $x$. We run an experiment with a Hilbert matrix of size 9. Hilbert matrices are known to be close to singular. We use the package `Matrix` here only to access the Hilbert matrix function. We will discuss the `Matrix` package in more detail when we discuss sparse matrices.
 
 ```{r}
-n = 9
-library(Matrix); A = as.matrix(Hilbert(n))
+n <- 9
+library(Matrix); A <- as.matrix(Hilbert(n))
 c(rankMatrix(A), rankMatrix(A, tol=1e-9), det(A))
-x = matrix(rnorm(n), nrow=n, ncol=1)
-b = A %*% x
-x1 = solve(A) %*% b
-x2 = solve(A, b)
+x <- matrix(rnorm(n), nrow=n, ncol=1)
+b <- A %*% x
+x1 <- solve(A) %*% b
+x2 <- solve(A, b)
 c(norm(x-x1, type='1'), norm(x-x2, type='1')) # compare 1-norm of error
 c(norm(b - A %*% x1, type='1'), norm(b - A %*% x2, type='1')) # compare residuals
 ```
 
-In the above, the function `norm` computes the matrix norm, with the 1-norm being $$\|A\|_1 = \max_{1\le j\le n} \sum_{i=1}^n |a_{ij}|.$$
 As can be seen from this example, solving directly is more accurate, not to mention faster. Unless a linear system needs to be repeated solved for different vectors, the matrix involved should never be inverted in `R`.
 
 ## Numerical stability, finite precision arithmetic
 
-In R and many other programming packages, a floating point number is stored as a "double" precision number. According to the IEEE754 standard, a double number consists of 64 binary bits arranged as follows:
+In `R` and many other programming packages, a floating point number is stored as a "double" precision number. According to the IEEE754 standard, a double number consists of 64 binary bits arranged as follows:
 
 - sign bit: 1 bit
-- exponent bit: 11 bits
-- significant precision: 52 bits
+- exponent: 11 bits
+- significant precision: 53 bits
 
-This means that there are largest and smallest finite numbers in R:
+This means that there are largest and smallest finite numbers in `R`:
 
 ```{r}
 c(2^(-1075), 2^(-1074), 2^1023, 2^1024, 2^1024 / 2^1024)
 ```
 
-With $2^{-52}\approx 2.22 \times 10^{-16}$, we can expect an error of order $10^{-16}$ in numerical representations (and therefore computation) of double numbers. For example,
+With $2^{-53}\approx 1.11 \times 10^{-16}$, we can expect an error of order $10^{-16}$ in numerical representations (and therefore computation) of double numbers. For example,
 
 ```{r}
 1 + 1e-15
@@ -89,7 +88,7 @@ This finite precision causes numerical errors when one performs arithmetic opera
 0.1 + 0.2 - 0.3
 ```
 
-In addition to floating point representation, R also has an integer data type "long", e.g. `1L` means 1 stored as a long integer.
+In addition to floating point representation, `R` also has an integer data type "long", e.g. `1L` means 1 stored as a long integer.
 
 ```{r}
 1 == 1L
@@ -110,44 +109,44 @@ all.equal(1L, 1)
 Due to finite precision, matrix operations will contain numerical errors, with matrix multiplication generally having larger errors due to many operations of addition and scalar multiplication.
 
 ```{r}
-A = matrix(rnorm(100), 10, 10); B = matrix(rnorm(100), 10, 10); C = rnorm(10)
+A <- matrix(rnorm(100), 10, 10); B = matrix(rnorm(100), 10, 10); C = rnorm(10)
 
 summary(c((A+B) - A - B))
 
 summary(c(A%*%B%*%C - A%*%(B%*%C)))
 ```
 
-The R function `solve` gives the inverse of a matrix for `solve(A)`, or solves a linear system $Ax=b$ for `solve(A,b)`. If one needs to solve $Ax=b$, then `solve(A,b)` generally speaking has lower numerical error than `solve(A) %*% b`, which is equivalent to computing $A^{-1} b$.
+The `R` function `solve` gives the inverse of a matrix for `solve(A)`, or solves a linear system $Ax=b$ for `solve(A,b)`. If one needs to solve $Ax=b$, then `solve(A,b)` generally speaking has lower numerical error than `solve(A) %*% b`, which is equivalent to computing $A^{-1} b$.
 
 ```{r}
-A = rbind(c(10,7,8,7), c(7,5,6,5), c(8,6,10,9), c(7,5,9,10))
-b1 = c(32,23,33,31); b2 = b1 + rnorm(4)*0.1
+A <- rbind(c(10,7,8,7), c(7,5,6,5), c(8,6,10,9), c(7,5,9,10))
+b1 <- c(32,23,33,31); b2 = b1 + rnorm(4)*0.1
 c( A %*% (solve(A, b1)) - b1 )
 c( A %*% (solve(A) %*% b1) - b1 )
 c( A %*% (solve(A, b2)) - b2 )
 c( A %*% (solve(A) %*% b2) - b2 )
 ```
 
-The R function `eigen` gives a list of two outputs, eigenvalues and eigenvectors of the input matrix. If one knows the input matrix is symmetric, hence will have real eigenvalues, one should specify this in the input argument to `eigen`. As can be seen in the following examples, if the eigenvalues of a matrix differ by magnitudes, the values of the eigenvectors have significant numerical error.
+The `R` function `eigen` gives a list of two outputs, eigenvalues and eigenvectors of the input matrix. If one knows the input matrix is symmetric, hence will have real eigenvalues, one should specify this in the input argument to `eigen`. As can be seen in the following examples, if the eigenvalues of a matrix differ by magnitudes, the values of the eigenvectors have significant numerical error.
 
 ```{r}
-n = 10
-A1 = matrix(rnorm(n*n), nrow=n, ncol=n); A2 = A1 + t(A1)
-eA = eigen(A2, symmetric=TRUE)
+n <- 10
+A1 <- matrix(rnorm(n*n), nrow=n, ncol=n); A2 = A1 + t(A1)
+eA <- eigen(A2, symmetric=TRUE)
 summary(abs(eA$values))
 c(norm(eA$vectors %*% diag(eA$values) %*% t(eA$vectors) - A2, type='1'),
   norm(eA$vectors %*% t(eA$vectors) - diag(rep(1, n)), type='1'))
 
-n = 100
-A1 = matrix(rnorm(n*n), nrow=n, ncol=n); A2 = A1 + t(A1)
-eA = eigen(A2, symmetric=TRUE)
+n <- 100
+A1 <- matrix(rnorm(n*n), nrow=n, ncol=n); A2 = A1 + t(A1)
+eA <- eigen(A2, symmetric=TRUE)
 summary(abs(eA$values))
 c(norm(eA$vectors %*% diag(eA$values) %*% t(eA$vectors) - A2, type='1'),
   norm(eA$vectors %*% t(eA$vectors) - diag(rep(1, n)), type='1'))
 
-n = 1000
-A1 = matrix(rnorm(n*n), nrow=n, ncol=n); A2 = A1 + t(A1)
-eA = eigen(A2, symmetric=TRUE)
+n <- 1000
+A1 <- matrix(rnorm(n*n), nrow=n, ncol=n); A2 = A1 + t(A1)
+eA <- eigen(A2, symmetric=TRUE)
 summary(abs(eA$values))
 c(norm(eA$vectors %*% diag(eA$values) %*% t(eA$vectors) - A2, type='1'),
   norm(eA$vectors %*% t(eA$vectors) - diag(rep(1, n)), type='1'))

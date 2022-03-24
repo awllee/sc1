@@ -51,7 +51,7 @@ arithmetic$add(1,2)
 
 In functional programming, one often aims to avoid functions that have side effects. That is, functions that modify global program state.
 
-A function that has always gives the same output for the same arguments and does not have any side effects is a pure function. These are very similar to mathematical functions and can be easier to reason about.
+A function that always gives the same output for the same arguments and does not have any side effects is a pure function. These are very similar to mathematical functions and can be easier to reason about.
 
 Typically, a few functions in data analysis software will need to be impure. For example, functions that perform I/O or generate pseudo-random numbers. The former is necessary to access data and/or report results.
 

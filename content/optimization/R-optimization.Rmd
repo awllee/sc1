@@ -13,13 +13,13 @@ To illustrate various `R` optimisation functions, we define a simple two-dimensi
 
 ```{R, warning=FALSE}
 library(pracma) # for meshgrid function
-f = function(x1, x2) cos(x1-1) + cos(x2) + sin(3*x1*x2) + x1^2 + x2^2
+f <- function(x1, x2) cos(x1-1) + cos(x2) + sin(3*x1*x2) + x1^2 + x2^2
 meshgrid(seq(-2, 2, length=5))
-x = seq(-2, 2, length=101)
-grid_XY = meshgrid(x)
-z = matrix(mapply(f, grid_XY$X, grid_XY$Y), nrow=101)
+x <- seq(-2, 2, length=101)
+grid_XY <- meshgrid(x)
+z <- matrix(mapply(f, grid_XY$X, grid_XY$Y), nrow=101)
 min(z)
-contour(x, x, z)
+contour(x, x, z, nlevels=20)
 ```
 
 ## The `nlm` function
@@ -27,7 +27,8 @@ contour(x, x, z)
 The `R` function `nlm` uses a Newton-type algorithm. We have the option of specifying the gradient function and the hessian function. For this, we use the `deriv` function in `R`, which takes an expression and outputs a function $f$ that returns the gradient (and hessian, if desired) of $f$ along with the value of $f$ itself.
 
 ```{R}
-f1 = deriv(expression(cos(x1-1) + cos(x2) + sin(3*x1*x2) + x1^2 + x2^2), namevec = c('x1', 'x2'), function.arg=T, hessian=T)
+f1 <- deriv(expression(cos(x1-1) + cos(x2) + sin(3*x1*x2) + x1^2 + x2^2),
+  namevec = c('x1', 'x2'), function.arg=T, hessian=T)
 f1(0,0)
 nlm(function(x) f1(x[1], x[2]), c(0,0))
 nlm(function(x) f1(x[1], x[2]), c(-1.5, 1.5))
@@ -78,14 +79,14 @@ Simulated annealing certainly does not get stuck in the local minimum close to i
 We use a dataset from the `nlmrt` function help file. A plot of the data as well as the fitted logistic model is shown below. We first use `R` functions that are specifically designed to solve nonlinear least squares problems, `nls` (part of base `R`) which uses the Gauss-Newton algorithm by default, and `nlsLM` (part of `minpack.lm` package) which uses the Levenberg-Marquardt algorithm.
 
 ```{R, warning=FALSE}
-ydat = c(5.308, 7.24, 9.638, 12.866, 17.069, 23.192, 31.443, 38.558, 50.156, 62.948, 75.995, 91.972)
-tdat = seq_along(ydat)
-my_data = data.frame(y=ydat, t=tdat)
-start1 = c(b1=1, b2=1, b3=1)
-my_model = y ~ b1/(1+b2*exp(-b3*t))
+ydat <- c(5.308, 7.24, 9.638, 12.866, 17.069, 23.192, 31.443, 38.558, 50.156, 62.948, 75.995, 91.972)
+tdat <- seq_along(ydat)
+my_data <- data.frame(y=ydat, t=tdat)
+start1 <- c(b1=1, b2=1, b3=1)
+my_model <- y ~ b1/(1+b2*exp(-b3*t))
 try(nls(my_model, start=start1, data=my_data))
 library(minpack.lm)
-out_lm = nlsLM(my_model, start=start1, data=my_data)
+out_lm <- nlsLM(my_model, start=start1, data=my_data)
 out_lm
 plot(tdat, ydat, pch=18, xlab='t', ylab='y', col='red')
 lines(tdat, out_lm$m$fitted(), pch=1, col='blue', type='b', lty=2)
@@ -97,14 +98,14 @@ We see that the Gauss-Newton algorithm actually fails for this slightly tricky d
 Next we define the residue function explicitly as the objective function and uses general-purpose optimisation functions for this nonlinear least squares problem.
 
 ```{R}
-f = function(b, mydata) sum((mydata$y-b[1]/(1+b[2]*exp(-b[3]*mydata$t)))^2)
+f <- function(b, mydata) sum((mydata$y-b[1]/(1+b[2]*exp(-b[3]*mydata$t)))^2)
 
 nlm(f, mydata=my_data, p=start1)
-optim(par=start1, fn=f, mydata=my_data)
+optim(par=start1, fn=f, mydata=my_data) # default method is Nelder-Mead
 optim(par=start1, fn=f, mydata=my_data, method="CG")
 optim(par=start1, fn=f, mydata=my_data, method="BFGS")
 optim(par=start1, fn=f, mydata=my_data, method="L-BFGS-B")
 optim(par=start1, fn=f, mydata=my_data, method="SANN", control=list(maxit=30000))
 ```
 
-We see from the results that the only algorithms that succeeds in finding a reasonable solution to this problem are the Newton type methods. Both Nelder-Mead and conjugate gradient fail to get anywhere close to something reasoable. Simulated annealing also fails, despite running for 30,000 iterations and the problem being only 3-dimensional.
+We see from the results that the only algorithms that succeeds in finding a reasonable solution to this problem are the Newton type methods. Both Nelder-Mead and conjugate gradient fail to get anywhere close to something reasonable. Simulated annealing also fails, despite running for 30,000 iterations and the problem being only 3-dimensional.
