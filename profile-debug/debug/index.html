@@ -85,8 +85,8 @@
 <p class="tagline">Statistical Computing 1</p>
 
       <nav class="menu">
-  <input id="menu-check" type="checkbox" />
-  <label id="menu-label" for="menu-check" class="unselectable">
+  <input id="menu-check" type="checkbox" hidden/>
+  <label id="menu-label" for="menu-check" class="unselectable" hidden>
     <span class="icon close-icon">✕</span>
     <span class="icon open-icon">☰</span>
     <span class="text">Menu</span>
@@ -133,6 +133,8 @@
 
 
       </header>
+
+
 
 
 
@@ -260,6 +262,7 @@ for (j in 1:100) {
 <p>This is certainly a bug, but the specific mistake made depends on what the purpose of the <code>find.first</code> function really is. If it is expected that the input <code>x</code> is a member of the array <code>array</code> then it would make sense to throw a more informative error when <code>x</code> is not in <code>array</code>, e.g. by checking before the while loop, or by throwing the error when <code>i</code> exceeds <code>length(array)</code>. Alternatively, it may be the case that <code>find.first</code> should return <code>NA</code> or <code>NULL</code> or <code>0</code> when <code>x</code> is not in the array.</p>
 <p>Once the bug is fixed, one can add appropriate tests to ensure that the same mistake is not made again, e.g. if one refactors the code.</p>
 </div>
+
 
 
   <footer>

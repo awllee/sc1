@@ -87,8 +87,8 @@
 <p class="tagline">Statistical Computing 1</p>
 
       <nav class="menu">
-  <input id="menu-check" type="checkbox" />
-  <label id="menu-label" for="menu-check" class="unselectable">
+  <input id="menu-check" type="checkbox" hidden/>
+  <label id="menu-label" for="menu-check" class="unselectable" hidden>
     <span class="icon close-icon">✕</span>
     <span class="icon open-icon">☰</span>
     <span class="text">Menu</span>
@@ -135,6 +135,8 @@
 
 
       </header>
+
+
 
 
 
@@ -238,7 +240,7 @@ plot.simple_lin_regression &lt;- function(x, y = NULL, ...) {
 <pre class="r"><code>plot</code></pre>
 <pre><code>## function (x, y, ...) 
 ## UseMethod(&quot;plot&quot;)
-## &lt;bytecode: 0x7f86a68faeb0&gt;
+## &lt;bytecode: 0x7fefe6027b00&gt;
 ## &lt;environment: namespace:base&gt;</code></pre>
 <p>Note that the generic function <code>plot</code> has two compulsory arguments <code>x</code> and <code>y</code> and optional arguments indicated by <code>...</code>. The generic functions body is always a call of the function <code>UseMethod("[name_of_generic_function]")</code>.</p>
 <p>When defining a method that implements a generic function for an S3 object it must have the same arguments as the generic function.</p>
@@ -593,6 +595,7 @@ dC1         # no result set yet!</code></pre>
 <p>We can see that the getter for <code>result</code> does the computation and returns the correct result. Also, the slot <code>result</code> is set, but due to the modification a copy of the object <code>dC1</code> is generated which we never get to see, because <code>result</code> does not return it.</p>
 <p>This concludes the chapter on object-oriented programming in <code>R</code>. It shall be pointed out, though, that only a fraction of the possibilities were covered here and that you are encouraged to conceptually design your software before you start coding with the right programming paradigm in mind.</p>
 </div>
+
 
 
   <footer>

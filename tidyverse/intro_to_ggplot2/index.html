@@ -87,8 +87,8 @@
 <p class="tagline">Statistical Computing 1</p>
 
       <nav class="menu">
-  <input id="menu-check" type="checkbox" />
-  <label id="menu-label" for="menu-check" class="unselectable">
+  <input id="menu-check" type="checkbox" hidden/>
+  <label id="menu-label" for="menu-check" class="unselectable" hidden>
     <span class="icon close-icon">✕</span>
     <span class="icon open-icon">☰</span>
     <span class="text">Menu</span>
@@ -135,6 +135,8 @@
 
 
       </header>
+
+
 
 
 
@@ -240,6 +242,7 @@ In the first three lines of code we are simply creating a new factor variable (<
 <p><img src="/sc1/tidyverse/Intro_to_ggplot2_files/figure-html/unnamed-chunk-13-1.png" width="576" style="display: block; margin: auto;" /></p>
 <p>This section illustrated how <code>ggplot2</code> works, using basic examples. Hopefully it should be clear by now that using <code>ggplot2</code> requires having created the “right” <code>data.frame</code> before starting the visualization process. Here we used readymade data.frames (<code>mcycle</code> and <code>UKload</code>) and we limited ourselves to adding a couple of variables (<code>Period</code> and <code>DayType</code>). However, the Tidyverse provides some packages (mainly <code>dplyr</code> and <code>tidyr</code>) which make <code>data.frame</code> preparation and transformation easier, relative to base <code>R</code>. Such packages will be described in a later section. Before doing that, we’ll go through a <code>ggplot2</code> case study, namely the <code>mgcViz</code> package. The reason is that, while this section illustrates how <code>ggplot2</code> tidily breaks down the visualization process into an layered object-oriented framework of smaller steps and components (e.g., creating the main plot using <code>ggplot</code>, adding layers, dividing the plot into facets and finally rendering it on the screen), you might be wondering: “Why bother?”. Indeed, if you just want to construct a standard scatterplot or histogram, you might be better off using base <code>R</code> (i.e. the <code>graphics</code> package). However, by going through a detailed case study, the next section should convince you that <code>ggplot2</code> might be preferable to base <code>R</code> for the purpose of constructing a tidy visualization library for a specific class of statistical models.</p>
 </div>
+
 
 
   <footer>

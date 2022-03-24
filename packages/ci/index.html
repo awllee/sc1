@@ -87,8 +87,8 @@ CI is a useful tool when developing software collaboratively &amp;hellip;">
 <p class="tagline">Statistical Computing 1</p>
 
       <nav class="menu">
-  <input id="menu-check" type="checkbox" />
-  <label id="menu-label" for="menu-check" class="unselectable">
+  <input id="menu-check" type="checkbox" hidden/>
+  <label id="menu-label" for="menu-check" class="unselectable" hidden>
     <span class="icon close-icon">✕</span>
     <span class="icon open-icon">☰</span>
     <span class="text">Menu</span>
@@ -138,6 +138,8 @@ CI is a useful tool when developing software collaboratively &amp;hellip;">
 
 
 
+
+
 <p>An R package that is publicly available on GitHub can be tested using <a href="https://github.com/features/actions">GitHub Actions</a>. This is one example of continuous integration (CI).</p>
 <p>CI is a useful tool when developing software collaboratively because pull requests can automatically trigger tests. This means that the reviewer of the pull request can be sure that the code works, insofar as the tests pass, and focus on other aspects of the code.</p>
 <p>Even in non-collaborative development, this can be useful as tests can be configured to run systematically against different configurations. For example, operating systems and versions of R.</p>
@@ -149,7 +151,7 @@ CI is a useful tool when developing software collaboratively &amp;hellip;">
 <p><code>R-CMD-check.yaml</code>: this workflow runs the tests defined in the package on Windows, macOS and Linux with the latest release of R, and also on Linux with the latest development build of R. It was created automatically by running</p>
 <pre tabindex="0"><code>usethis::use_github_action_check_standard()
 </code></pre><p><code>test-coverage.yaml</code>: this workflow runs <code>covr::codecov()</code>, which essentially runs the package tests on macOS and monitors which lines of source code have been run, and then uploads the results to <a href="https://about.codecov.io/">Codecov.io</a>. It was created automatically by running</p>
-<pre tabindex="0"><code>usethis::use_github_action(&quot;test-coverage&quot;)
+<pre tabindex="0"><code>usethis::use_github_action(&#34;test-coverage&#34;)
 </code></pre><p>You can log on to Codecov using GitHub credentials and manage coverage settings for your GitHub repository there.</p>
 <h2 id="hosting-pages-using-github-pages">Hosting pages using GitHub pages</h2>
 <p>In fact, you can also have Github Actions build RMarkdown pages and deploy them to a GitHub Pages website associated with your GitHub repository.</p>
@@ -159,6 +161,7 @@ CI is a useful tool when developing software collaboratively &amp;hellip;">
 <li><a href="https://github.com/awllee/rmarkdown-pages-demo">basic RMarkdown project</a> + <a href="https://awllee.github.io/rmarkdown-pages-demo/example.html">webpage</a></li>
 <li><a href="https://github.com/awllee/smc-tutorial">some slides</a> + <a href="https://awllee.github.io/smc-tutorial/smc-tutorial.html">webpage</a></li>
 </ul>
+
 
 
   <footer>

@@ -87,8 +87,8 @@ For example, you can take the following code and paste it into a file with exten
 <p class="tagline">Statistical Computing 1</p>
 
       <nav class="menu">
-  <input id="menu-check" type="checkbox" />
-  <label id="menu-label" for="menu-check" class="unselectable">
+  <input id="menu-check" type="checkbox" hidden/>
+  <label id="menu-label" for="menu-check" class="unselectable" hidden>
     <span class="icon close-icon">✕</span>
     <span class="icon open-icon">☰</span>
     <span class="text">Menu</span>
@@ -138,6 +138,8 @@ For example, you can take the following code and paste it into a file with exten
 
 
 
+
+
 <p>It is straightforward to incorporate R code chunks in LaTeX using knitr.</p>
 <p>For example, you can take the following code and paste it into a file with extension <code>.Rnw</code>. After doing so, you can open it with RStudio.</p>
 <p><em>Before</em> trying to compile the file (by clicking &ldquo;Compile PDF&rdquo;), first check in your global or project options that under the &ldquo;Sweave&rdquo; menu, &ldquo;Weave Rnw files using:&rdquo; is set to &ldquo;knitr&rdquo;. Otherwise, Sweave will be used, which requires a few modifications to the input file.</p>
@@ -165,11 +167,12 @@ The difference is that you can insert R code chunks
 &lt;&lt;chunk-name, fig.height=5&gt;&gt;=
 xs &lt;- seq(0,2*pi,0.01)
 ys &lt;- sin(xs)
-plot(xs, ys, type=&quot;l&quot;)
+plot(xs, ys, type=&#34;l&#34;)
 @
 
 \end{document}
 </code></pre><p>You can also put R code chunks into LyX documents if they have activated the module &ldquo;Rnw (knitr)&rdquo;. The syntax for code chunks is the same as for LaTeX documents, and is inserted using &ldquo;Evil Red Text&rdquo;.</p>
+
 
 
   <footer>

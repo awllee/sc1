@@ -89,8 +89,8 @@
 <p class="tagline">Statistical Computing 1</p>
 
       <nav class="menu">
-  <input id="menu-check" type="checkbox" />
-  <label id="menu-label" for="menu-check" class="unselectable">
+  <input id="menu-check" type="checkbox" hidden/>
+  <label id="menu-label" for="menu-check" class="unselectable" hidden>
     <span class="icon close-icon">✕</span>
     <span class="icon open-icon">☰</span>
     <span class="text">Menu</span>
@@ -137,6 +137,8 @@
 
 
       </header>
+
+
 
 
 
@@ -249,6 +251,7 @@ shapiro.test(rescaled.diff.USD[1:5000])</code></pre>
 <p>It is not common to write packages of low-level functionality entirely using RMarkdown. Instead, people typically write R scripts with helpful comments that are easy to understand, and use function and variable names that ease understanding of the code itself. It is possible to use special “roxygen” comments that can automatically be turned into help documentation for users of those functions: we will cover this in more detail later.</p>
 <p>An RMarkdown file has Markdown text and specially delimited code chunks, which can be processed to produce the desired output. <a href="https://yihui.name/knitr/demo/stitch/">An alternative</a> is to write an R script with specially delimited Markdown chunks. These chunks are automatically ignored by R as they are parsed as comments, but can optionally be converted into a literate programming document by the <code>knitr::spin</code> function.</p>
 </div>
+
 
 
   <footer>

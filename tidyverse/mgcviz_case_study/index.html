@@ -85,8 +85,8 @@
 <p class="tagline">Statistical Computing 1</p>
 
       <nav class="menu">
-  <input id="menu-check" type="checkbox" />
-  <label id="menu-label" for="menu-check" class="unselectable">
+  <input id="menu-check" type="checkbox" hidden/>
+  <label id="menu-label" for="menu-check" class="unselectable" hidden>
     <span class="icon close-icon">✕</span>
     <span class="icon open-icon">☰</span>
     <span class="text">Menu</span>
@@ -139,16 +139,18 @@
 
 
 
+
+
 <style>
 body {
 text-align: justify}
 </style>
-<p>As we said before, <code>ggplot2</code> provides a powerful framework for building visualization libraries. The best way to see why this is the case, might be to examine a real example. Here we consider the <code>mgcViz</code> package, with provides a layered framework for visualizing Generalized Additive Models (GAMs) using <code>ggplot2</code>. You might have heard about GAMs before but, if you didn’t, don’t worry because background knowledge on GAMs is not necessary to understand this section.</p>
+<p>As we said before, <code>ggplot2</code> provides a powerful framework for building visualization libraries. The best way to see why this is the case, might be to examine a real example. Here we consider the <code>mgcViz</code> package, which provides a layered framework for visualizing Generalized Additive Models (GAMs) using <code>ggplot2</code>. You might have heard about GAMs before but, if you didn’t, don’t worry because background knowledge on GAMs is not necessary to understand this section.</p>
 <p>GAMs are an extension of Generalized Linear Models (GLMs), which allow using spline-based smooth effects in addition to the usual linear effects used in GLMs. For example, a Poisson GLM might have the following structure
 <span class="math display">\[
 y \sim \text{Pois}\{\mu({\bf x})\}, \;\;\; \log \mu({\bf x}) = \beta_0 + \beta_1 x_1 + \beta_2 x_2,
 \]</span>
-where <span class="math inline">\({\bf x} = \{x_1, x_2\}\)</span> are indipendent variables (covariates) and <span class="math inline">\(\beta_0, \beta_1, \beta_2\)</span> are regression coefficients. Here we are modelling the log-rate of a Poisson distribution, using linear effects for variables <span class="math inline">\(x_1\)</span> and <span class="math inline">\(x_2\)</span>. A GAM extension of such model could be
+where <span class="math inline">\({\bf x} = \{x_1, x_2\}\)</span> are indipendent variables (covariates) and <span class="math inline">\(\beta_0, \beta_1, \beta_2\)</span> are regression coefficients. Here we are modelling the log-rate of a Poisson distribution, using linear effects for variables <span class="math inline">\(x_1\)</span> and <span class="math inline">\(x_2\)</span>. A GAM extension of such a model could be
 <span class="math display">\[
 \log \mu({\bf x}) = \beta_0 + f_1(x_1) + f_2(x_2),
 \]</span>
@@ -156,7 +158,7 @@ where <span class="math inline">\(f_1\)</span> and <span class="math inline">\(f
 <span class="math display">\[
 f_1(x_1) = \sum_{j=1}^{K_1} \beta^1_j b_j^1(x_1), 
 \]</span>
-where <span class="math inline">\(b_1^1(x_1), \dots, b_{K_1}^1(x_1)\)</span> are known basis functions and <span class="math inline">\(\beta_1^1, \dots, \beta_{K_1}^1\)</span> are unknown regression coefficients (to be estimated). Effect <span class="math inline">\(f_2\)</span> is defined similarly. There are many classes of effects, for example they can be multidimensional, such as
+where <span class="math inline">\(b_1^1(x_1), \dots, b_{K_1}^1(x_1)\)</span> are known basis functions and <span class="math inline">\(\beta_1^1, \dots, \beta_{K_1}^1\)</span> are unknown regression coefficients (to be estimated). The effect <span class="math inline">\(f_2\)</span> is defined similarly. There are many classes of effects, for example they can be multidimensional, such as
 <span class="math display">\[
 \log \mu({\bf x}) = \beta_0 + f(x_1, x_2),
 \]</span>
@@ -212,8 +214,8 @@ where the <code>select</code> argument is used to determine which smooth effect 
 plot(fitG, select = 3, scale = FALSE, residuals = TRUE, ylim = c(-2000, 2000))
 plot(fitG, select = 3, scale = FALSE, residuals = TRUE, pch = 1, ylim = c(-2000, 2000))</code></pre>
 <p><img src="/sc1/tidyverse/mgcViz_case_study_files/figure-html/unnamed-chunk-8-1.png" width="768" style="display: block; margin: auto;" /></p>
-<p>Here the points representing the residuals are always plotted over the fitted effect and confidence intervals so, if you change the size of the points, they will completely hide the fit, as on the plot on the right. We could probably live with the limitations mentioned so far, but the biggest issue is that it is quite hard to add new features to the plots offered by <code>plot.gam</code>. In fact, <code>plot.gam</code> is a big multi-purpose function, and adding a new graphical features requires looking at its source code, understanding what is going on, and modifing the whole function (e.g. we need to add new arguments, choose at which point within <code>plot.gam</code> the new graphical layer should be rendered, etc). So adding new features is a rather involved process.</p>
-<p>The good news is that the limitations just mentioned make of <code>plot.gam</code> a very good case study for illustrating the usefulness of layer-based framework provided by <code>ggplot2</code>. In particular, let’s see how the <code>mgcViz</code> package solves these issues by adopting the layered system based on <code>ggplot2</code>. To use it, we need to convert the output of <code>gam</code> to an object of class <code>gamViz</code>:</p>
+<p>Here the points representing the residuals are always plotted over the fitted effect and confidence intervals so, if you change the size of the points, they will completely hide the fit, as on the plot on the right. We could probably live with the limitations mentioned so far, but a more important issue is that it is quite hard to add new features to the plots offered by <code>plot.gam</code>. In fact, <code>plot.gam</code> is a big multi-purpose function, and adding a new graphical features requires looking at its source code, understanding what is going on, and modifing the whole function (e.g. we need to add new arguments, choose at which point within <code>plot.gam</code> the new graphical layer should be rendered, etc). So adding new features is a rather involved process.</p>
+<p>The good news is that the limitations just mentioned make <code>plot.gam</code> a very good case study for illustrating the usefulness of layer-based framework provided by <code>ggplot2</code>. In particular, let’s see how the <code>mgcViz</code> package solves these issues by adopting the layered system based on <code>ggplot2</code>. To use it, we need to convert the output of <code>gam</code> to an object of class <code>gamViz</code>:</p>
 <pre class="r"><code>library(mgcViz)
 fitG_v &lt;- getViz(fitG)
 
@@ -306,6 +308,7 @@ pl + geom_hex(data = pl$data$res, alpha = 0.7) + l_fitLine() +
 <pre class="r"><code>pl + l_binRes(alpha = 0.7) + l_fitPoints(col = 2) + l_ciBar()</code></pre>
 <p><img src="/sc1/tidyverse/mgcViz_case_study_files/figure-html/unnamed-chunk-22-1.png" width="672" style="display: block; margin: auto;" />
 The point of all this is illustrating that, using the layer-based system provided by <code>ggplot</code>, it is easy to introduce new GAM-specific layers for <code>mgcViz</code>, without modifying the functions used to build the initial plots (here <code>plot.mgcv.smooth.1D</code> and <code>plot.ptermFactor</code>). Of course, the new layer introduced here (<code>l_binRes</code>) is quite trivial, and we might be better off using the raw <code>ggplot2</code> layers directly (e.g. <code>stat_summary_2d</code>), but some of the layers implemented by <code>mgcViz</code> are quite complicated, hence coding them in <code>mgcViz</code> is worthwhile (see, e.g., the code for <code>mgcViz:::l_fitDens.1D</code>).</p>
+
 
 
   <footer>

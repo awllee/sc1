@@ -85,8 +85,8 @@
 <p class="tagline">Statistical Computing 1</p>
 
       <nav class="menu">
-  <input id="menu-check" type="checkbox" />
-  <label id="menu-label" for="menu-check" class="unselectable">
+  <input id="menu-check" type="checkbox" hidden/>
+  <label id="menu-label" for="menu-check" class="unselectable" hidden>
     <span class="icon close-icon">✕</span>
     <span class="icon open-icon">☰</span>
     <span class="text">Menu</span>
@@ -139,6 +139,8 @@
 
 
 
+
+
 <style>
 body {
 text-align: justify}
@@ -158,44 +160,27 @@ if( !require(electBook) ){
   install_github(&quot;mfasiolo/electBook&quot;)
   library(electBook)
 }</code></pre>
-<pre><code>## TTR          (NA -&gt; 0.24.2    ) [CRAN]
+<pre><code>## TTR          (NA -&gt; 0.24.3    ) [CRAN]
 ## xts          (NA -&gt; 0.12.1    ) [CRAN]
 ## quantmod     (NA -&gt; 0.4.18    ) [CRAN]
 ## zoo          (NA -&gt; 1.8-9     ) [CRAN]
 ## quadprog     (NA -&gt; 1.5-8     ) [CRAN]
-## RcppArmad... (NA -&gt; 0.10.7.3.0) [CRAN]
+## RcppArmad... (NA -&gt; 0.10.8.1.0) [CRAN]
 ## urca         (NA -&gt; 1.3-0     ) [CRAN]
 ## tseries      (NA -&gt; 0.10-49   ) [CRAN]
 ## timeDate     (NA -&gt; 3043.102  ) [CRAN]
-## lmtest       (NA -&gt; 0.9-39    ) [CRAN]
+## lmtest       (NA -&gt; 0.9-40    ) [CRAN]
 ## fracdiff     (NA -&gt; 1.5-1     ) [CRAN]
-## forecast     (NA -&gt; 8.15      ) [CRAN]
+## forecast     (NA -&gt; 8.16      ) [CRAN]
 ## 
 ## The downloaded binary packages are in
-##  /var/folders/24/8k48jl6d249_n_qfxwsl6xvm0000gn/T//Rtmp9Q1Ajx/downloaded_packages
-##   
-   checking for file ‘/private/var/folders/24/8k48jl6d249_n_qfxwsl6xvm0000gn/T/Rtmp9Q1Ajx/remotes3119429d7d22/mfasiolo-electBook-38d7020/DESCRIPTION’ ...
-  
-✔  checking for file ‘/private/var/folders/24/8k48jl6d249_n_qfxwsl6xvm0000gn/T/Rtmp9Q1Ajx/remotes3119429d7d22/mfasiolo-electBook-38d7020/DESCRIPTION’
-## 
-  
-─  preparing ‘electBook’:
-## 
-  
-   checking DESCRIPTION meta-information ...
-  
-✔  checking DESCRIPTION meta-information
-## 
-  
-─  checking for LF line-endings in source and make files and shell scripts
-## 
-  
-─  checking for empty or unneeded directories
-## ─  building ‘electBook_0.0.1.tar.gz’
-## 
-  
-   
-## </code></pre>
+##  /var/folders/24/8k48jl6d249_n_qfxwsl6xvm0000gn/T//Rtmp9TSVU1/downloaded_packages
+## * checking for file ‘/private/var/folders/24/8k48jl6d249_n_qfxwsl6xvm0000gn/T/Rtmp9TSVU1/remotes3681431a445d/mfasiolo-electBook-38d7020/DESCRIPTION’ ... OK
+## * preparing ‘electBook’:
+## * checking DESCRIPTION meta-information ... OK
+## * checking for LF line-endings in source and make files and shell scripts
+## * checking for empty or unneeded directories
+## * building ‘electBook_0.0.1.tar.gz’</code></pre>
 <p>Then we load the smart meter data:</p>
 <pre class="r"><code>data(Irish)</code></pre>
 <p><code>Irish</code> is a list, where <code>Irish$indCons</code> is a <code>data.frame</code> containing electricity demand data over one year, at 30min resolution, for more than 2000 smart meters. We store it as a separate object:</p>
@@ -215,7 +200,7 @@ dim(indCons)</code></pre>
 <p>Now, suppose that we want to plot the consumption of some of the customers over time, on the same plot. Using base <code>R</code>, one way of doing this is:</p>
 <pre class="r"><code>matplot(indCons[1:(48*7), 1:3], type = &#39;l&#39;)</code></pre>
 <p><img src="/sc1/tidyverse/data_reshaping_tidyr_files/figure-html/unnamed-chunk-5-1.png" width="672" style="display: block; margin: auto;" />
-Here we are plotting the consumption of the first three customers over the first 7 days (we have 48 observations per day). To do the same in <code>ggplot2</code> we need to put the data in a “long” format, that is we need a <code>data.frame</code> where one columns contains the demand values and another indicates to which customer each demand value belongs to. This can be achieved easily using <code>tidyr::pivot_longer</code>:</p>
+Here we are plotting the consumption of the first three customers over the first 7 days (we have 48 observations per day). To do the same in <code>ggplot2</code> we need to put the data in a “long” format, that is we need a <code>data.frame</code> where one column contains the demand values and another indicates to which customer each demand value belongs to. This can be achieved easily using <code>tidyr::pivot_longer</code>:</p>
 <pre class="r"><code>longDat &lt;- indCons %&gt;% pivot_longer(cols = everything(), names_to = &quot;ID&quot;, values_to = &quot;dem&quot;) %&gt;% dplyr::arrange(ID)
 head(longDat, 5)</code></pre>
 <pre><code>## # A tibble: 5 × 2
@@ -498,11 +483,11 @@ left_join(d1, d2)</code></pre>
 <p>so the total memory used is less than 15MB. But:</p>
 <pre class="r"><code>allDat %&gt;% object.size() %&gt;% format(&quot;MB&quot;)</code></pre>
 <pre><code>## [1] &quot;217.9 Mb&quot;</code></pre>
-<p>so the long data set must contain quite a lot of redundant information! For instance, the data in <code>extra</code> is repeated 100 times (once per customer) in <code>allDat</code>, and that alone should cost us around 60 MB. This is something to keep in mind when working with larger data sets.</p>
+<p>so the long data set must contain quite a lot of redundant information! For instance, the data in <code>extra</code> is repeated 100 times (once per customer) in <code>allDat</code>, and that alone should cost us around 70 MB. This is something to keep in mind when working with larger data sets.</p>
 </div>
 <div id="further-topics" class="section level2">
 <h2>Further topics</h2>
-<p>Here we presented the main tools provided by <code>dplyr</code> and <code>tidyr</code> for data trasformation and reshaping. Other <code>tidyr</code> functions that you might find useful are:</p>
+<p>Here we presented the main tools provided by <code>dplyr</code> and <code>tidyr</code> for data transformation and reshaping. Other <code>tidyr</code> functions that you might find useful are:</p>
 <ul>
 <li><code>separate</code> which allows you to break a variable (e.g. age_sex = “20_male”) into its components (age = 20 and sex = “male”);</li>
 <li><code>unite</code> which does the opposite;</li>
@@ -516,6 +501,7 @@ left_join(d1, d2)</code></pre>
 </ul>
 <p>You might also be interested in looking at the “tidy” functional programming tools provided by the <code>purrr</code>. If, instead, you feel that you are getting excessively excited about the Tidyverse, you could try to curb your enthusiasm by reading <a href="https://github.com/matloff/TidyverseSkeptic">this</a>.</p>
 </div>
+
 
 
   <footer>

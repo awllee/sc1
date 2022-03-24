@@ -87,8 +87,8 @@ It is generally a good idea to keep code for a &amp;hellip;">
 <p class="tagline">Statistical Computing 1</p>
 
       <nav class="menu">
-  <input id="menu-check" type="checkbox" />
-  <label id="menu-label" for="menu-check" class="unselectable">
+  <input id="menu-check" type="checkbox" hidden/>
+  <label id="menu-label" for="menu-check" class="unselectable" hidden>
     <span class="icon close-icon">✕</span>
     <span class="icon open-icon">☰</span>
     <span class="text">Menu</span>
@@ -138,6 +138,8 @@ It is generally a good idea to keep code for a &amp;hellip;">
 
 
 
+
+
 <p>RStudio has a nice interface for programming in R. You may have only been using it to create R scripts / RMarkdown files and execute / render them.</p>
 <p>It is generally a good idea to keep code for a &ldquo;project&rdquo; in one place. RStudio can help with this by letting you create a &ldquo;Project&rdquo;, which is little more than a directory with files in it. Opening a project in RStudio automatically sets R&rsquo;s working directory to that directory.</p>
 <h2 id="project-structure">Project structure</h2>
@@ -159,11 +161,12 @@ It is generally a good idea to keep code for a &amp;hellip;">
 <p>If your R code is complicated enough, you may want to add a <code>tests</code> folder with test scripts that you can run automatically to check that the functions do what you expect them to do. In some such cases, you might wish to convert your project into a package to take advantage of various tools that work with packages.</p>
 <h2 id="loading-code-from-files-and-packages">Loading code from files and packages</h2>
 <p>When code is split across multiple files, there needs to be a mechanism to load it. For R projects and scripts, one can use the <code>source</code> command. For example, one could load the code in the &ldquo;algorithms.R&rdquo; file in the &ldquo;R&rdquo; directory.</p>
-<pre tabindex="0"><code>source(&quot;R/algorithms.R&quot;)
+<pre tabindex="0"><code>source(&#34;R/algorithms.R&#34;)
 </code></pre><p>To use an R package, one uses the <code>library</code> or <code>requires</code> command. For example, one could load the Matrix package, which has support for some sparse matrix computations.</p>
 <pre tabindex="0"><code>library(Matrix)
 </code></pre><h2 id="example-project">Example project</h2>
 <p>An example R project can be found <a href="https://github.com/awllee/SC1ExampleProject">here</a>. You can clone it and knit the RMarkdown document if you like.</p>
+
 
 
   <footer>

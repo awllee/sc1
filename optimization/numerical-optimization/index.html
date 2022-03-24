@@ -85,8 +85,8 @@
 <p class="tagline">Statistical Computing 1</p>
 
       <nav class="menu">
-  <input id="menu-check" type="checkbox" />
-  <label id="menu-label" for="menu-check" class="unselectable">
+  <input id="menu-check" type="checkbox" hidden/>
+  <label id="menu-label" for="menu-check" class="unselectable" hidden>
     <span class="icon close-icon">✕</span>
     <span class="icon open-icon">☰</span>
     <span class="text">Menu</span>
@@ -133,6 +133,8 @@
 
 
       </header>
+
+
 
 
 
@@ -265,6 +267,7 @@ for (i in 1:6) {
 <p>Methods such as BFGS and Levenberg-Marquardt are highly efficient but they compute the gradient vectors taking into account all of the dataset. Such methods are known as batch methods. In many big data applications, however, the dataset can be too large to hold in computer memory at the same time. This is the main motivation behind stochastic gradient descent (SGD), which changes the parameter in the negative gradient direction taking into account only a few data samples. SGD is especially popular for the training of neural networks, where the full back propagation over the full training set can be very expensive computationally.</p>
 <p>In the simplest form, SGD takes on the following form: <span class="math display">\[\beta \leftarrow \beta - \gamma r_i \nabla r_i(\beta),\]</span> where <span class="math inline">\(i\)</span> cycles through all data points in a deterministic or random fashion. One can also combine a number of data samples into “mini-batches” and update the parameter <span class="math inline">\(\beta\)</span> using samples in each minibatch.</p>
 </div>
+
 
 
   <footer>

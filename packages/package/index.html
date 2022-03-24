@@ -87,8 +87,8 @@ File -&amp;gt; New Project -&amp;gt; New Directory -&amp;gt; R Package You can c
 <p class="tagline">Statistical Computing 1</p>
 
       <nav class="menu">
-  <input id="menu-check" type="checkbox" />
-  <label id="menu-label" for="menu-check" class="unselectable">
+  <input id="menu-check" type="checkbox" hidden/>
+  <label id="menu-label" for="menu-check" class="unselectable" hidden>
     <span class="icon close-icon">✕</span>
     <span class="icon open-icon">☰</span>
     <span class="text">Menu</span>
@@ -138,6 +138,8 @@ File -&amp;gt; New Project -&amp;gt; New Directory -&amp;gt; R Package You can c
 
 
 
+
+
 <p>Creating a package in RStudio is straightforward. Just click</p>
 <pre tabindex="0"><code>File -&gt; New Project -&gt; New Directory -&gt; R Package
 </code></pre><p>You can choose a name for your package, the parent directory for the package and whether or not you want to also initialize an empty git repository.</p>
@@ -170,7 +172,7 @@ File -&amp;gt; New Project -&amp;gt; New Directory -&amp;gt; R Package You can c
 <p>Test suites are a mechanism for ensuring that code changes do not break existing functionality that is measured by the test suite. They involve retaining test scripts that are run collectively as part of a suite after changes have been made to code. In practice, this can be very helpful for preventing bugs. Moreover, once a test suite has been designed, running it usually takes very little programmer effort.</p>
 <p>To begin testing, install the &ldquo;testthat&rdquo; R package and then run <code>usethis::use_test(&quot;&lt;name&gt;&quot;)</code>. This will create a <code>tests</code> directory and populate it. You can add tests to the created file <code>tests/test-&lt;name&gt;.R</code>, or create more test files.</p>
 <p>Tests in the <code>tests/test-&lt;name&gt;.R</code> will often be of the form</p>
-<pre tabindex="0"><code>test_that(&quot;&lt;feature name&gt;&quot;, {
+<pre tabindex="0"><code>test_that(&#34;&lt;feature name&gt;&#34;, {
   expect_equal(a, b)
   expect_true(c &gt;= 1)
 })
@@ -187,8 +189,9 @@ File -&amp;gt; New Project -&amp;gt; New Directory -&amp;gt; R Package You can c
 <h2 id="example-package">Example package</h2>
 <p>An example R package can be found <a href="https://github.com/awllee/SC1ExamplePackage">here</a>.</p>
 <p>You can install a package from GitHub in R via</p>
-<pre tabindex="0"><code>devtools::install_github(&quot;https://github.com/awllee/SC1ExamplePackage&quot;)
+<pre tabindex="0"><code>devtools::install_github(&#34;https://github.com/awllee/SC1ExamplePackage&#34;)
 </code></pre><p>This is why the git repository includes computer-generated content, specifically <code>NAMESPACE</code> and the <code>man</code> folder.</p>
+
 
 
   <footer>

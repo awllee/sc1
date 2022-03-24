@@ -85,8 +85,8 @@
 <p class="tagline">Statistical Computing 1</p>
 
       <nav class="menu">
-  <input id="menu-check" type="checkbox" />
-  <label id="menu-label" for="menu-check" class="unselectable">
+  <input id="menu-check" type="checkbox" hidden/>
+  <label id="menu-label" for="menu-check" class="unselectable" hidden>
     <span class="icon close-icon">✕</span>
     <span class="icon open-icon">☰</span>
     <span class="text">Menu</span>
@@ -139,6 +139,8 @@
 
 
 
+
+
 <div id="matrix-package" class="section level2">
 <h2><code>Matrix</code> package</h2>
 <p>The <code>R</code> <code>Matrix</code> package provides additional functions for both dense and sparse matrices that extend the basic matrix data type. In the <code>Matrix</code> package, dense matrices are stored as <code>dgeMatrix</code> objects. One useful function it adds for dense matrices is <code>rankMatrix</code>, which returns the rank of the input matrix, up to a certain tolerance if desired. Another useful function is <code>rcond</code>, which gives the condition number of a square matrix, defined to be the product of the norm of the matrix and the norm of its inverse.</p>
@@ -149,7 +151,7 @@ C &lt;- Matrix(rnorm(4), nrow=2, ncol=2)
 c(rankMatrix(A), rankMatrix(B), rankMatrix(B, tol=1e-7))</code></pre>
 <pre><code>## [1] 1 2 1</code></pre>
 <pre class="r"><code>c(rcond(A), rcond(B), rcond(C), rcond(C/1e5))</code></pre>
-<pre><code>## [1] 0.000000e+00 3.092069e-09 2.543927e-01 2.543927e-01</code></pre>
+<pre><code>## [1] 0.000000e+00 9.985887e-10 2.904445e-01 2.904445e-01</code></pre>
 <p>A sparse matrix is one where most entries will be 0. It is inefficient to store all these 0’s in memory.</p>
 <pre class="r"><code>set.seed(7)
 nrows &lt;- 1000
@@ -378,6 +380,7 @@ c(object.size(A1), object.size(A1inv))</code></pre>
 <pre><code>## [1] 9702    0</code></pre>
 <p>Instead, just as in the case of dense matrix, one should try to use <code>solve(A, b)</code> whenever possible.</p>
 </div>
+
 
 
   <footer>

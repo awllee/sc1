@@ -97,8 +97,8 @@ Find the sum of all the multiples of 3 or 5 below 1000.
 <p class="tagline">Statistical Computing 1</p>
 
       <nav class="menu">
-  <input id="menu-check" type="checkbox" />
-  <label id="menu-label" for="menu-check" class="unselectable">
+  <input id="menu-check" type="checkbox" hidden/>
+  <label id="menu-label" for="menu-check" class="unselectable" hidden>
     <span class="icon close-icon">✕</span>
     <span class="icon open-icon">☰</span>
     <span class="text">Menu</span>
@@ -151,6 +151,8 @@ Find the sum of all the multiples of 3 or 5 below 1000.
 
 
 
+
+
 <p>If we list all the natural numbers below 10 that are multiples of 3 or 5, we get 3, 5, 6 and 9. The sum of these multiples is 23.</p>
 <p>Find the sum of all the multiples of 3 or 5 below 1000.</p>
 <details>
@@ -170,6 +172,7 @@ for (i in 1:999) {
 counter</code></pre>
 <pre><code>## [1] 233168</code></pre>
 </details>
+
 
 
   <footer>

@@ -85,8 +85,8 @@
 <p class="tagline">Statistical Computing 1</p>
 
       <nav class="menu">
-  <input id="menu-check" type="checkbox" />
-  <label id="menu-label" for="menu-check" class="unselectable">
+  <input id="menu-check" type="checkbox" hidden/>
+  <label id="menu-label" for="menu-check" class="unselectable" hidden>
     <span class="icon close-icon">✕</span>
     <span class="icon open-icon">☰</span>
     <span class="text">Menu</span>
@@ -138,6 +138,8 @@
 
 
 
+
+
 <div id="TOC">
 <ul>
 <li><a href="#optimized-routines">Optimized routines</a></li>
@@ -170,12 +172,12 @@ a2 &lt;- rep(0,10000)
 library(microbenchmark)
 microbenchmark(add.one(a1))</code></pre>
 <pre><code>## Unit: microseconds
-##         expr     min       lq     mean  median       uq      max neval
-##  add.one(a1) 297.517 314.1685 537.3125 318.721 333.9255 20918.09   100</code></pre>
+##         expr     min      lq     mean   median      uq      max neval
+##  add.one(a1) 298.987 319.331 525.3406 323.7025 326.295 20398.43   100</code></pre>
 <pre class="r"><code>microbenchmark(add.one(a2))</code></pre>
 <pre><code>## Unit: microseconds
-##         expr     min      lq    mean  median       uq     max neval
-##  add.one(a2) 618.867 623.263 632.985 627.835 634.5065 831.305   100</code></pre>
+##         expr     min      lq     mean   median      uq     max neval
+##  add.one(a2) 615.666 633.938 641.1718 641.0845 646.869 701.419   100</code></pre>
 <p>On the other hand, small changes in the code (that would not affect performance in languages that pass by reference) can cause many copies of the array to made.</p>
 <pre class="r"><code>add.one.bad &lt;- function(x) {
   y &lt;- x
@@ -200,16 +202,16 @@ add.one.slow &lt;- function(x) {
 
 system.time(add.one.bad(a1))</code></pre>
 <pre><code>##    user  system elapsed 
-##   0.065   0.085   0.151</code></pre>
+##   0.061   0.094   0.155</code></pre>
 <pre class="r"><code>system.time(add.one.bad(a2))</code></pre>
 <pre><code>##    user  system elapsed 
-##   0.223   0.306   0.532</code></pre>
+##   0.203   0.330   0.532</code></pre>
 <pre class="r"><code>system.time(add.one.slow(a1))</code></pre>
 <pre><code>##    user  system elapsed 
-##    0.08    0.09    0.17</code></pre>
+##   0.078   0.101   0.178</code></pre>
 <pre class="r"><code>system.time(add.one.slow(a2))</code></pre>
 <pre><code>##    user  system elapsed 
-##   0.327   0.320   0.650</code></pre>
+##   0.313   0.358   0.671</code></pre>
 </div>
 <div id="column-major-storage" class="section level2">
 <h2>Column-major storage</h2>
@@ -236,10 +238,10 @@ fill.by.row &lt;- function(n) {
 <pre class="r"><code>n &lt;- 10000
 system.time(Y1 &lt;- fill.by.column(n))</code></pre>
 <pre><code>##    user  system elapsed 
-##   0.481   0.436   0.923</code></pre>
+##   0.465   0.434   0.900</code></pre>
 <pre class="r"><code>system.time(Y2 &lt;- fill.by.row(n))</code></pre>
 <pre><code>##    user  system elapsed 
-##   2.237   0.584   2.918</code></pre>
+##   2.720   0.470   3.197</code></pre>
 <p>Filling the matrix column by column is faster because reading and writing memory in contiguous blocks is faster than reading and writing memory locations that are far apart.</p>
 </div>
 <div id="example-logistic-regression" class="section level2">
@@ -319,22 +321,22 @@ X &lt;- matrix(rnorm(n*(d-1)), n, d-1)
 X &lt;- cbind(1, X)
 theta.true &lt;- rnorm(d)
 theta.true</code></pre>
-<pre><code>##  [1] -0.57685342 -0.31536071 -1.07559813 -0.69811488 -1.46957399  0.05981318
-##  [7] -0.35406332 -0.91339817 -0.08607509  0.38059459</code></pre>
+<pre><code>##  [1]  1.744950068 -0.005183531  0.896674223  1.534142068 -0.804062668
+##  [6]  0.255911188  1.966507190  0.522693943  1.950759931 -0.355968199</code></pre>
 <pre class="r"><code>y &lt;- generate.y(X, theta.true)
 
 system.time(mle &lt;- maximize.ell(ell, score, X, y, rep(0,d)))</code></pre>
 <pre><code>##    user  system elapsed 
-##   0.107   0.021   0.137</code></pre>
+##   0.090   0.016   0.107</code></pre>
 <pre class="r"><code>mle</code></pre>
-<pre><code>##  [1] -0.55151549 -0.31814092 -1.07882575 -0.69327809 -1.42435966  0.09126585
-##  [7] -0.31144096 -0.92668737 -0.02317183  0.39879456</code></pre>
+<pre><code>##  [1]  1.692432021 -0.006543297  0.823305199  1.442703140 -0.740895634
+##  [6]  0.256798828  1.827811324  0.524110629  1.844228247 -0.300294372</code></pre>
 <pre class="r"><code>system.time(mle &lt;- maximize.ell(ell.slow, score.slow, X, y, rep(0,d)))</code></pre>
 <pre><code>##    user  system elapsed 
-##   4.726   0.051   5.038</code></pre>
+##   5.109   0.023   5.152</code></pre>
 <pre class="r"><code>mle</code></pre>
-<pre><code>##  [1] -0.55151548 -0.31814091 -1.07882568 -0.69327807 -1.42435960  0.09126586
-##  [7] -0.31144094 -0.92668734 -0.02317185  0.39879455</code></pre>
+<pre><code>##  [1]  1.692432131 -0.006543263  0.823305246  1.442703116 -0.740895639
+##  [6]  0.256798825  1.827811362  0.524110663  1.844228274 -0.300294307</code></pre>
 </div>
 <div id="example-matrix-vector-multiplications" class="section level2">
 <h2>Example: matrix vector multiplications</h2>
@@ -356,10 +358,10 @@ foo &lt;- function(A, B) {
 
 system.time(C &lt;- A%*%B)</code></pre>
 <pre><code>##    user  system elapsed 
-##   0.888   0.032   0.943</code></pre>
+##   0.799   0.017   0.817</code></pre>
 <pre class="r"><code>system.time(C.alt &lt;- foo(A, B))</code></pre>
 <pre><code>##    user  system elapsed 
-##   1.763   0.069   1.896</code></pre>
+##   1.717   0.056   1.776</code></pre>
 <pre class="r"><code>norm(C-C.alt)</code></pre>
 <pre><code>## [1] 0</code></pre>
 <p>Clearly, the matrix-matrix multiplication is more computationally efficient. This is because the implementation of matrix multiplication is <a href="https://en.wikipedia.org/wiki/Matrix_multiplication_algorithm">highly optimized</a> and is not implemented by performing several matrix-vector multiplications.</p>
@@ -370,6 +372,7 @@ system.time(C &lt;- A%*%B)</code></pre>
 <p>In Statistical Computing 2 you will learn how to use <a href="http://www.rcpp.org/">Rcpp</a> to write C++ code that is easily called from within R. This is one of the main routes to improving the performance of functions on the critical pathway for an application.</p>
 <p>Most other high-level, scientific computing languages have the similar mechanisms for calling C or C++ code. This is a very powerful mechanism for improving performance, as one has complete control over what is computed, but involves writing and maintaining code in two languages, as well as maintaining an interface between the two languages.</p>
 </div>
+
 
 
   <footer>

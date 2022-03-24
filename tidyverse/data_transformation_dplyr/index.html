@@ -85,8 +85,8 @@
 <p class="tagline">Statistical Computing 1</p>
 
       <nav class="menu">
-  <input id="menu-check" type="checkbox" />
-  <label id="menu-label" for="menu-check" class="unselectable">
+  <input id="menu-check" type="checkbox" hidden/>
+  <label id="menu-label" for="menu-check" class="unselectable" hidden>
     <span class="icon close-icon">✕</span>
     <span class="icon open-icon">☰</span>
     <span class="text">Menu</span>
@@ -133,6 +133,8 @@
 
 
       </header>
+
+
 
 
 
@@ -291,7 +293,8 @@ UKweek</code></pre>
                       tempMin = min(wM),
                       Posan = mean(Posan), 
                       nHoly = factor(sum(Holy == &quot;1&quot;)))</code></pre>
-<pre><code>## `summarise()` has grouped output by &#39;Year&#39;. You can override using the `.groups` argument.</code></pre>
+<pre><code>## `summarise()` has grouped output by &#39;Year&#39;. You can override using the
+## `.groups` argument.</code></pre>
 <pre class="r"><code>UKweek</code></pre>
 <pre><code>## # A tibble: 291 × 7
 ## # Groups:   Year [6]
@@ -324,6 +327,7 @@ fit &lt;- gamV(TotDemand ~ nHoly + s(tempMax) + s(tempMin) + s(Posan), data = UK
 We can see a strong heating effect depending on the minimal weekly temperature, but little cooling effect (recall that this is UK data!). As expected consumption is higher in the winter than in the summer, and weeks containing holidays have a lower total consumption.</p>
 <p>This section showed how to use the basic tools provided by <code>dplyr</code> to transform <code>data.frames</code>. To appreciate the practical utility of such tools, you are encouraged to try to transform <code>UKload</code> into <code>UKweek</code> using only the tools provided by base <code>R</code> (that is, without using <code>group_by</code> and <code>summarise</code>). You are also encouraged to issue a pull request including your solutions, as it would be cool to see how base <code>R</code> solutions to this problem look, relative to the <code>dplyr</code>-based solution above.</p>
 </div>
+
 
 
   <footer>

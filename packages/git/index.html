@@ -85,8 +85,8 @@
 <p class="tagline">Statistical Computing 1</p>
 
       <nav class="menu">
-  <input id="menu-check" type="checkbox" />
-  <label id="menu-label" for="menu-check" class="unselectable">
+  <input id="menu-check" type="checkbox" hidden/>
+  <label id="menu-label" for="menu-check" class="unselectable" hidden>
     <span class="icon close-icon">✕</span>
     <span class="icon open-icon">☰</span>
     <span class="text">Menu</span>
@@ -156,6 +156,8 @@
     <li><a href="#contributing-code-forks-and-pull-requests">Contributing code: forks and pull requests</a></li>
   </ul>
 </nav> 
+
+
 <p>Many people think that using version control is a complicated, time-consuming process that is only necessary for large, collaborative software projects. In fact, version control is now very easy, thanks to excellent tools like git and online services like GitHub, and can save a significant amount of time. Moreover, it is helpful in making research reproducible, and public repositories can extend its impact.</p>
 <p>There are other version control systems, but we focus on git and GitHub here for simplicity.</p>
 <p>A version control system is basically software that tracks changes in files. People use an informal version control system implicitly even if they don&rsquo;t use a software system, e.g. by copying and renaming files. As you might imagine, most ad hoc systems make recovering the state of a software project at a specific time difficult. Modern version control systems have been developed to cater to the needs of most projects with minimal effort.</p>
@@ -163,7 +165,7 @@
 <h2 id="installing-and-setting-up-git">Installing and setting up git</h2>
 <p>Linux users can install git using their package manager, macOS users can install Xcode (larger) or the Xcode command line tools (smaller). Once you have git on your system, it&rsquo;s a good idea to set up your identity as a global configuration parameter, as this information will be used automatically in certain git commands.</p>
 <p>To set your name, execute the following commands in a terminal.</p>
-<pre tabindex="0"><code>git config --global user.name &quot;Your Name&quot;
+<pre tabindex="0"><code>git config --global user.name &#34;Your Name&#34;
 git config --global user.email name@domain
 </code></pre><p>You can check your global configuration.</p>
 <pre tabindex="0"><code>git config --list --show-origin
@@ -252,6 +254,7 @@ git push -u origin master
 <pre tabindex="0"><code>git fetch upstream
 git merge upstream/master
 </code></pre><p>After merging, if you commit and then push, the pull request will automatically be updated. It is often useful to keep a fork up to date with the upstream, i.e. original repository.</p>
+
 
 
   <footer>

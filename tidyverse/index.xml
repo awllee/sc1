@@ -33,7 +33,7 @@ library(MASS) data(mcycle) head(mcycle) ## times accel ## 1 2.4 0.0 ## 2 2.6 -1.
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>https://awllee.github.io/sc1/tidyverse/mgcviz_case_study/</guid>
-      <description>body { text-align: justify}  As we said before, ggplot2 provides a powerful framework for building visualization libraries. The best way to see why this is the case, might be to examine a real example. Here we consider the mgcViz package, with provides a layered framework for visualizing Generalized Additive Models (GAMs) using ggplot2. You might have heard about GAMs before but, if you didn’t, don’t worry because background knowledge on GAMs is not necessary to understand this section.</description>
+      <description>body { text-align: justify}  As we said before, ggplot2 provides a powerful framework for building visualization libraries. The best way to see why this is the case, might be to examine a real example. Here we consider the mgcViz package, which provides a layered framework for visualizing Generalized Additive Models (GAMs) using ggplot2. You might have heard about GAMs before but, if you didn’t, don’t worry because background knowledge on GAMs is not necessary to understand this section.</description>
     </item>
     
     <item>

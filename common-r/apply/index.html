@@ -85,8 +85,8 @@
 <p class="tagline">Statistical Computing 1</p>
 
       <nav class="menu">
-  <input id="menu-check" type="checkbox" />
-  <label id="menu-label" for="menu-check" class="unselectable">
+  <input id="menu-check" type="checkbox" hidden/>
+  <label id="menu-label" for="menu-check" class="unselectable" hidden>
     <span class="icon close-icon">✕</span>
     <span class="icon open-icon">☰</span>
     <span class="text">Menu</span>
@@ -133,6 +133,8 @@
 
 
       </header>
+
+
 
 
 
@@ -278,13 +280,13 @@ ftest1_loop &lt;- function(x) {
 }
 system.time(ftest1_apply(x))</code></pre>
 <pre><code>##    user  system elapsed 
-##   1.002   0.051   1.057</code></pre>
+##   1.071   0.046   1.119</code></pre>
 <pre class="r"><code>system.time(ftest1_loop(x))</code></pre>
 <pre><code>##    user  system elapsed 
-##   0.686   0.011   0.698</code></pre>
+##   0.692   0.037   0.730</code></pre>
 <pre class="r"><code>system.time(ftest1(x))</code></pre>
 <pre><code>##    user  system elapsed 
-##   0.012   0.000   0.012</code></pre>
+##   0.011   0.000   0.012</code></pre>
 <p>The results show that <code>lapply</code> is the slowest, with for loop being twice as fast as <code>lapply</code>. But obviously applying the function directly (hence vectorised) is the fastest by far.</p>
 </div>
 <div id="map-reduce-and-filter" class="section level2">
@@ -338,6 +340,7 @@ y</code></pre>
 <p>Note that in R, 0 is treated as <code>FALSE</code>, whereas any non-zero number is treated as <code>TRUE</code></p>
 </div>
 </div>
+
 
 
   <footer>
