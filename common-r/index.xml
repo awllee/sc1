@@ -25,7 +25,7 @@ fsum1 &amp;lt;- function(x) { fsum &amp;lt;- 0 for (i in 1:length(x)) { fsum &am
       <guid>https://awllee.github.io/sc1/common-r/apply/</guid>
       <description>R apply family The apply family of functions consist of apply(), lapply(), sapply(), and mapply(). The basic idea of the apply family is to apply the same function repetitively across a list or a certain dimension of an array or dataframe.
 apply We start with apply(). Its syntax is apply(X, MARGIN, FUN, ...), where
- X is an array of dimension \(\ge 2\), including a 2-d matrix. MARGIN is a vector giving the subscripts which the function will be applied over.</description>
+X is an array of dimension \(\ge 2\), including a 2-d matrix. MARGIN is a vector giving the subscripts which the function will be applied over.</description>
     </item>
     
     <item>

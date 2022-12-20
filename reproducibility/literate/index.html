@@ -37,13 +37,13 @@
 
 
 
-    <link rel="stylesheet" href="/sc1/css/style.css" />
-    <link rel="stylesheet" href="/sc1/css/fonts.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/fonts.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Arvo">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Marcellus">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Code+Pro">
 
-<link rel="stylesheet" href="/sc1/css/custom.css" />
+<link rel="stylesheet" href="/css/custom.css" />
 
 <link rel="icon" href="/sc1/favicon.ico" type="image/x-icon" />
 
@@ -84,7 +84,7 @@
   
   <body class="sc1">
     <header class="masthead">
-      <h1><a href="/sc1/">SC1</a></h1>
+      <h1><a href="/">SC1</a></h1>
 
 <p class="tagline">Statistical Computing 1</p>
 
@@ -222,23 +222,23 @@ lines(vs, dnorm(vs), col=&quot;blue&quot;)</code></pre>
 <pre class="r"><code># shapiro.test sample size must be between 3 and 5000
 shapiro.test(rescaled.diff.USD[1:5000])</code></pre>
 <pre><code>## 
-##  Shapiro-Wilk normality test
+## 	Shapiro-Wilk normality test
 ## 
 ## data:  rescaled.diff.USD[1:5000]
 ## W = 0.97014, p-value &lt; 2.2e-16</code></pre>
 <pre class="r"><code>shapiro.test(rescaled.diff.GBP[1:5000])</code></pre>
 <pre><code>## 
-##  Shapiro-Wilk normality test
+## 	Shapiro-Wilk normality test
 ## 
 ## data:  rescaled.diff.GBP[1:5000]
 ## W = 0.93928, p-value &lt; 2.2e-16</code></pre>
 <p>There is very strong evidence against the rescaled differences being normally distributed.</p>
 <p>We can also perform a Kolmogorov–Smirnov test to see if the rescaled differences could be from the same distribution.</p>
 <pre class="r"><code>ks.test(rescaled.diff.USD, rescaled.diff.GBP)</code></pre>
-<pre><code>## Warning in ks.test(rescaled.diff.USD, rescaled.diff.GBP): p-value will be
-## approximate in the presence of ties</code></pre>
+<pre><code>## Warning in ks.test.default(rescaled.diff.USD, rescaled.diff.GBP): p-value will
+## be approximate in the presence of ties</code></pre>
 <pre><code>## 
-##  Two-sample Kolmogorov-Smirnov test
+## 	Asymptotic two-sample Kolmogorov-Smirnov test
 ## 
 ## data:  rescaled.diff.USD and rescaled.diff.GBP
 ## D = 0.024573, p-value = 0.0861

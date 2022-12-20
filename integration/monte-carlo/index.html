@@ -33,13 +33,13 @@
 
 
 
-    <link rel="stylesheet" href="/sc1/css/style.css" />
-    <link rel="stylesheet" href="/sc1/css/fonts.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/fonts.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Arvo">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Marcellus">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Code+Pro">
 
-<link rel="stylesheet" href="/sc1/css/custom.css" />
+<link rel="stylesheet" href="/css/custom.css" />
 
 <link rel="icon" href="/sc1/favicon.ico" type="image/x-icon" />
 
@@ -80,7 +80,7 @@
   
   <body class="sc1">
     <header class="masthead">
-      <h1><a href="/sc1/">SC1</a></h1>
+      <h1><a href="/">SC1</a></h1>
 
 <p class="tagline">Statistical Computing 1</p>
 
@@ -239,9 +239,9 @@ monte.carlo &lt;- function(mu, f, n) {
 <p><strong>Theorem</strong>. The rejection sampling algorithm outputs a <span class="math inline">\(\pi\)</span>-distributed random variable.</p>
 <p><em>Proof</em>. Let <span class="math inline">\(Y=\mathbb{I}\left(U&lt;\frac{1}{M}\frac{\pi(X)}{\mu(X)}\right)\)</span> where <span class="math inline">\(U\)</span> is uniformly distributed on <span class="math inline">\([0,1]\)</span>, so <span class="math inline">\(Y\)</span> is indeed <span class="math inline">\(1\)</span> with probability <span class="math inline">\(\frac{1}{M}\frac{\pi(X)}{\mu(X)}\)</span>. For any <span class="math inline">\(A \in \mathcal{X}\)</span>,
 <span class="math display">\[\begin{align}
-\Pr(X \in A \mid Y=1)   &amp;=  \frac{\Pr(X\in A,Y=1)}{\Pr(Y=1)} \newline
-    &amp;=  \frac{\int_{A}\frac{1}{M}\frac{\pi(x)}{\mu(x)}\mu(x){\rm d}x}{\int_{\mathsf{X}}\frac{1}{M}\frac{\pi(x)}{\mu(x)}\mu(x){\rm d}x} \newline
-    &amp;= \pi(A).
+\Pr(X \in A \mid Y=1)	&amp;=	\frac{\Pr(X\in A,Y=1)}{\Pr(Y=1)} \newline
+	&amp;=	\frac{\int_{A}\frac{1}{M}\frac{\pi(x)}{\mu(x)}\mu(x){\rm d}x}{\int_{\mathsf{X}}\frac{1}{M}\frac{\pi(x)}{\mu(x)}\mu(x){\rm d}x} \newline
+	&amp;= \pi(A).
 \end{align}\]</span>
 Hence <span class="math inline">\(X \mid (Y=1)\)</span> is indeed distributed according to <span class="math inline">\(\pi\)</span>. □</p>
 <p>The rejection sampling algorithm is very simple and powerful. However, we observe that the computational cost of the algorithm in terms of the number of simulations of <span class="math inline">\(\mu\)</span>-distributed random variables is itself random. In fact, the cost is characterized by the value of <span class="math inline">\(M\)</span>.</p>
@@ -286,7 +286,7 @@ lines(vs, dnorm(vs), col=&quot;red&quot;)</code></pre>
 <span class="math display">\[\begin{align}
 \pi(f) &amp;= \int_\mathsf{X} f(x) \pi({\rm d}x) \\
   &amp;= \int_\mathsf{X} f(x)w(x) \mu({\rm d}x) \\
-    &amp;= \mu(f \cdot w),
+	&amp;= \mu(f \cdot w),
 \end{align}\]</span>
 where <span class="math inline">\(w(x) = \pi(x)/\mu(x)\)</span> is the ratio of the densities of <span class="math inline">\(\pi\)</span> and <span class="math inline">\(\mu\)</span>.</p>
 <p>This justifies the use of <span class="math inline">\(n^{-1} S_n(f \cdot w)\)</span> as an approximation of <span class="math inline">\(\pi(f)\)</span>. The variance of the approximation multiplied by <span class="math inline">\(n\)</span> is
@@ -497,19 +497,19 @@ i.e.
 holds then <span class="math inline">\(P\)</span> defines a <span class="math inline">\(\pi\)</span>-reversible Markov chain.</p>
 <p><em>Proof</em>. We have
 <span class="math display">\[\begin{align}
-\int_{A}\pi({\rm d}x)P(x,B) &amp;=  \int_{A}\pi(x)\left[\int_{B}p(x,z)\lambda({\rm d}z)+r(x)\mathbf{1}_{B}(x)\right]\lambda({\rm d}x) \\
-    &amp;=  \int_{B}\pi(z)\left[\int_{A}p(z,x)\lambda({\rm d}x)\right]\lambda({\rm d}z)+\int_{A\cap B}\pi(x)r(x)\lambda({\rm d}x) \\
-    &amp;=  \int_{B}\pi(z)\left[\int_{A}p(z,x)\lambda({\rm d}x)+r(z)\mathbf{1}_{A}(x)\right]\lambda({\rm d}z) \\
-    &amp;=  \int_{B}\pi({\rm d}x)P(x,A).
+\int_{A}\pi({\rm d}x)P(x,B) &amp;=	\int_{A}\pi(x)\left[\int_{B}p(x,z)\lambda({\rm d}z)+r(x)\mathbf{1}_{B}(x)\right]\lambda({\rm d}x) \\
+	&amp;=	\int_{B}\pi(z)\left[\int_{A}p(z,x)\lambda({\rm d}x)\right]\lambda({\rm d}z)+\int_{A\cap B}\pi(x)r(x)\lambda({\rm d}x) \\
+	&amp;=	\int_{B}\pi(z)\left[\int_{A}p(z,x)\lambda({\rm d}x)+r(z)\mathbf{1}_{A}(x)\right]\lambda({\rm d}z) \\
+	&amp;=	\int_{B}\pi({\rm d}x)P(x,A).
 \end{align}\]</span></p>
 <p>The key utility of detailed balance is it need only be checked pointwise: no integrals necessary!</p>
 <p><strong>Corollary</strong>. Any Metropolis–Hastings Markov chain is <span class="math inline">\(\pi\)</span>-reversible.</p>
 <p><em>Proof</em>. We have
 <span class="math display">\[\begin{align}
-\pi(x)p_{{\rm MH}}(x,z) &amp;=  \pi(x)q(x,z)\left[1\wedge\frac{\pi(z)q(z,x)}{\pi(x)q(x,z)}\right] \\
-    &amp;=  \left[\pi(x)q(x,z)\wedge\pi(z)q(z,x)\right] \\
-    &amp;=  \pi(z)q(z,x)\left[\frac{\pi(x)q(x,z)}{\pi(z)q(z,x)}\wedge1\right] \\
-    &amp;=  \pi(z)p_{{\rm MH}}(z,x).
+\pi(x)p_{{\rm MH}}(x,z)	&amp;=	\pi(x)q(x,z)\left[1\wedge\frac{\pi(z)q(z,x)}{\pi(x)q(x,z)}\right] \\
+	&amp;=	\left[\pi(x)q(x,z)\wedge\pi(z)q(z,x)\right] \\
+	&amp;=	\pi(z)q(z,x)\left[\frac{\pi(x)q(x,z)}{\pi(z)q(z,x)}\wedge1\right] \\
+	&amp;=	\pi(z)p_{{\rm MH}}(z,x).
 \end{align}\]</span></p>
 <p>Many Markov chains used in statistics are constructed using reversible Markov transition kernels.</p>
 <p>If <span class="math inline">\(P_{{\rm MH}}\)</span> is <span class="math inline">\(\pi\)</span>-reversible and <span class="math inline">\(\pi\)</span>-irreducible then it is positive and has <span class="math inline">\(\pi\)</span> as its invariant probability measure. Verifying <span class="math inline">\(\pi\)</span>-irreducibility is often very easy. For example, <span class="math inline">\(\pi(A)&gt;0\)</span>, <span class="math inline">\(A\in\mathcal{X}\)</span> and <span class="math inline">\(q(x,A)&gt;0\)</span>, <span class="math inline">\(x\in\mathsf{X}\)</span>, <span class="math inline">\(A\in\mathcal{X}\)</span>.</p>

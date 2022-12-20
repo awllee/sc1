@@ -33,13 +33,13 @@
 
 
 
-    <link rel="stylesheet" href="/sc1/css/style.css" />
-    <link rel="stylesheet" href="/sc1/css/fonts.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/fonts.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Arvo">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Marcellus">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Code+Pro">
 
-<link rel="stylesheet" href="/sc1/css/custom.css" />
+<link rel="stylesheet" href="/css/custom.css" />
 
 <link rel="icon" href="/sc1/favicon.ico" type="image/x-icon" />
 
@@ -80,7 +80,7 @@
   
   <body class="sc1">
     <header class="masthead">
-      <h1><a href="/sc1/">SC1</a></h1>
+      <h1><a href="/">SC1</a></h1>
 
 <p class="tagline">Statistical Computing 1</p>
 
@@ -192,6 +192,8 @@ We can also remove variables, for instance:</p>
 <p>Here we are selecting only the Mondays (“Lundi” in French) where the temperature is below 5 degrees Celsius. We are also printing the first and last few rows of the data by exploiting the <code>%T&gt;%</code> pipe (by the way, why do we need the curly brackets <code>{}</code> around <code>print</code>?). <strong>Warning</strong>: notice that the following would not work:</p>
 <pre class="r"><code>coldMondays &lt;- UKload %&gt;% filter(wM &lt; 5 &amp;&amp; Dow == &quot;lundi&quot;) %T&gt;% 
                           {print(head(.), digits = 2)}</code></pre>
+<pre><code>## Warning in wM &lt; 5 &amp;&amp; Dow == &quot;lundi&quot;: &#39;length(x) = 2008 &gt; 1&#39; in coercion to
+## &#39;logical(1)&#39;</code></pre>
 <pre><code>## [1] NetDemand    wM           wM_s95       Posan        Dow         
 ## [6] Trend        NetDemand.48 Holy         Year        
 ## &lt;0 rows&gt; (or 0-length row.names)</code></pre>

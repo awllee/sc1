@@ -33,13 +33,13 @@
 
 
 
-    <link rel="stylesheet" href="/sc1/css/style.css" />
-    <link rel="stylesheet" href="/sc1/css/fonts.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/fonts.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Arvo">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Marcellus">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Code+Pro">
 
-<link rel="stylesheet" href="/sc1/css/custom.css" />
+<link rel="stylesheet" href="/css/custom.css" />
 
 <link rel="icon" href="/sc1/favicon.ico" type="image/x-icon" />
 
@@ -80,7 +80,7 @@
   
   <body class="sc1">
     <header class="masthead">
-      <h1><a href="/sc1/">SC1</a></h1>
+      <h1><a href="/">SC1</a></h1>
 
 <p class="tagline">Statistical Computing 1</p>
 
@@ -198,9 +198,9 @@ b &lt;- A %*% x
 x1 &lt;- solve(A) %*% b
 x2 &lt;- solve(A, b)
 c(norm(x-x1, type=&#39;1&#39;), norm(x-x2, type=&#39;1&#39;)) # compare 1-norm of error</code></pre>
-<pre><code>## [1] 8.757296e-05 3.149616e-05</code></pre>
+<pre><code>## [1] 3.585464e-05 1.399194e-05</code></pre>
 <pre class="r"><code>c(norm(b - A %*% x1, type=&#39;1&#39;), norm(b - A %*% x2, type=&#39;1&#39;)) # compare residuals</code></pre>
-<pre><code>## [1] 1.227605e-06 6.106227e-16</code></pre>
+<pre><code>## [1] 3.778593e-07 1.543904e-16</code></pre>
 <p>As can be seen from this example, solving directly is more accurate, not to mention faster. Unless a linear system needs to be repeated solved for different vectors, the matrix involved should never be inverted in <code>R</code>.</p>
 </div>
 <div id="numerical-stability-finite-precision-arithmetic" class="section level2">
@@ -241,10 +241,10 @@ c(norm(x-x1, type=&#39;1&#39;), norm(x-x2, type=&#39;1&#39;)) # compare 1-norm o
 
 summary(c((A+B) - A - B))</code></pre>
 <pre><code>##       Min.    1st Qu.     Median       Mean    3rd Qu.       Max. 
-## -2.220e-16  0.000e+00  0.000e+00  6.471e-18  0.000e+00  4.441e-16</code></pre>
+## -2.220e-16  0.000e+00  0.000e+00 -1.804e-18  0.000e+00  2.220e-16</code></pre>
 <pre class="r"><code>summary(c(A%*%B%*%C - A%*%(B%*%C)))</code></pre>
 <pre><code>##       Min.    1st Qu.     Median       Mean    3rd Qu.       Max. 
-## -2.665e-15 -9.992e-16  2.220e-16 -4.441e-17  8.882e-16  1.776e-15</code></pre>
+## -1.776e-15 -3.331e-16  2.220e-16  9.770e-16  2.442e-15  4.663e-15</code></pre>
 <p>The <code>R</code> function <code>solve</code> gives the inverse of a matrix for <code>solve(A)</code>, or solves a linear system <span class="math inline">\(Ax=b\)</span> for <code>solve(A,b)</code>. If one needs to solve <span class="math inline">\(Ax=b\)</span>, then <code>solve(A,b)</code> generally speaking has lower numerical error than <code>solve(A) %*% b</code>, which is equivalent to computing <span class="math inline">\(A^{-1} b\)</span>.</p>
 <pre class="r"><code>A &lt;- rbind(c(10,7,8,7), c(7,5,6,5), c(8,6,10,9), c(7,5,9,10))
 b1 &lt;- c(32,23,33,31); b2 = b1 + rnorm(4)*0.1
@@ -253,37 +253,37 @@ c( A %*% (solve(A, b1)) - b1 )</code></pre>
 <pre class="r"><code>c( A %*% (solve(A) %*% b1) - b1 )</code></pre>
 <pre><code>## [1] 8.384404e-13 5.826450e-13 5.258016e-13 3.979039e-13</code></pre>
 <pre class="r"><code>c( A %*% (solve(A, b2)) - b2 )</code></pre>
-<pre><code>## [1]  3.552714e-15  0.000000e+00  7.105427e-15 -3.552714e-15</code></pre>
+<pre><code>## [1]  7.105427e-15 -3.552714e-15  0.000000e+00 -7.105427e-15</code></pre>
 <pre class="r"><code>c( A %*% (solve(A) %*% b2) - b2 )</code></pre>
-<pre><code>## [1]  3.304024e-13  2.060574e-13 -6.394885e-14 -1.243450e-13</code></pre>
+<pre><code>## [1] 8.526513e-13 5.897505e-13 5.186962e-13 3.872458e-13</code></pre>
 <p>The <code>R</code> function <code>eigen</code> gives a list of two outputs, eigenvalues and eigenvectors of the input matrix. If one knows the input matrix is symmetric, hence will have real eigenvalues, one should specify this in the input argument to <code>eigen</code>. As can be seen in the following examples, if the eigenvalues of a matrix differ by magnitudes, the values of the eigenvectors have significant numerical error.</p>
 <pre class="r"><code>n &lt;- 10
 A1 &lt;- matrix(rnorm(n*n), nrow=n, ncol=n); A2 = A1 + t(A1)
 eA &lt;- eigen(A2, symmetric=TRUE)
 summary(abs(eA$values))</code></pre>
 <pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-##  0.8064  2.3344  3.6420  3.9155  4.6952  8.8224</code></pre>
+##  0.1625  1.4189  3.5261  3.7198  6.0478  8.9093</code></pre>
 <pre class="r"><code>c(norm(eA$vectors %*% diag(eA$values) %*% t(eA$vectors) - A2, type=&#39;1&#39;),
   norm(eA$vectors %*% t(eA$vectors) - diag(rep(1, n)), type=&#39;1&#39;))</code></pre>
-<pre><code>## [1] 5.929979e-14 1.300896e-14</code></pre>
+<pre><code>## [1] 7.527312e-14 3.084772e-15</code></pre>
 <pre class="r"><code>n &lt;- 100
 A1 &lt;- matrix(rnorm(n*n), nrow=n, ncol=n); A2 = A1 + t(A1)
 eA &lt;- eigen(A2, symmetric=TRUE)
 summary(abs(eA$values))</code></pre>
-<pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-##  0.2415  5.6467 11.1973 11.9211 17.6983 27.8460</code></pre>
+<pre><code>##     Min.  1st Qu.   Median     Mean  3rd Qu.     Max. 
+##  0.02393  5.95456 11.48684 12.06607 18.20795 27.32539</code></pre>
 <pre class="r"><code>c(norm(eA$vectors %*% diag(eA$values) %*% t(eA$vectors) - A2, type=&#39;1&#39;),
   norm(eA$vectors %*% t(eA$vectors) - diag(rep(1, n)), type=&#39;1&#39;))</code></pre>
-<pre><code>## [1] 3.070252e-12 4.710093e-13</code></pre>
+<pre><code>## [1] 4.326185e-12 2.690600e-13</code></pre>
 <pre class="r"><code>n &lt;- 1000
 A1 &lt;- matrix(rnorm(n*n), nrow=n, ncol=n); A2 = A1 + t(A1)
 eA &lt;- eigen(A2, symmetric=TRUE)
 summary(abs(eA$values))</code></pre>
-<pre><code>##     Min.  1st Qu.   Median     Mean  3rd Qu.     Max. 
-##  0.01685 17.54170 36.04069 37.85982 56.70547 88.63292</code></pre>
+<pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+##  0.0389 17.6643 36.2157 38.0379 56.9502 89.2144</code></pre>
 <pre class="r"><code>c(norm(eA$vectors %*% diag(eA$values) %*% t(eA$vectors) - A2, type=&#39;1&#39;),
   norm(eA$vectors %*% t(eA$vectors) - diag(rep(1, n)), type=&#39;1&#39;))</code></pre>
-<pre><code>## [1] 1.251825e-10 4.123589e-12</code></pre>
+<pre><code>## [1] 1.127074e-10 5.073156e-12</code></pre>
 </div>
 
 

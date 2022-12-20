@@ -33,13 +33,13 @@
 
 
 
-    <link rel="stylesheet" href="/sc1/css/style.css" />
-    <link rel="stylesheet" href="/sc1/css/fonts.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/fonts.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Arvo">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Marcellus">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Code+Pro">
 
-<link rel="stylesheet" href="/sc1/css/custom.css" />
+<link rel="stylesheet" href="/css/custom.css" />
 
 <link rel="icon" href="/sc1/favicon.ico" type="image/x-icon" />
 
@@ -80,7 +80,7 @@
   
   <body class="sc1">
     <header class="masthead">
-      <h1><a href="/sc1/">SC1</a></h1>
+      <h1><a href="/">SC1</a></h1>
 
 <p class="tagline">Statistical Computing 1</p>
 
@@ -161,21 +161,22 @@ if( !require(electBook) ){
   library(electBook)
 }</code></pre>
 <pre><code>## TTR          (NA -&gt; 0.24.3    ) [CRAN]
-## xts          (NA -&gt; 0.12.1    ) [CRAN]
-## quantmod     (NA -&gt; 0.4.18    ) [CRAN]
-## zoo          (NA -&gt; 1.8-9     ) [CRAN]
+## xts          (NA -&gt; 0.12.2    ) [CRAN]
+## quantmod     (NA -&gt; 0.4.20    ) [CRAN]
+## zoo          (NA -&gt; 1.8-11    ) [CRAN]
 ## quadprog     (NA -&gt; 1.5-8     ) [CRAN]
-## RcppArmad... (NA -&gt; 0.10.8.1.0) [CRAN]
-## urca         (NA -&gt; 1.3-0     ) [CRAN]
-## tseries      (NA -&gt; 0.10-49   ) [CRAN]
-## timeDate     (NA -&gt; 3043.102  ) [CRAN]
+## RcppArmad... (NA -&gt; 0.11.4.2.1) [CRAN]
+## urca         (NA -&gt; 1.3-3     ) [CRAN]
+## tseries      (NA -&gt; 0.10-52   ) [CRAN]
+## timeDate     (NA -&gt; 4021.107  ) [CRAN]
 ## lmtest       (NA -&gt; 0.9-40    ) [CRAN]
-## fracdiff     (NA -&gt; 1.5-1     ) [CRAN]
-## forecast     (NA -&gt; 8.16      ) [CRAN]
+## fracdiff     (NA -&gt; 1.5-2     ) [CRAN]
+## forecast     (NA -&gt; 8.19      ) [CRAN]
 ## 
 ## The downloaded binary packages are in
-##  /var/folders/24/8k48jl6d249_n_qfxwsl6xvm0000gn/T//Rtmp9TSVU1/downloaded_packages
-## * checking for file ‘/private/var/folders/24/8k48jl6d249_n_qfxwsl6xvm0000gn/T/Rtmp9TSVU1/remotes3681431a445d/mfasiolo-electBook-38d7020/DESCRIPTION’ ... OK
+## 	/var/folders/24/8k48jl6d249_n_qfxwsl6xvm0000gn/T//RtmpF77dHd/downloaded_packages
+## ── R CMD build ─────────────────────────────────────────────────────────────────
+## * checking for file ‘/private/var/folders/24/8k48jl6d249_n_qfxwsl6xvm0000gn/T/RtmpF77dHd/remotes24002812debe/mfasiolo-electBook-38d7020/DESCRIPTION’ ... OK
 ## * preparing ‘electBook’:
 ## * checking DESCRIPTION meta-information ... OK
 ## * checking for LF line-endings in source and make files and shell scripts
@@ -277,7 +278,7 @@ As an exercises, try to work out what the above code does, and what is being plo
 
 print(wideDat, n = 5, width = 60, n_extra = 0)</code></pre>
 <pre><code>## Warning: The `n_extra` argument of `print()` is deprecated as of pillar 1.6.2.
-## Please use the `max_extra_cols` argument instead.</code></pre>
+## ℹ Please use the `max_extra_cols` argument instead.</code></pre>
 <pre><code>## # A tibble: 16,799 × 101
 ##   counter I1002 I1003 I1004 I1005 I1013 I1015 I1018 I1020
 ##     &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
@@ -357,17 +358,18 @@ strange</code></pre>
 <pre class="r"><code>survey &lt;- as_tibble( Irish$survey )
 head(survey)</code></pre>
 <pre><code>## # A tibble: 6 × 12
-##   ID    meanDem SOCIALCLASS OWNERSHIP BUILT.YEAR HEAT.HOME HEAT.WATER
-##   &lt;chr&gt;   &lt;dbl&gt; &lt;fct&gt;       &lt;chr&gt;          &lt;dbl&gt; &lt;chr&gt;     &lt;chr&gt;     
-## 1 I1002   0.208 DE          O               1975 Other     Elec      
-## 2 I1003   0.622 C1          O               2004 Other     Other     
-## 3 I1004   0.962 C1          O               1987 Other     Elec      
-## 4 I1005   0.640 C1          O               1930 Other     Other     
-## 5 I1013   0.241 C2          O               2003 Other     Elec      
-## 6 I1015   0.463 DE          R               1989 Elec      Other     
-## # … with 5 more variables: WINDOWS.doubleglazed &lt;chr&gt;,
-## #   HOME.APPLIANCE..White.goods. &lt;dbl&gt;, Code &lt;int&gt;, ResTariffallocation &lt;fct&gt;,
-## #   ResStimulusallocation &lt;fct&gt;</code></pre>
+##   ID    meanDem SOCIALCL…¹ OWNER…² BUILT…³ HEAT.…⁴ HEAT.…⁵ WINDO…⁶ HOME.…⁷  Code
+##   &lt;chr&gt;   &lt;dbl&gt; &lt;fct&gt;      &lt;chr&gt;     &lt;dbl&gt; &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;     &lt;dbl&gt; &lt;int&gt;
+## 1 I1002   0.208 DE         O          1975 Other   Elec    All           1     1
+## 2 I1003   0.622 C1         O          2004 Other   Other   All           5     1
+## 3 I1004   0.962 C1         O          1987 Other   Elec    All           5     1
+## 4 I1005   0.640 C1         O          1930 Other   Other   All           4     1
+## 5 I1013   0.241 C2         O          2003 Other   Elec    All           3     1
+## 6 I1015   0.463 DE         R          1989 Elec    Other   All           2     1
+## # … with 2 more variables: ResTariffallocation &lt;fct&gt;,
+## #   ResStimulusallocation &lt;fct&gt;, and abbreviated variable names ¹​SOCIALCLASS,
+## #   ²​OWNERSHIP, ³​BUILT.YEAR, ⁴​HEAT.HOME, ⁵​HEAT.WATER, ⁶​WINDOWS.doubleglazed,
+## #   ⁷​HOME.APPLIANCE..White.goods.</code></pre>
 <p>Here we have, among others, the built year of the building, the type of heating and the number of appliances (see <code>?Irish</code> for more details). We also have some extra information in the following slot:</p>
 <pre class="r"><code>extra &lt;- as_tibble( Irish$extra )
 head(extra)</code></pre>
