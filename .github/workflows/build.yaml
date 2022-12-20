@@ -8,7 +8,7 @@ name: build
 
 jobs:
   build:
-    runs-on: macOS-latest
+    runs-on: ubuntu-latest
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
     steps:
@@ -23,7 +23,9 @@ jobs:
         run: brew install --cask xquartz
 
       - name: Install dependencies
-        run: R -e 'install.packages(c(
+        run: |
+          sudo apt install build-essential libcurl4-gnutls-dev libxml2-dev libssl-dev
+          R -e 'install.packages(c(
           "tidyverse",
           "mgcViz",
           "GGally",
