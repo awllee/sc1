@@ -318,7 +318,7 @@ UKweek</code></pre>
 <p>The reason for this is that the Christmas and New Year period is quite special in terms of electricity demand dynamics, hence we prefer to discard it here.</p>
 <p>A simple GAM model for weekly total demand might be <span class="math inline">\(D_w \sim N(\mu_w, \sigma)\)</span> where
 <span class="math display">\[
-\mu_w = \mathbb{E}(D_w) = \psi_{N_w} + f_1(T^{max}_w) + f_2(T^{min}_w) + f_3(\text{Posan}_w), 
+\mu_w = \mathbb{E}(D_w) = \psi_{N_w} + f_1(T^{max}_w) + f_2(T^{min}_w) + f_3(\text{Posan}_w),
 \]</span>
 <span class="math inline">\(\psi_{N_t}\)</span> is a parametric effect, whose value depends on the number of holidays taking place during the <span class="math inline">\(w\)</span>-th week, while <span class="math inline">\(f_1, f_2\)</span> and <span class="math inline">\(f_3\)</span> are smooth effects (see a previous section for an intro to GAMs, but a deep understanding of GAMs is unnecessary here, as we just want to illustrate the utility of <code>dplyr</code> in day-to-day modelling). We fit the model as follows:</p>
 <pre class="r"><code>library(mgcViz)

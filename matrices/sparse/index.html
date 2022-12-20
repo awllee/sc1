@@ -151,7 +151,7 @@ C &lt;- Matrix(rnorm(4), nrow=2, ncol=2)
 c(rankMatrix(A), rankMatrix(B), rankMatrix(B, tol=1e-7))</code></pre>
 <pre><code>## [1] 1 2 1</code></pre>
 <pre class="r"><code>c(rcond(A), rcond(B), rcond(C), rcond(C/1e5))</code></pre>
-<pre><code>## [1] 0.000000e+00 1.661158e-09 3.232635e-01 3.232635e-01</code></pre>
+<pre><code>## [1] 0.000000e+00 6.394001e-10 1.793980e-02 1.793980e-02</code></pre>
 <p>A sparse matrix is one where most entries will be 0. It is inefficient to store all these 0’s in memory.</p>
 <pre class="r"><code>set.seed(7)
 nrows &lt;- 1000
