@@ -29,7 +29,7 @@
     
 
 
-<link href='//cdn.bootcss.com/highlight.js/9.12.0/styles/github.min.css' rel='stylesheet' type='text/css' />
+<link rel="stylesheet" href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.12.0/build/styles/github.min.css">
 
 
 
@@ -280,13 +280,13 @@ ftest1_loop &lt;- function(x) {
 }
 system.time(ftest1_apply(x))</code></pre>
 <pre><code>##    user  system elapsed 
-##   1.093   0.133   1.229</code></pre>
+##   1.076   0.050   1.130</code></pre>
 <pre class="r"><code>system.time(ftest1_loop(x))</code></pre>
 <pre><code>##    user  system elapsed 
-##   0.728   0.015   0.744</code></pre>
+##   0.726   0.003   0.730</code></pre>
 <pre class="r"><code>system.time(ftest1(x))</code></pre>
 <pre><code>##    user  system elapsed 
-##   0.013   0.000   0.013</code></pre>
+##   0.012   0.000   0.012</code></pre>
 <p>The results show that <code>lapply</code> is the slowest, with for loop being twice as fast as <code>lapply</code>. But obviously applying the function directly (hence vectorised) is the fastest by far.</p>
 </div>
 <div id="map-reduce-and-filter" class="section level2">
@@ -405,14 +405,15 @@ alt="Web Analytics"></a></div></noscript>
 
 
 
-<script src="//cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
 
 
 
-<script src="//cdn.bootcss.com/highlight.js/9.12.0/languages/r.min.js"></script>
-<script src="//cdn.bootcss.com/highlight.js/9.12.0/languages/yaml.min.js"></script>
-<script src="//cdn.bootcss.com/highlight.js/9.12.0/languages/tex.min.js"></script>
-<script>hljs.configure({languages: []}); hljs.initHighlightingOnLoad();</script>
+
+
+
+
+
+<script src="//cdn.jsdelivr.net/combine/gh/highlightjs/cdn-release@9.12.0/build/highlight.min.js,gh/highlightjs/cdn-release@9.12.0/build/languages/r.min.js,gh/highlightjs/cdn-release@9.12.0/build/languages/yaml.min.js,gh/highlightjs/cdn-release@9.12.0/build/languages/tex.min.js,npm/@xiee/utils/js/load-highlight.js" defer></script>
 
 
 

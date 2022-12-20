@@ -31,7 +31,7 @@
     
 
 
-<link href='//cdn.bootcss.com/highlight.js/9.12.0/styles/github.min.css' rel='stylesheet' type='text/css' />
+<link rel="stylesheet" href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.12.0/build/styles/github.min.css">
 
 
 
@@ -240,7 +240,7 @@ plot.simple_lin_regression &lt;- function(x, y = NULL, ...) {
 <pre class="r"><code>plot</code></pre>
 <pre><code>## function (x, y, ...) 
 ## UseMethod(&quot;plot&quot;)
-## &lt;bytecode: 0x7fbfa9147868&gt;
+## &lt;bytecode: 0x7f9ff0e58a68&gt;
 ## &lt;environment: namespace:base&gt;</code></pre>
 <p>Note that the generic function <code>plot</code> has two compulsory arguments <code>x</code> and <code>y</code> and optional arguments indicated by <code>...</code>. The generic functions body is always a call of the function <code>UseMethod("[name_of_generic_function]")</code>.</p>
 <p>When defining a method that implements a generic function for an S3 object it must have the same arguments as the generic function.</p>
@@ -660,14 +660,15 @@ alt="Web Analytics"></a></div></noscript>
 
 
 
-<script src="//cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
 
 
 
-<script src="//cdn.bootcss.com/highlight.js/9.12.0/languages/r.min.js"></script>
-<script src="//cdn.bootcss.com/highlight.js/9.12.0/languages/yaml.min.js"></script>
-<script src="//cdn.bootcss.com/highlight.js/9.12.0/languages/tex.min.js"></script>
-<script>hljs.configure({languages: []}); hljs.initHighlightingOnLoad();</script>
+
+
+
+
+
+<script src="//cdn.jsdelivr.net/combine/gh/highlightjs/cdn-release@9.12.0/build/highlight.min.js,gh/highlightjs/cdn-release@9.12.0/build/languages/r.min.js,gh/highlightjs/cdn-release@9.12.0/build/languages/yaml.min.js,gh/highlightjs/cdn-release@9.12.0/build/languages/tex.min.js,npm/@xiee/utils/js/load-highlight.js" defer></script>
 
 
 

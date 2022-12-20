@@ -31,7 +31,7 @@ Vectorisation is &amp;hellip;">
     
 
 
-<link href='//cdn.bootcss.com/highlight.js/9.12.0/styles/github.min.css' rel='stylesheet' type='text/css' />
+<link rel="stylesheet" href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.12.0/build/styles/github.min.css">
 
 
 
@@ -159,10 +159,10 @@ Vectorisation is &amp;hellip;">
 <pre class="r"><code>x &lt;- 1:1e6 #runif(1e+06, min=-1, max=1)
 system.time(fsum1(x))</code></pre>
 <pre><code>##    user  system elapsed 
-##   0.098   0.001   0.099</code></pre>
+##   0.100   0.001   0.101</code></pre>
 <pre class="r"><code>system.time(fsum2(x))</code></pre>
 <pre><code>##    user  system elapsed 
-##   0.022   0.004   0.026</code></pre>
+##   0.023   0.004   0.028</code></pre>
 <p>As can been seen in this example, vectorised code is not only faster but also more elegant.</p>
 </div>
 <div id="matrix-operations-higher-dimensional-vectorisation" class="section level2">
@@ -190,10 +190,10 @@ hist(num_heads, breaks=50)</code></pre>
 <pre class="r"><code>n &lt;- 10000
 system.time(coin_toss1(n))</code></pre>
 <pre><code>##    user  system elapsed 
-##   9.717   0.249  10.172</code></pre>
+##   9.446   0.203   9.864</code></pre>
 <pre class="r"><code>system.time(coin_toss2(n))</code></pre>
 <pre><code>##    user  system elapsed 
-##   0.039   0.005   0.044</code></pre>
+##   0.039   0.005   0.059</code></pre>
 <p>Generally speaking, more layers of loops result in higher speedup if the code is properly vectorised. Having 3 layers of loops or higher should be avoided in an interpreted language such as <code>R</code>.</p>
 </div>
 
@@ -261,14 +261,15 @@ alt="Web Analytics"></a></div></noscript>
 
 
 
-<script src="//cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
 
 
 
-<script src="//cdn.bootcss.com/highlight.js/9.12.0/languages/r.min.js"></script>
-<script src="//cdn.bootcss.com/highlight.js/9.12.0/languages/yaml.min.js"></script>
-<script src="//cdn.bootcss.com/highlight.js/9.12.0/languages/tex.min.js"></script>
-<script>hljs.configure({languages: []}); hljs.initHighlightingOnLoad();</script>
+
+
+
+
+
+<script src="//cdn.jsdelivr.net/combine/gh/highlightjs/cdn-release@9.12.0/build/highlight.min.js,gh/highlightjs/cdn-release@9.12.0/build/languages/r.min.js,gh/highlightjs/cdn-release@9.12.0/build/languages/yaml.min.js,gh/highlightjs/cdn-release@9.12.0/build/languages/tex.min.js,npm/@xiee/utils/js/load-highlight.js" defer></script>
 
 
 
