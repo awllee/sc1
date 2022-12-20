@@ -38,7 +38,7 @@ jobs:
           ))'
 
       - name: Setup pandoc
-        uses: r-lib/actions/setup-pandoc@v1
+        uses: r-lib/actions/setup-pandoc@v2
 
       - name: Install hugo
         run: |
