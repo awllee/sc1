@@ -284,7 +284,7 @@ $$\int_a^b f(x) {\rm d}x = \int_c^d g(y) {\rm d}y,$$
 
 by defining
 
-$$g(y) := \frac{b-a}{d-c}g \left (a+\frac{b-a}{d-c}(y-c) \right ).$$
+$$g(y) := \frac{b-a}{d-c} f \left (a+\frac{b-a}{d-c}(y-c) \right ).$$
 
 Examples of common intervals are $[-1,1]$ and $[0,1]$.
 
