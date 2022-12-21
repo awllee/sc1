@@ -165,7 +165,7 @@
 <pre class="r"><code>library(parallel)
 num_cores &lt;- detectCores()
 num_cores</code></pre>
-<pre><code>## [1] 3</code></pre>
+<pre><code>## [1] 2</code></pre>
 <p>In a Wright-Fisher model, an important model in population genetics, we trace the frequency of a mutant in a population of constant size <span class="math inline">\(N\)</span>. The number of mutants <span class="math inline">\(X_k\)</span> is a Markov process that depends only on the value of <span class="math inline">\(X_{k-1}\)</span>:
 <span class="math display">\[ X_k | X_{k-1} \sim Binomial(N, \frac{X_{k-1}} N). \]</span></p>
 <pre class="r"><code>simulate_wright_fisher &lt;- function(N, n_gen, init_freq) {
@@ -182,7 +182,7 @@ plot(counts, type=&#39;l&#39;, main=&#39;frequency of mutant&#39;, xlab=&#39;gen
 <p><img src="/sc1common-r/parallel_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
 <pre class="r"><code>system.time(simulate_wright_fisher(5000, 10000, 0.2))</code></pre>
 <pre><code>##    user  system elapsed 
-##   0.027   0.001   0.028</code></pre>
+##   0.023   0.000   0.023</code></pre>
 <p>This simple “neutral” Wright-Fisher model can still be vectorised relatively easily, but more complicated models won’t be. This is where parallelisation comes in.</p>
 </div>
 <div id="mclapply-doesnt-work-on-windows" class="section level2">
@@ -192,24 +192,24 @@ init_freqs &lt;- rep(0.2, 3)
 res &lt;- mclapply(init_freqs, wrapper, mc.cores=2)
 res</code></pre>
 <pre><code>## [[1]]
-##  [1] 1000 1010  970  972  941  898  862  844  851  821
+##  [1] 1000  955  925  934  953  962  929  894  876  868
 ## 
 ## [[2]]
-##  [1] 1000  940  979  945  952  969  915  952  963  939
+##  [1] 1000  994  982  958  895  879  848  831  791  797
 ## 
 ## [[3]]
-##  [1] 1000 1036 1036 1018  999 1038 1010  997 1023 1030</code></pre>
+##  [1] 1000  996  987  962  949  956  974  988 1000 1046</code></pre>
 <pre class="r"><code>wrapper2 &lt;- function(init_freq) tail(simulate_wright_fisher(5000, 1000, init_freq), 1)
 init_freqs2 &lt;- rep(0.2, 500)
 system.time(lapply(init_freqs2, wrapper2))</code></pre>
 <pre><code>##    user  system elapsed 
-##   1.578   0.150   1.730</code></pre>
+##   1.303   0.012   1.315</code></pre>
 <pre class="r"><code>system.time(mclapply(init_freqs2, wrapper2, mc.cores=2))</code></pre>
 <pre><code>##    user  system elapsed 
-##   0.892   0.266   1.234</code></pre>
+##   0.001   0.004   0.717</code></pre>
 <pre class="r"><code>system.time(mclapply(init_freqs2, wrapper2, mc.cores=4))</code></pre>
 <pre><code>##    user  system elapsed 
-##   0.945   0.336   1.043</code></pre>
+##   0.712   0.104   0.809</code></pre>
 <p>The results show that <code>mclapply</code> with 2 cores is twice as fast as <code>lapply</code>. Increasing to 4 cores improves the performance of <code>mclapply</code> further, but by a factor slightly less than 2. (Note that on this MacBook, there are 4 physical cores, 8 virtual cores.)</p>
 </div>
 <div id="foreach-and-doparallel" class="section level2">
@@ -232,8 +232,8 @@ foreach (i=1:3) %do% {
 }
 res</code></pre>
 <pre><code>##          [,1] [,2] [,3] [,4] [,5] [,6] [,7] [,8] [,9] [,10]
-## result.1 1000 1002  967  930  984  959  962  944  910   938
-## result.2 1000  961  948  935  916  914  870  888  894   861</code></pre>
+## result.1 1000  967  926  925  926  943  936  939  926   902
+## result.2 1000 1029 1003  988 1032 1009 1015  988 1007   989</code></pre>
 <p>A useful argument to add to <code>foreach</code> is <code>.final</code>, which is function of one argument that is called to return final. For sample, if we are only interested in the number of mutants in the most recent generation,</p>
 <pre class="r"><code>n_gen &lt;- 1000
 res &lt;- foreach (i=1:1000, .combine=rbind, .final=function(x) x[,n_gen]) %do% {
@@ -250,12 +250,12 @@ system.time(foreach (i=1:n_runs, .combine=rbind, .final=function(x) x[,n_gen]) %
   simulate_wright_fisher(5000, n_gen, 0.2)
 })</code></pre>
 <pre><code>##    user  system elapsed 
-##   0.716   0.041   0.766</code></pre>
+##   0.549   0.000   0.549</code></pre>
 <pre class="r"><code>system.time(foreach (i=1:n_runs, .combine=rbind, .final=function(x) x[,n_gen]) %dopar% {
   simulate_wright_fisher(5000, n_gen, 0.2)
 })</code></pre>
 <pre><code>##    user  system elapsed 
-##   0.841   0.254   0.592</code></pre>
+##   0.616   0.114   0.377</code></pre>
 <pre class="r"><code>t1 &lt;- Sys.time()
 res1 &lt;- foreach (i=1:n_runs, .combine=rbind, .final=function(x) x[,n_gen]) %do% {
   simulate_wright_fisher(5000, n_gen, 0.2)
@@ -272,11 +272,11 @@ res2 &lt;- foreach (i=1:n_runs, .combine=rbind, .final=function(x) x[,n_gen]) %d
 t4 &lt;- Sys.time()
 
 t2-t1</code></pre>
-<pre><code>## Time difference of 0.8655181 secs</code></pre>
+<pre><code>## Time difference of 0.577471 secs</code></pre>
 <pre class="r"><code>t3-t2</code></pre>
-<pre><code>## Time difference of 0.7432921 secs</code></pre>
+<pre><code>## Time difference of 0.4573038 secs</code></pre>
 <pre class="r"><code>t4-t3</code></pre>
-<pre><code>## Time difference of 1.355169 secs</code></pre>
+<pre><code>## Time difference of 0.6398735 secs</code></pre>
 <pre class="r"><code># clean up the cluster
 stopImplicitCluster()</code></pre>
 <p>Just as in the case of <code>mclapply</code>, evaluating the code in parallel with 2 cores takes about half as much time as evaluating the code sequentially, but with 4 cores, the speedup deteriorates somewhat.</p>

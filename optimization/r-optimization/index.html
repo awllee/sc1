@@ -203,7 +203,7 @@ f1(0,0)</code></pre>
 ## [1] -0.7366981  0.5830360
 ## 
 ## $gradient
-## [1] -2.415179e-12  2.897904e-12
+## [1] -2.415179e-12  2.897682e-12
 ## 
 ## $code
 ## [1] 1
@@ -235,7 +235,7 @@ f1(0,0)</code></pre>
 ## [1] -0.7366992  0.5830349
 ## 
 ## $gradient
-## [1]  4.019007e-08 -1.554312e-09
+## [1]  3.996803e-08 -1.554312e-09
 ## 
 ## $code
 ## [1] 1
@@ -250,7 +250,7 @@ f1(0,0)</code></pre>
 ## [1] -1.506530  1.622656
 ## 
 ## $gradient
-## [1]  1.143924e-07 -1.179837e-07
+## [1]  1.143747e-07 -1.180056e-07
 ## 
 ## $code
 ## [1] 1
@@ -304,7 +304,7 @@ f1(0,0)</code></pre>
 ## 
 ## $counts
 ## function gradient 
-##      180       35 
+##      134       29 
 ## 
 ## $convergence
 ## [1] 0
@@ -363,10 +363,10 @@ f1(0,0)</code></pre>
 <p>We observe that BFGS and L-BFGS-B requires far fewer iterations than either Nelder-Mead or CG. Finally, we try simulated annealing, the only method that claims to be able find the global minimum.</p>
 <pre class="r"><code>optim(c(-1.5, 1.5), function(x) f(x[1], x[2]), method=&quot;SANN&quot;, control=list(maxit=100))</code></pre>
 <pre><code>## $par
-## [1] -0.8132828  0.7443714
+## [1] -0.2763957  1.9368608
 ## 
 ## $value
-## [1] 0.7408638
+## [1] 2.760668
 ## 
 ## $counts
 ## function gradient 
@@ -379,10 +379,10 @@ f1(0,0)</code></pre>
 ## NULL</code></pre>
 <pre class="r"><code>optim(c(-1.5, 1.5), function(x) f(x[1], x[2]), method=&quot;SANN&quot;, control=list(maxit=1000))</code></pre>
 <pre><code>## $par
-## [1] -0.7275898  0.5495808
+## [1] -0.7223199  0.5847110
 ## 
 ## $value
-## [1] 0.5961207
+## [1] 0.592339
 ## 
 ## $counts
 ## function gradient 
@@ -395,10 +395,10 @@ f1(0,0)</code></pre>
 ## NULL</code></pre>
 <pre class="r"><code>optim(c(-1.5, 1.5), function(x) f(x[1], x[2]), method=&quot;SANN&quot;, control=list(maxit=3000))</code></pre>
 <pre><code>## $par
-## [1] -0.7283909  0.5968884
+## [1] -0.7317667  0.6002729
 ## 
 ## $value
-## [1] 0.5922739
+## [1] 0.5925539
 ## 
 ## $counts
 ## function gradient 
@@ -451,7 +451,7 @@ nlm(f, mydata=my_data, p=start1)</code></pre>
 ## [1] 196.2832646  49.0967439   0.3135034
 ## 
 ## $gradient
-## [1]  2.389191e-08 -6.393138e-08  3.163159e-05
+## [1]  2.396657e-08 -6.501680e-08  3.163825e-05
 ## 
 ## $code
 ## [1] 2
@@ -512,14 +512,14 @@ nlm(f, mydata=my_data, p=start1)</code></pre>
 <pre class="r"><code>optim(par=start1, fn=f, mydata=my_data, method=&quot;L-BFGS-B&quot;)</code></pre>
 <pre><code>## $par
 ##          b1          b2          b3 
-## 196.5325081  49.1219542   0.3133583 
+## 196.1652577  49.0795134   0.3135607 
 ## 
 ## $value
-## [1] 2.587556
+## [1] 2.5873
 ## 
 ## $counts
 ## function gradient 
-##      126      126 
+##      137      137 
 ## 
 ## $convergence
 ## [1] 0
@@ -528,11 +528,11 @@ nlm(f, mydata=my_data, p=start1)</code></pre>
 ## [1] &quot;CONVERGENCE: REL_REDUCTION_OF_F &lt;= FACTR*EPSMCH&quot;</code></pre>
 <pre class="r"><code>optim(par=start1, fn=f, mydata=my_data, method=&quot;SANN&quot;, control=list(maxit=30000))</code></pre>
 <pre><code>## $par
-##         b1         b2         b3 
-## 98.1532019 34.8064143  0.4155085 
+##          b1          b2          b3 
+## 101.3092490  37.5608199   0.4180104 
 ## 
 ## $value
-## [1] 228.7085
+## [1] 180.1782
 ## 
 ## $counts
 ## function gradient 
