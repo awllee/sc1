@@ -22,9 +22,13 @@ jobs:
         if: runner.os == 'macOS'
         run: brew install --cask xquartz
 
-      - name: Install dependencies
+      - name: Install Ubuntu dependencies
+        if: runner.os == 'ubuntu'
         run: |
           sudo apt install build-essential libcurl4-gnutls-dev libxml2-dev libssl-dev libharfbuzz-dev libfribidi-dev
+
+      - name: Install R packages
+        run: |
           R -e 'install.packages(c(
           "tidyverse",
           "mgcViz",
