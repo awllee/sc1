@@ -23,7 +23,7 @@ jobs:
         run: brew install --cask xquartz
 
       - name: Install Ubuntu dependencies
-        if: startsWith(runner.os, 'ubuntu')
+        if: runner.os == 'Linux'
         run: |
           sudo apt install build-essential libcurl4-gnutls-dev libxml2-dev libssl-dev libharfbuzz-dev libfribidi-dev
 
