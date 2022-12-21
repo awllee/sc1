@@ -35,6 +35,7 @@
 
     <link rel="stylesheet" href="/sc1/css/style.css" />
     <link rel="stylesheet" href="/sc1/css/fonts.css" />
+    <link rel="stylesheet" href="/sc1/css/custom.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Arvo">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Marcellus">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Code+Pro">
@@ -284,13 +285,13 @@ ftest1_loop &lt;- function(x) {
 }
 system.time(ftest1_apply(x))</code></pre>
 <pre><code>##    user  system elapsed 
-##   1.111   0.059   1.300</code></pre>
+##   1.091   0.075   1.228</code></pre>
 <pre class="r"><code>system.time(ftest1_loop(x))</code></pre>
 <pre><code>##    user  system elapsed 
-##   0.733   0.009   0.909</code></pre>
+##   0.809   0.019   1.170</code></pre>
 <pre class="r"><code>system.time(ftest1(x))</code></pre>
 <pre><code>##    user  system elapsed 
-##   0.012   0.000   0.011</code></pre>
+##   0.012   0.000   0.028</code></pre>
 <p>The results show that <code>lapply</code> is the slowest, with for loop being twice as fast as <code>lapply</code>. But obviously applying the function directly (hence vectorised) is the fastest by far.</p>
 </div>
 <div id="map-reduce-and-filter" class="section level2">

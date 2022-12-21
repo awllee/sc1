@@ -35,6 +35,7 @@
 
     <link rel="stylesheet" href="/sc1/css/style.css" />
     <link rel="stylesheet" href="/sc1/css/fonts.css" />
+    <link rel="stylesheet" href="/sc1/css/custom.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Arvo">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Marcellus">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Code+Pro">
@@ -361,10 +362,10 @@ f1(0,0)</code></pre>
 <p>We observe that BFGS and L-BFGS-B requires far fewer iterations than either Nelder-Mead or CG. Finally, we try simulated annealing, the only method that claims to be able find the global minimum.</p>
 <pre class="r"><code>optim(c(-1.5, 1.5), function(x) f(x[1], x[2]), method=&quot;SANN&quot;, control=list(maxit=100))</code></pre>
 <pre><code>## $par
-## [1] -0.9101781  0.2730895
+## [1] -0.5805195  0.9713463
 ## 
 ## $value
-## [1] 0.8545684
+## [1] 0.8422766
 ## 
 ## $counts
 ## function gradient 
@@ -377,10 +378,10 @@ f1(0,0)</code></pre>
 ## NULL</code></pre>
 <pre class="r"><code>optim(c(-1.5, 1.5), function(x) f(x[1], x[2]), method=&quot;SANN&quot;, control=list(maxit=1000))</code></pre>
 <pre><code>## $par
-## [1] -0.7572027  0.3945739
+## [1] -0.7631853  0.5670830
 ## 
 ## $value
-## [1] 0.6858438
+## [1] 0.5931817
 ## 
 ## $counts
 ## function gradient 
@@ -393,10 +394,10 @@ f1(0,0)</code></pre>
 ## NULL</code></pre>
 <pre class="r"><code>optim(c(-1.5, 1.5), function(x) f(x[1], x[2]), method=&quot;SANN&quot;, control=list(maxit=3000))</code></pre>
 <pre><code>## $par
-## [1] -0.7475073  0.5667293
+## [1] -0.7479938  0.5744025
 ## 
 ## $value
-## [1] 0.59245
+## [1] 0.5921353
 ## 
 ## $counts
 ## function gradient 
@@ -527,10 +528,10 @@ nlm(f, mydata=my_data, p=start1)</code></pre>
 <pre class="r"><code>optim(par=start1, fn=f, mydata=my_data, method=&quot;SANN&quot;, control=list(maxit=30000))</code></pre>
 <pre><code>## $par
 ##         b1         b2         b3 
-## 98.3913634 36.4783620  0.4214901 
+## 98.0966358 35.8393633  0.4230092 
 ## 
 ## $value
-## [1] 214.9812
+## [1] 222.8291
 ## 
 ## $counts
 ## function gradient 
