@@ -240,7 +240,7 @@ plot.simple_lin_regression &lt;- function(x, y = NULL, ...) {
 <pre class="r"><code>plot</code></pre>
 <pre><code>## function (x, y, ...) 
 ## UseMethod(&quot;plot&quot;)
-## &lt;bytecode: 0x7fc5d336c840&gt;
+## &lt;bytecode: 0x55e2973018e8&gt;
 ## &lt;environment: namespace:base&gt;</code></pre>
 <p>Note that the generic function <code>plot</code> has two compulsory arguments <code>x</code> and <code>y</code> and optional arguments indicated by <code>...</code>. The generic functions body is always a call of the function <code>UseMethod("[name_of_generic_function]")</code>.</p>
 <p>When defining a method that implements a generic function for an S3 object it must have the same arguments as the generic function.</p>
