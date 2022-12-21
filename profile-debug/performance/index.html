@@ -71,18 +71,18 @@
 
 <nav class="breadcrumbs">
     
-        <a href="https://awllee.github.io/sc1">home / </a>
+        <a href="sc1">home / </a>
     
-        <a href="https://awllee.github.io/sc1/profile-debug/">profile-debug / </a>
+        <a href="sc1/profile-debug/">profile-debug / </a>
     
-        <a href="https://awllee.github.io/sc1/profile-debug/performance/">performance / </a>
+        <a href="sc1/profile-debug/performance/">performance / </a>
     
 </nav>
 
   </head>
 
   
-  <body class="sc1">
+  <body class="sc1/profile-debug/performance/">
     <header class="masthead">
       <h1><a href="/">SC1</a></h1>
 
@@ -98,27 +98,27 @@
   <ul>
   
   
-  <li><a href="/sc1/">Home</a></li>
+  <li><a href="sc1/">Home</a></li>
   
-  <li><a href="/sc1/intro-r/">Intro to R</a></li>
+  <li><a href="sc1/intro-r/">Intro to R</a></li>
   
-  <li><a href="/sc1/reproducibility/">Reproducibility</a></li>
+  <li><a href="sc1/reproducibility/">Reproducibility</a></li>
   
-  <li><a href="/sc1/packages/">Packages</a></li>
+  <li><a href="sc1/packages/">Packages</a></li>
   
-  <li><a href="/sc1/common-r/">Common R</a></li>
+  <li><a href="sc1/common-r/">Common R</a></li>
   
-  <li><a href="/sc1/functional-oo/">Functional / OO</a></li>
+  <li><a href="sc1/functional-oo/">Functional / OO</a></li>
   
-  <li><a href="/sc1/tidyverse/">Tidyverse</a></li>
+  <li><a href="sc1/tidyverse/">Tidyverse</a></li>
   
-  <li><a href="/sc1/profile-debug/">Performance / Bugs</a></li>
+  <li><a href="sc1/profile-debug/">Performance / Bugs</a></li>
   
-  <li><a href="/sc1/matrices/">Matrices</a></li>
+  <li><a href="sc1/matrices/">Matrices</a></li>
   
-  <li><a href="/sc1/optimization/">Optimization</a></li>
+  <li><a href="sc1/optimization/">Optimization</a></li>
   
-  <li><a href="/sc1/integration/">Integration</a></li>
+  <li><a href="sc1/integration/">Integration</a></li>
   
   
   </ul>
@@ -176,12 +176,12 @@ a2 &lt;- rep(0,10000)
 library(microbenchmark)
 microbenchmark(add.one(a1))</code></pre>
 <pre><code>## Unit: microseconds
-##         expr   min    lq    mean median     uq     max neval
-##  add.one(a1) 311.7 324.5 520.098 325.95 328.85 19404.3   100</code></pre>
+##         expr     min       lq     mean  median      uq      max neval
+##  add.one(a1) 292.774 312.9475 541.6525 315.122 319.531 21922.33   100</code></pre>
 <pre class="r"><code>microbenchmark(add.one(a2))</code></pre>
 <pre><code>## Unit: microseconds
-##         expr   min    lq    mean median     uq   max neval
-##  add.one(a2) 598.6 617.7 624.644 620.85 629.15 666.6   100</code></pre>
+##         expr     min       lq     mean  median       uq     max neval
+##  add.one(a2) 617.304 621.4655 640.6069 626.101 636.8055 801.598   100</code></pre>
 <p>On the other hand, small changes in the code (that would not affect performance in languages that pass by reference) can cause many copies of the array to made.</p>
 <pre class="r"><code>add.one.bad &lt;- function(x) {
   y &lt;- x
@@ -206,16 +206,16 @@ add.one.slow &lt;- function(x) {
 
 system.time(add.one.bad(a1))</code></pre>
 <pre><code>##    user  system elapsed 
-##   0.029   0.020   0.049</code></pre>
+##   0.075   0.097   0.176</code></pre>
 <pre class="r"><code>system.time(add.one.bad(a2))</code></pre>
 <pre><code>##    user  system elapsed 
-##   0.084   0.020   0.104</code></pre>
+##   0.231   0.306   0.540</code></pre>
 <pre class="r"><code>system.time(add.one.slow(a1))</code></pre>
 <pre><code>##    user  system elapsed 
-##   0.034   0.020   0.054</code></pre>
+##   0.093   0.095   0.189</code></pre>
 <pre class="r"><code>system.time(add.one.slow(a2))</code></pre>
 <pre><code>##    user  system elapsed 
-##   0.172   0.020   0.192</code></pre>
+##   0.409   0.395   0.862</code></pre>
 </div>
 <div id="column-major-storage" class="section level2">
 <h2>Column-major storage</h2>
@@ -242,10 +242,10 @@ fill.by.row &lt;- function(n) {
 <pre class="r"><code>n &lt;- 10000
 system.time(Y1 &lt;- fill.by.column(n))</code></pre>
 <pre><code>##    user  system elapsed 
-##   0.328   0.244   0.573</code></pre>
+##   0.516   1.214   1.751</code></pre>
 <pre class="r"><code>system.time(Y2 &lt;- fill.by.row(n))</code></pre>
 <pre><code>##    user  system elapsed 
-##   0.729   0.240   0.970</code></pre>
+##   3.161   1.008   5.343</code></pre>
 <p>Filling the matrix column by column is faster because reading and writing memory in contiguous blocks is faster than reading and writing memory locations that are far apart.</p>
 </div>
 <div id="example-logistic-regression" class="section level2">
@@ -325,22 +325,22 @@ X &lt;- matrix(rnorm(n*(d-1)), n, d-1)
 X &lt;- cbind(1, X)
 theta.true &lt;- rnorm(d)
 theta.true</code></pre>
-<pre><code>##  [1] -0.5994542 -0.5194083 -0.6602696  1.7586430 -1.1337367  0.1742495
-##  [7]  0.4796657  0.1526954 -0.6645104  0.6810573</code></pre>
+<pre><code>##  [1]  1.190720564  0.009020179 -1.440411395 -0.497793799  1.956904908
+##  [6]  1.660800577  0.156772041 -1.698258189 -1.484207511  0.653510430</code></pre>
 <pre class="r"><code>y &lt;- generate.y(X, theta.true)
 
 system.time(mle &lt;- maximize.ell(ell, score, X, y, rep(0,d)))</code></pre>
 <pre><code>##    user  system elapsed 
-##   0.126   0.037   0.082</code></pre>
+##   0.116   0.023   0.142</code></pre>
 <pre class="r"><code>mle</code></pre>
-<pre><code>##  [1] -0.5640212 -0.5170514 -0.6479016  1.7727978 -1.1369754  0.2020981
-##  [7]  0.5080581  0.1049005 -0.6420684  0.7493049</code></pre>
+<pre><code>##  [1]  1.201321737  0.003052994 -1.396546899 -0.522551146  1.902881959
+##  [6]  1.695981525  0.109602744 -1.694698460 -1.480911339  0.683437658</code></pre>
 <pre class="r"><code>system.time(mle &lt;- maximize.ell(ell.slow, score.slow, X, y, rep(0,d)))</code></pre>
 <pre><code>##    user  system elapsed 
-##   3.362   0.012   3.324</code></pre>
+##   5.477   0.079   6.542</code></pre>
 <pre class="r"><code>mle</code></pre>
-<pre><code>##  [1] -0.5640212 -0.5170514 -0.6479016  1.7727978 -1.1369754  0.2020981
-##  [7]  0.5080581  0.1049005 -0.6420684  0.7493049</code></pre>
+<pre><code>##  [1]  1.20132175  0.00305299 -1.39654694 -0.52255117  1.90288200  1.69598157
+##  [7]  0.10960274 -1.69469849 -1.48091138  0.68343768</code></pre>
 </div>
 <div id="example-matrix-vector-multiplications" class="section level2">
 <h2>Example: matrix vector multiplications</h2>
@@ -362,12 +362,12 @@ foo &lt;- function(A, B) {
 
 system.time(C &lt;- A%*%B)</code></pre>
 <pre><code>##    user  system elapsed 
-##   0.040   0.012   0.027</code></pre>
+##   0.978   0.030   1.227</code></pre>
 <pre class="r"><code>system.time(C.alt &lt;- foo(A, B))</code></pre>
 <pre><code>##    user  system elapsed 
-##   1.014   0.267   0.642</code></pre>
+##   2.037   0.075   2.681</code></pre>
 <pre class="r"><code>norm(C-C.alt)</code></pre>
-<pre><code>## [1] 5.036247e-11</code></pre>
+<pre><code>## [1] 0</code></pre>
 <p>Clearly, the matrix-matrix multiplication is more computationally efficient. This is because the implementation of matrix multiplication is <a href="https://en.wikipedia.org/wiki/Matrix_multiplication_algorithm">highly optimized</a> and is not implemented by performing several matrix-vector multiplications.</p>
 <p>In some applications one might need to perform several matrix-vector multiplications with the same vector. For performance, it is better to combine the vectors in a matrix. However, this can sometimes also lead to code that is harder to understand, extend and maintain. So it is usually a good idea to use profiling to ensure that any performance improvements that come at the cost of easily understandable and maintainable code are appropriately justified.</p>
 </div>

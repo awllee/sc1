@@ -71,18 +71,18 @@
 
 <nav class="breadcrumbs">
     
-        <a href="https://awllee.github.io/sc1">home / </a>
+        <a href="sc1">home / </a>
     
-        <a href="https://awllee.github.io/sc1/common-r/">common-r / </a>
+        <a href="sc1/common-r/">common-r / </a>
     
-        <a href="https://awllee.github.io/sc1/common-r/apply/">apply / </a>
+        <a href="sc1/common-r/apply/">apply / </a>
     
 </nav>
 
   </head>
 
   
-  <body class="sc1">
+  <body class="sc1/common-r/apply/">
     <header class="masthead">
       <h1><a href="/">SC1</a></h1>
 
@@ -98,27 +98,27 @@
   <ul>
   
   
-  <li><a href="/sc1/">Home</a></li>
+  <li><a href="sc1/">Home</a></li>
   
-  <li><a href="/sc1/intro-r/">Intro to R</a></li>
+  <li><a href="sc1/intro-r/">Intro to R</a></li>
   
-  <li><a href="/sc1/reproducibility/">Reproducibility</a></li>
+  <li><a href="sc1/reproducibility/">Reproducibility</a></li>
   
-  <li><a href="/sc1/packages/">Packages</a></li>
+  <li><a href="sc1/packages/">Packages</a></li>
   
-  <li><a href="/sc1/common-r/">Common R</a></li>
+  <li><a href="sc1/common-r/">Common R</a></li>
   
-  <li><a href="/sc1/functional-oo/">Functional / OO</a></li>
+  <li><a href="sc1/functional-oo/">Functional / OO</a></li>
   
-  <li><a href="/sc1/tidyverse/">Tidyverse</a></li>
+  <li><a href="sc1/tidyverse/">Tidyverse</a></li>
   
-  <li><a href="/sc1/profile-debug/">Performance / Bugs</a></li>
+  <li><a href="sc1/profile-debug/">Performance / Bugs</a></li>
   
-  <li><a href="/sc1/matrices/">Matrices</a></li>
+  <li><a href="sc1/matrices/">Matrices</a></li>
   
-  <li><a href="/sc1/optimization/">Optimization</a></li>
+  <li><a href="sc1/optimization/">Optimization</a></li>
   
-  <li><a href="/sc1/integration/">Integration</a></li>
+  <li><a href="sc1/integration/">Integration</a></li>
   
   
   </ul>
@@ -284,13 +284,13 @@ ftest1_loop &lt;- function(x) {
 }
 system.time(ftest1_apply(x))</code></pre>
 <pre><code>##    user  system elapsed 
-##   0.890   0.033   0.923</code></pre>
+##   1.137   0.207   1.351</code></pre>
 <pre class="r"><code>system.time(ftest1_loop(x))</code></pre>
 <pre><code>##    user  system elapsed 
-##   0.627   0.003   0.632</code></pre>
+##   0.752   0.006   0.760</code></pre>
 <pre class="r"><code>system.time(ftest1(x))</code></pre>
 <pre><code>##    user  system elapsed 
-##    0.01    0.00    0.01</code></pre>
+##   0.012   0.000   0.012</code></pre>
 <p>The results show that <code>lapply</code> is the slowest, with for loop being twice as fast as <code>lapply</code>. But obviously applying the function directly (hence vectorised) is the fastest by far.</p>
 </div>
 <div id="map-reduce-and-filter" class="section level2">
