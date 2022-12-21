@@ -33,14 +33,15 @@
 
 
 
-    <link rel="stylesheet" href="/sc1/css/style.css" />
-    <link rel="stylesheet" href="/sc1/css/fonts.css" />
-    <link rel="stylesheet" href="/sc1/css/custom.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/fonts.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Arvo">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Marcellus">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Code+Pro">
 
-<link rel="stylesheet" href="/css/custom.css" />
+<link rel="stylesheet" href="/sc1/css/style.css" />
+<link rel="stylesheet" href="/sc1/css/fonts.css" />
+<link rel="stylesheet" href="/sc1/css/custom.css" />
 
 <link rel="icon" href="/sc1/favicon.ico" type="image/x-icon" />
 
@@ -362,10 +363,10 @@ f1(0,0)</code></pre>
 <p>We observe that BFGS and L-BFGS-B requires far fewer iterations than either Nelder-Mead or CG. Finally, we try simulated annealing, the only method that claims to be able find the global minimum.</p>
 <pre class="r"><code>optim(c(-1.5, 1.5), function(x) f(x[1], x[2]), method=&quot;SANN&quot;, control=list(maxit=100))</code></pre>
 <pre><code>## $par
-## [1] -0.5805195  0.9713463
+## [1] -0.8132828  0.7443714
 ## 
 ## $value
-## [1] 0.8422766
+## [1] 0.7408638
 ## 
 ## $counts
 ## function gradient 
@@ -378,10 +379,10 @@ f1(0,0)</code></pre>
 ## NULL</code></pre>
 <pre class="r"><code>optim(c(-1.5, 1.5), function(x) f(x[1], x[2]), method=&quot;SANN&quot;, control=list(maxit=1000))</code></pre>
 <pre><code>## $par
-## [1] -0.7631853  0.5670830
+## [1] -0.7275898  0.5495808
 ## 
 ## $value
-## [1] 0.5931817
+## [1] 0.5961207
 ## 
 ## $counts
 ## function gradient 
@@ -394,10 +395,10 @@ f1(0,0)</code></pre>
 ## NULL</code></pre>
 <pre class="r"><code>optim(c(-1.5, 1.5), function(x) f(x[1], x[2]), method=&quot;SANN&quot;, control=list(maxit=3000))</code></pre>
 <pre><code>## $par
-## [1] -0.7479938  0.5744025
+## [1] -0.7283909  0.5968884
 ## 
 ## $value
-## [1] 0.5921353
+## [1] 0.5922739
 ## 
 ## $counts
 ## function gradient 
@@ -528,10 +529,10 @@ nlm(f, mydata=my_data, p=start1)</code></pre>
 <pre class="r"><code>optim(par=start1, fn=f, mydata=my_data, method=&quot;SANN&quot;, control=list(maxit=30000))</code></pre>
 <pre><code>## $par
 ##         b1         b2         b3 
-## 98.0966358 35.8393633  0.4230092 
+## 98.1532019 34.8064143  0.4155085 
 ## 
 ## $value
-## [1] 222.8291
+## [1] 228.7085
 ## 
 ## $counts
 ## function gradient 

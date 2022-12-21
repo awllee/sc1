@@ -33,14 +33,15 @@
 
 
 
-    <link rel="stylesheet" href="/sc1/css/style.css" />
-    <link rel="stylesheet" href="/sc1/css/fonts.css" />
-    <link rel="stylesheet" href="/sc1/css/custom.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/fonts.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Arvo">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Marcellus">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Code+Pro">
 
-<link rel="stylesheet" href="/css/custom.css" />
+<link rel="stylesheet" href="/sc1/css/style.css" />
+<link rel="stylesheet" href="/sc1/css/fonts.css" />
+<link rel="stylesheet" href="/sc1/css/custom.css" />
 
 <link rel="icon" href="/sc1/favicon.ico" type="image/x-icon" />
 
@@ -203,9 +204,9 @@ b &lt;- A %*% x
 x1 &lt;- solve(A) %*% b
 x2 &lt;- solve(A, b)
 c(norm(x-x1, type=&#39;1&#39;), norm(x-x2, type=&#39;1&#39;)) # compare 1-norm of error</code></pre>
-<pre><code>## [1] 0.0002444893 0.0000389555</code></pre>
+<pre><code>## [1] 0.0001118059 0.0000104030</code></pre>
 <pre class="r"><code>c(norm(b - A %*% x1, type=&#39;1&#39;), norm(b - A %*% x2, type=&#39;1&#39;)) # compare residuals</code></pre>
-<pre><code>## [1] 6.641434e-06 1.110223e-16</code></pre>
+<pre><code>## [1] 3.482664e-06 0.000000e+00</code></pre>
 <p>As can be seen from this example, solving directly is more accurate, not to mention faster. Unless a linear system needs to be repeated solved for different vectors, the matrix involved should never be inverted in <code>R</code>.</p>
 </div>
 <div id="numerical-stability-finite-precision-arithmetic" class="section level2">
@@ -246,10 +247,10 @@ c(norm(x-x1, type=&#39;1&#39;), norm(x-x2, type=&#39;1&#39;)) # compare 1-norm o
 
 summary(c((A+B) - A - B))</code></pre>
 <pre><code>##       Min.    1st Qu.     Median       Mean    3rd Qu.       Max. 
-## -2.220e-16  0.000e+00  0.000e+00  8.361e-18  0.000e+00  2.220e-16</code></pre>
+## -2.220e-16  0.000e+00  0.000e+00  4.718e-18  0.000e+00  2.220e-16</code></pre>
 <pre class="r"><code>summary(c(A%*%B%*%C - A%*%(B%*%C)))</code></pre>
 <pre><code>##       Min.    1st Qu.     Median       Mean    3rd Qu.       Max. 
-## -1.776e-15 -1.277e-15 -5.551e-16 -1.776e-16  9.992e-16  2.220e-15</code></pre>
+## -3.553e-15 -6.661e-16  4.441e-16  6.217e-16  3.331e-15  3.553e-15</code></pre>
 <p>The <code>R</code> function <code>solve</code> gives the inverse of a matrix for <code>solve(A)</code>, or solves a linear system <span class="math inline">\(Ax=b\)</span> for <code>solve(A,b)</code>. If one needs to solve <span class="math inline">\(Ax=b\)</span>, then <code>solve(A,b)</code> generally speaking has lower numerical error than <code>solve(A) %*% b</code>, which is equivalent to computing <span class="math inline">\(A^{-1} b\)</span>.</p>
 <pre class="r"><code>A &lt;- rbind(c(10,7,8,7), c(7,5,6,5), c(8,6,10,9), c(7,5,9,10))
 b1 &lt;- c(32,23,33,31); b2 = b1 + rnorm(4)*0.1
@@ -260,35 +261,35 @@ c( A %*% (solve(A, b1)) - b1 )</code></pre>
 <pre class="r"><code>c( A %*% (solve(A, b2)) - b2 )</code></pre>
 <pre><code>## [1] 0 0 0 0</code></pre>
 <pre class="r"><code>c( A %*% (solve(A) %*% b2) - b2 )</code></pre>
-<pre><code>## [1]  2.202682e-13  1.350031e-13 -3.552714e-14 -5.684342e-14</code></pre>
+<pre><code>## [1] 1.538325e-12 1.072920e-12 1.044498e-12 8.206769e-13</code></pre>
 <p>The <code>R</code> function <code>eigen</code> gives a list of two outputs, eigenvalues and eigenvectors of the input matrix. If one knows the input matrix is symmetric, hence will have real eigenvalues, one should specify this in the input argument to <code>eigen</code>. As can be seen in the following examples, if the eigenvalues of a matrix differ by magnitudes, the values of the eigenvectors have significant numerical error.</p>
 <pre class="r"><code>n &lt;- 10
 A1 &lt;- matrix(rnorm(n*n), nrow=n, ncol=n); A2 = A1 + t(A1)
 eA &lt;- eigen(A2, symmetric=TRUE)
 summary(abs(eA$values))</code></pre>
 <pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-##  0.6251  2.6032  3.3927  3.7975  4.9346  8.8455</code></pre>
+## 0.02659 1.95175 3.30898 3.49672 4.81672 7.54392</code></pre>
 <pre class="r"><code>c(norm(eA$vectors %*% diag(eA$values) %*% t(eA$vectors) - A2, type=&#39;1&#39;),
   norm(eA$vectors %*% t(eA$vectors) - diag(rep(1, n)), type=&#39;1&#39;))</code></pre>
-<pre><code>## [1] 5.495604e-14 2.487593e-15</code></pre>
+<pre><code>## [1] 6.571133e-14 5.081439e-15</code></pre>
 <pre class="r"><code>n &lt;- 100
 A1 &lt;- matrix(rnorm(n*n), nrow=n, ncol=n); A2 = A1 + t(A1)
 eA &lt;- eigen(A2, symmetric=TRUE)
 summary(abs(eA$values))</code></pre>
-<pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-##  0.3495  5.7170 11.1172 11.9456 17.5406 27.3418</code></pre>
+<pre><code>##     Min.  1st Qu.   Median     Mean  3rd Qu.     Max. 
+##  0.04829  5.61268 11.32744 11.88829 17.60609 28.10616</code></pre>
 <pre class="r"><code>c(norm(eA$vectors %*% diag(eA$values) %*% t(eA$vectors) - A2, type=&#39;1&#39;),
   norm(eA$vectors %*% t(eA$vectors) - diag(rep(1, n)), type=&#39;1&#39;))</code></pre>
-<pre><code>## [1] 2.359647e-12 3.071591e-13</code></pre>
+<pre><code>## [1] 3.563344e-12 3.295865e-13</code></pre>
 <pre class="r"><code>n &lt;- 1000
 A1 &lt;- matrix(rnorm(n*n), nrow=n, ncol=n); A2 = A1 + t(A1)
 eA &lt;- eigen(A2, symmetric=TRUE)
 summary(abs(eA$values))</code></pre>
 <pre><code>##     Min.  1st Qu.   Median     Mean  3rd Qu.     Max. 
-##  0.07261 17.63332 36.08649 37.92202 56.69085 89.20725</code></pre>
+##  0.09943 17.69778 36.07542 37.98211 56.74662 88.67747</code></pre>
 <pre class="r"><code>c(norm(eA$vectors %*% diag(eA$values) %*% t(eA$vectors) - A2, type=&#39;1&#39;),
   norm(eA$vectors %*% t(eA$vectors) - diag(rep(1, n)), type=&#39;1&#39;))</code></pre>
-<pre><code>## [1] 1.512236e-10 4.184764e-12</code></pre>
+<pre><code>## [1] 2.447950e-10 4.531438e-12</code></pre>
 </div>
 
 
