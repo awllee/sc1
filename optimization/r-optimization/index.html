@@ -65,9 +65,13 @@
 
 
 
+
+
+
+
 <nav class="breadcrumbs">
     
-        <a href="https://awllee.github.io/sc1/">home / </a>
+        <a href="https://awllee.github.io/sc1">home / </a>
     
         <a href="https://awllee.github.io/sc1/optimization/">optimization / </a>
     
@@ -168,7 +172,7 @@ z &lt;- matrix(mapply(f, grid_XY$X, grid_XY$Y), nrow=101)
 min(z)</code></pre>
 <pre><code>## [1] 0.5926044</code></pre>
 <pre class="r"><code>contour(x, x, z, nlevels=20)</code></pre>
-<p><img src="/sc1/optimization/R-optimization_files/figure-html/unnamed-chunk-1-1.png" width="672" /></p>
+<p><img src="/sc1optimization/R-optimization_files/figure-html/unnamed-chunk-1-1.png" width="672" /></p>
 <div id="the-nlm-function" class="section level2">
 <h2>The <code>nlm</code> function</h2>
 <p>The <code>R</code> function <code>nlm</code> uses a Newton-type algorithm. We have the option of specifying the gradient function and the hessian function. For this, we use the <code>deriv</code> function in <code>R</code>, which takes an expression and outputs a function <span class="math inline">\(f\)</span> that returns the gradient (and hessian, if desired) of <span class="math inline">\(f\)</span> along with the value of <span class="math inline">\(f\)</span> itself.</p>
@@ -357,10 +361,10 @@ f1(0,0)</code></pre>
 <p>We observe that BFGS and L-BFGS-B requires far fewer iterations than either Nelder-Mead or CG. Finally, we try simulated annealing, the only method that claims to be able find the global minimum.</p>
 <pre class="r"><code>optim(c(-1.5, 1.5), function(x) f(x[1], x[2]), method=&quot;SANN&quot;, control=list(maxit=100))</code></pre>
 <pre><code>## $par
-## [1] -0.4001241  1.2123178
+## [1] -0.8414048  0.6032409
 ## 
 ## $value
-## [1] 1.157178
+## [1] 0.6292011
 ## 
 ## $counts
 ## function gradient 
@@ -373,10 +377,10 @@ f1(0,0)</code></pre>
 ## NULL</code></pre>
 <pre class="r"><code>optim(c(-1.5, 1.5), function(x) f(x[1], x[2]), method=&quot;SANN&quot;, control=list(maxit=1000))</code></pre>
 <pre><code>## $par
-## [1] -0.7548530  0.6049681
+## [1] -0.7109397  0.5877922
 ## 
 ## $value
-## [1] 0.5953852
+## [1] 0.5932862
 ## 
 ## $counts
 ## function gradient 
@@ -389,10 +393,10 @@ f1(0,0)</code></pre>
 ## NULL</code></pre>
 <pre class="r"><code>optim(c(-1.5, 1.5), function(x) f(x[1], x[2]), method=&quot;SANN&quot;, control=list(maxit=3000))</code></pre>
 <pre><code>## $par
-## [1] -0.7305073  0.6102642
+## [1] -0.7473082  0.5709015
 ## 
 ## $value
-## [1] 0.5936389
+## [1] 0.5922231
 ## 
 ## $counts
 ## function gradient 
@@ -432,7 +436,7 @@ out_lm</code></pre>
 <pre class="r"><code>plot(tdat, ydat, pch=18, xlab=&#39;t&#39;, ylab=&#39;y&#39;, col=&#39;red&#39;)
 lines(tdat, out_lm$m$fitted(), pch=1, col=&#39;blue&#39;, type=&#39;b&#39;, lty=2)
 legend(1, 95, legend=c(&#39;data&#39;, &#39;fitted model&#39;), col=c(&#39;red&#39;, &#39;blue&#39;), pch=c(18,1))</code></pre>
-<p><img src="/sc1/optimization/R-optimization_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+<p><img src="/sc1optimization/R-optimization_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
 <p>We see that the Gauss-Newton algorithm actually fails for this slightly tricky dataset and model due to singular gradients, but the Levenberg-Marquardt algorithm, which can handle singuar gradients, has no problem finding a good fit for the data.</p>
 <p>Next we define the residue function explicitly as the objective function and uses general-purpose optimisation functions for this nonlinear least squares problem.</p>
 <pre class="r"><code>f &lt;- function(b, mydata) sum((mydata$y-b[1]/(1+b[2]*exp(-b[3]*mydata$t)))^2)
@@ -522,11 +526,11 @@ nlm(f, mydata=my_data, p=start1)</code></pre>
 ## [1] &quot;CONVERGENCE: REL_REDUCTION_OF_F &lt;= FACTR*EPSMCH&quot;</code></pre>
 <pre class="r"><code>optim(par=start1, fn=f, mydata=my_data, method=&quot;SANN&quot;, control=list(maxit=30000))</code></pre>
 <pre><code>## $par
-##         b1         b2         b3 
-## 96.2225613 35.4687293  0.4261368 
+##        b1        b2        b3 
+## 96.567789 36.485004  0.428544 
 ## 
 ## $value
-## [1] 246.1914
+## [1] 236.1187
 ## 
 ## $counts
 ## function gradient 

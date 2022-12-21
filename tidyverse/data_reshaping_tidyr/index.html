@@ -65,9 +65,13 @@
 
 
 
+
+
+
+
 <nav class="breadcrumbs">
     
-        <a href="https://awllee.github.io/sc1/">home / </a>
+        <a href="https://awllee.github.io/sc1">home / </a>
     
         <a href="https://awllee.github.io/sc1/tidyverse/">tidyverse / </a>
     
@@ -173,7 +177,7 @@ if( !require(electBook) ){
 ## fracdiff     (NA -&gt; 1.5-2     ) [CRAN]
 ## forecast     (NA -&gt; 8.19      ) [CRAN]
 ## ── R CMD build ─────────────────────────────────────────────────────────────────
-## * checking for file ‘/tmp/Rtmp2mzY8X/remotesef232547ccce/mfasiolo-electBook-38d7020/DESCRIPTION’ ... OK
+## * checking for file ‘/tmp/Rtmpjs748t/remotesee826c195a94/mfasiolo-electBook-38d7020/DESCRIPTION’ ... OK
 ## * preparing ‘electBook’:
 ## * checking DESCRIPTION meta-information ... OK
 ## * checking for LF line-endings in source and make files and shell scripts
@@ -197,7 +201,7 @@ dim(indCons)</code></pre>
 <pre class="r"><code>indCons &lt;- indCons[ , 1:100]</code></pre>
 <p>Now, suppose that we want to plot the consumption of some of the customers over time, on the same plot. Using base <code>R</code>, one way of doing this is:</p>
 <pre class="r"><code>matplot(indCons[1:(48*7), 1:3], type = &#39;l&#39;)</code></pre>
-<p><img src="/sc1/tidyverse/data_reshaping_tidyr_files/figure-html/unnamed-chunk-5-1.png" width="672" style="display: block; margin: auto;" />
+<p><img src="/sc1tidyverse/data_reshaping_tidyr_files/figure-html/unnamed-chunk-5-1.png" width="672" style="display: block; margin: auto;" />
 Here we are plotting the consumption of the first three customers over the first 7 days (we have 48 observations per day). To do the same in <code>ggplot2</code> we need to put the data in a “long” format, that is we need a <code>data.frame</code> where one column contains the demand values and another indicates to which customer each demand value belongs to. This can be achieved easily using <code>tidyr::pivot_longer</code>:</p>
 <pre class="r"><code>longDat &lt;- indCons %&gt;% pivot_longer(cols = everything(), names_to = &quot;ID&quot;, values_to = &quot;dem&quot;) %&gt;% dplyr::arrange(ID)
 head(longDat, 5)</code></pre>
@@ -238,7 +242,7 @@ longDat %&gt;% object.size %&gt;% format(units = &quot;MB&quot;)</code></pre>
             slice(1:(48 * 7)) %&gt;%
             ggplot(aes(x = 1:nrow(.), y = dem, col = ID)) +
             geom_line()</code></pre>
-<p><img src="/sc1/tidyverse/data_reshaping_tidyr_files/figure-html/unnamed-chunk-10-1.png" width="768" style="display: block; margin: auto;" />
+<p><img src="/sc1tidyverse/data_reshaping_tidyr_files/figure-html/unnamed-chunk-10-1.png" width="768" style="display: block; margin: auto;" />
 Here we are using filter to select the first three customers, then we group the data by customer ID and we use <code>slice</code> to select the first <span class="math inline">\(48 \times 7\)</span> observations for each customers. However, we didn’t quite get the plot we wanted, because the consumption of the three customers does not overlap, but it’s plotted sequentially along the <span class="math inline">\(x\)</span>-axis. To get the <code>ggplot2</code> equivalent of the plot we got with <code>matplot</code>, we need a variable going from 1 to <span class="math inline">\(48 \times 7\)</span> repeatedly for each of the customers. This is achieved as follows:</p>
 <pre class="r"><code>longDat %&gt;% filter(ID %in% levels(ID)[1:3]) %&gt;%
             group_by(ID) %&gt;%
@@ -246,7 +250,7 @@ Here we are using filter to select the first three customers, then we group the 
             mutate(counter = row_number()) %&gt;%
             ggplot(aes(x = counter, y = dem, col = ID)) +
             geom_line()</code></pre>
-<p><img src="/sc1/tidyverse/data_reshaping_tidyr_files/figure-html/unnamed-chunk-11-1.png" width="768" style="display: block; margin: auto;" />
+<p><img src="/sc1tidyverse/data_reshaping_tidyr_files/figure-html/unnamed-chunk-11-1.png" width="768" style="display: block; margin: auto;" />
 Where we used <code>row_number</code> within <code>mutate</code> to add a new <code>counter</code> variable to the data. <code>counter</code> is shown by the following plot:</p>
 <pre class="r"><code>longDat %&gt;% filter(ID %in% levels(ID)[1:3]) %&gt;%
             group_by(ID) %&gt;%
@@ -254,7 +258,7 @@ Where we used <code>row_number</code> within <code>mutate</code> to add a new <c
             mutate(counter = row_number()) %&gt;%
             ggplot(aes(x = 1:nrow(.), y = counter, col = ID)) +
             geom_line()</code></pre>
-<p><img src="/sc1/tidyverse/data_reshaping_tidyr_files/figure-html/unnamed-chunk-12-1.png" width="768" style="display: block; margin: auto;" /></p>
+<p><img src="/sc1tidyverse/data_reshaping_tidyr_files/figure-html/unnamed-chunk-12-1.png" width="768" style="display: block; margin: auto;" /></p>
 <p>At this point you might (legitimately!) be wondering whether we would have been better off just sticking to <code>matplot</code>, which was much easier to use in this case. However, notice that once we got our <code>data.frame</code> in the long shape, we can use all the plot types and layers provided by <code>ggplot2</code>. In addition, we can use <code>dplyr</code> and <code>ggplot2</code> to do more complicated things like:</p>
 <pre class="r"><code>longDat %&gt;% group_by(ID) %&gt;%
             slice(1:(48 * 7)) %&gt;%
@@ -264,7 +268,7 @@ Where we used <code>row_number</code> within <code>mutate</code> to add a new <c
             ggplot(aes(x = 1:nrow(.), y = dem)) +
             geom_smooth() +
             geom_point()</code></pre>
-<p><img src="/sc1/tidyverse/data_reshaping_tidyr_files/figure-html/unnamed-chunk-13-1.png" width="768" style="display: block; margin: auto;" />
+<p><img src="/sc1tidyverse/data_reshaping_tidyr_files/figure-html/unnamed-chunk-13-1.png" width="768" style="display: block; margin: auto;" />
 As an exercises, try to work out what the above code does, and what is being plotted.</p>
 <p>For the purpose of illustration, let us add the <code>counter</code> variable to the whole <code>longDat</code> data set:</p>
 <pre class="r"><code>longDat %&lt;&gt;% group_by(ID) %&gt;%
@@ -396,7 +400,7 @@ head(allDat)</code></pre>
            ggplot(aes(x = tod, y = dem, group = ID, color = ID)) +
            geom_smooth() +
            facet_wrap(~ weekend)</code></pre>
-<p><img src="/sc1/tidyverse/data_reshaping_tidyr_files/figure-html/unnamed-chunk-24-1.png" width="960" style="display: block; margin: auto;" />
+<p><img src="/sc1tidyverse/data_reshaping_tidyr_files/figure-html/unnamed-chunk-24-1.png" width="960" style="display: block; margin: auto;" />
 As you can see, customer <code>I1024</code> is probably at home during afternoon weekends, hence his consumption is higher than during working days.</p>
 <p>Now, how to add also the information in <code>survey</code> to <code>allDat</code>? The way to do it is:</p>
 <pre class="r"><code>allDat %&lt;&gt;% left_join(survey, by = &quot;ID&quot;) %&gt;%
@@ -421,7 +425,7 @@ head(allDat)</code></pre>
              appli = first(HOME.APPLIANCE..White.goods.)) %&gt;%
    ggplot(aes(x = dem, group = appli, colour = appli)) +
    geom_density()</code></pre>
-<p><img src="/sc1/tidyverse/data_reshaping_tidyr_files/figure-html/unnamed-chunk-26-1.png" width="768" style="display: block; margin: auto;" />
+<p><img src="/sc1tidyverse/data_reshaping_tidyr_files/figure-html/unnamed-chunk-26-1.png" width="768" style="display: block; margin: auto;" />
 Hence, it seems that the (total, per customer) consumption increases with the number of white goods (this becomes clearer if you consider the whole data set rather than a subset of 100 customers, as done here).</p>
 <p>There are different types of “mutating” joins:</p>
 <ul>

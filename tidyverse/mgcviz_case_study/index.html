@@ -65,9 +65,13 @@
 
 
 
+
+
+
+
 <nav class="breadcrumbs">
     
-        <a href="https://awllee.github.io/sc1/">home / </a>
+        <a href="https://awllee.github.io/sc1">home / </a>
     
         <a href="https://awllee.github.io/sc1/tidyverse/">tidyverse / </a>
     
@@ -190,7 +194,7 @@ where we have smooth effects for the hourly temperatures (<span class="math inli
                         s(NetDemand.48) + s(Trend, k = 6), data = UKload)</code></pre>
 <p>Let’s say that we now want to visualize the seasonal effect, that is the effect of <span class="math inline">\(S_t\)</span> (<code>Posan</code> in the code). This is done as follows:</p>
 <pre class="r"><code>plot(fitG, select = 3, scale = FALSE)</code></pre>
-<p><img src="/sc1/tidyverse/mgcViz_case_study_files/figure-html/unnamed-chunk-3-1.png" width="576" style="display: block; margin: auto;" />
+<p><img src="/sc1tidyverse/mgcViz_case_study_files/figure-html/unnamed-chunk-3-1.png" width="576" style="display: block; margin: auto;" />
 where the <code>select</code> argument is used to determine which smooth effect should be plotted. Given that <code>plot</code> is a generic function and that:</p>
 <pre class="r"><code>class(fitG)</code></pre>
 <pre><code>## [1] &quot;gam&quot; &quot;glm&quot; &quot;lm&quot;</code></pre>
@@ -208,12 +212,12 @@ where the <code>select</code> argument is used to determine which smooth effect 
 <pre class="r"><code>plot(fitG, select = 3, scale = FALSE, n2 = 100, theta = 10, n3 = 4)</code></pre>
 <p>produces exactly the same plot as before (not shown), because the arguments <code>n2</code>, <code>theta</code> and <code>n3</code> are not relevant for one-dimensional effects plots. A related problem is that it is not possible to control the graphical options of the layers appearing in the plot. For example:</p>
 <pre class="r"><code>plot(fitG, select = 3, scale = FALSE, col = &quot;red&quot;)</code></pre>
-<p><img src="/sc1/tidyverse/mgcViz_case_study_files/figure-html/unnamed-chunk-7-1.png" width="576" style="display: block; margin: auto;" /></p>
+<p><img src="/sc1tidyverse/mgcViz_case_study_files/figure-html/unnamed-chunk-7-1.png" width="576" style="display: block; margin: auto;" /></p>
 <p>makes the whole plot red, because the <code>col = "red"</code> argument is passed, via the <code>...</code> argument (a.k.a. <code>ellipsis</code>), to each plotting function called within <code>plot.gam</code> (e.g. <code>rug</code>). So it is hard to customize the appearance of the plot. The fact that the graphical elements of the plot are rendered in a fixed order by <code>plot.gam</code> is also limiting, for example:</p>
 <pre class="r"><code>par(mfrow = c(1, 2))
 plot(fitG, select = 3, scale = FALSE, residuals = TRUE, ylim = c(-2000, 2000))
 plot(fitG, select = 3, scale = FALSE, residuals = TRUE, pch = 1, ylim = c(-2000, 2000))</code></pre>
-<p><img src="/sc1/tidyverse/mgcViz_case_study_files/figure-html/unnamed-chunk-8-1.png" width="768" style="display: block; margin: auto;" /></p>
+<p><img src="/sc1tidyverse/mgcViz_case_study_files/figure-html/unnamed-chunk-8-1.png" width="768" style="display: block; margin: auto;" /></p>
 <p>Here the points representing the residuals are always plotted over the fitted effect and confidence intervals so, if you change the size of the points, they will completely hide the fit, as on the plot on the right. We could probably live with the limitations mentioned so far, but a more important issue is that it is quite hard to add new features to the plots offered by <code>plot.gam</code>. In fact, <code>plot.gam</code> is a big multi-purpose function, and adding a new graphical features requires looking at its source code, understanding what is going on, and modifing the whole function (e.g. we need to add new arguments, choose at which point within <code>plot.gam</code> the new graphical layer should be rendered, etc). So adding new features is a rather involved process.</p>
 <p>The good news is that the limitations just mentioned make <code>plot.gam</code> a very good case study for illustrating the usefulness of layer-based framework provided by <code>ggplot2</code>. In particular, let’s see how the <code>mgcViz</code> package solves these issues by adopting the layered system based on <code>ggplot2</code>. To use it, we need to convert the output of <code>gam</code> to an object of class <code>gamViz</code>:</p>
 <pre class="r"><code>library(mgcViz)
@@ -234,7 +238,7 @@ class(pl3)</code></pre>
 <p>Having stored the plot in <code>pl3</code>, an object of class <code>plotSmooth</code> which inherits from <code>gg</code>, we can then add layers and render</p>
 <pre class="r"><code>pl3 &lt;- pl3 + l_fitLine() + l_ciLine()
 pl3 </code></pre>
-<p><img src="/sc1/tidyverse/mgcViz_case_study_files/figure-html/unnamed-chunk-12-1.png" width="480" style="display: block; margin: auto;" /></p>
+<p><img src="/sc1tidyverse/mgcViz_case_study_files/figure-html/unnamed-chunk-12-1.png" width="480" style="display: block; margin: auto;" /></p>
 <p>where the last line calls <code>print.plotSmooth</code>. In one step:</p>
 <pre class="r"><code>plot(sm(fitG_v, 3)) + l_fitLine() + l_ciLine() # not shown</code></pre>
 <p>How does this work? The functions starting with <code>l_</code> are layers implemented in <code>mgcViz</code> and can be seen as wrappers around one or more <code>ggplot2</code> layers (e.g. <code>mgcViz::l_fitLine</code> is a wrapper around <code>ggplot2::geom_line</code>). All <code>mgcViz</code> layers start with the <code>l_</code> prefix.
@@ -254,7 +258,7 @@ Why is this useful? Because, as we illustrate below:</p>
 pl3b &lt;- plot(sm(fitG_v, 3), nsim = 20) + l_simLine()
 
 gridPrint(pl3a, pl3b, ncol = 2)</code></pre>
-<p><img src="/sc1/tidyverse/mgcViz_case_study_files/figure-html/plot_sm_lay_one_all-1.png" width="864" style="display: block; margin: auto;" /></p>
+<p><img src="/sc1tidyverse/mgcViz_case_study_files/figure-html/plot_sm_lay_one_all-1.png" width="864" style="display: block; margin: auto;" /></p>
 <p>where the second plot shows a set of 20 random curves drawn from (a Gaussian approximation to) the posterior distribution of the seasonal effect (but this is not crucial here). As for most smooth effect plots in <code>mgcViz</code>, the output of <code>plot.mgcv.smooth.1D</code> has class <code>plotSmooth</code>, which contains an object of class <code>c("gg", "ggObj")</code> is its <code>$ggObj</code> slot. Here <code>gridPrint</code> simply extracts the <code>ggplot</code> objects from <code>pl3a$ggObj</code> and <code>pl3b$ggObj</code>, and renders them on one page. To get the full list of available <code>mgcViz</code> layers for a particular object, do:</p>
 <pre class="r"><code>listLayers( plot(sm(fitG_v, 3)) )</code></pre>
 <pre><code>## [1] &quot;l_ciLine&quot;  &quot;l_ciPoly&quot;  &quot;l_dens2D&quot;  &quot;l_fitDens&quot; &quot;l_fitLine&quot; &quot;l_points&quot; 
@@ -263,7 +267,7 @@ gridPrint(pl3a, pl3b, ncol = 2)</code></pre>
 <pre class="r"><code>pl &lt;- plot(sm(fitG_v, 3))
 pl + geom_hex(data = pl$data$res, alpha = 0.7) + l_fitLine() + 
      l_ciLine() + xlim(c(0.25, 0.75))</code></pre>
-<p><img src="/sc1/tidyverse/mgcViz_case_study_files/figure-html/ggplot2-1.png" width="480" style="display: block; margin: auto;" /></p>
+<p><img src="/sc1tidyverse/mgcViz_case_study_files/figure-html/ggplot2-1.png" width="480" style="display: block; margin: auto;" /></p>
 <p>Here we used <code>ggplot2::geom_hex</code> to plot the density of the residuals, which required specifying that the residual data can be found in <code>pl$data$res</code>, and we zoomed along the <span class="math inline">\(x\)</span>-axis on <span class="math inline">\([0.25, 0.75]\)</span> using <code>ggplot2::xlim</code>.</p>
 <p>The examples above should illustrate some of the advantages of a layered system. To get some insights into how this layered system might be useful to someone trying to build a graphical library for GAM models (but this applies to other models, of course), it’s probably instructive to have a look at how <code>ggplot2</code> layers can be wrapped up to extend the array of layers made available by <code>mgcViz</code>. Here we consider implementing an <code>mgcViz</code> layer which plots the residual density using binning, as in the last plot above. Suppose that we want to call such layer <code>l_binRes</code>. The first thing we need to do, is to build its general (or generic-like) version:</p>
 <pre class="r"><code>l_binRes &lt;- function(...){
@@ -287,7 +291,7 @@ pl + geom_hex(data = pl$data$res, alpha = 0.7) + l_fitLine() +
 <pre><code>## [1] &quot;1D&quot;</code></pre>
 <p>Having set up the general <code>l_binRes</code> function and the internal function <code>myBinRes.1D</code>, we can now do:</p>
 <pre class="r"><code>pl + l_binRes(alpha = 0.7) + l_fitLine() + l_ciLine()</code></pre>
-<p><img src="/sc1/tidyverse/mgcViz_case_study_files/figure-html/unnamed-chunk-18-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="/sc1tidyverse/mgcViz_case_study_files/figure-html/unnamed-chunk-18-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>which works! We could say that this is an informal object oriented framework, because we are dispatching the method (<code>myBinRes.1D</code>) based on the <code>type</code> slot, rather than on a formal class. If we wanted to use the new layer on an plot of a different <code>type</code>, we would need to develop a specific <code>myBinRes</code> function for that plot type. For instance, if we extract the day-of-week effect and build its plot:</p>
 <pre class="r"><code>pl &lt;- plot(pterm(fitG_v, 1))</code></pre>
 <p>this would not work:</p>
@@ -306,7 +310,7 @@ pl + geom_hex(data = pl$data$res, alpha = 0.7) + l_fitLine() +
 }</code></pre>
 <p>where we used the <code>stat_summary_2d</code> layers from <code>ggplot2</code>, which is more appropriate when the <span class="math inline">\(x\)</span>-axis is categorical. Now we get:</p>
 <pre class="r"><code>pl + l_binRes(alpha = 0.7) + l_fitPoints(col = 2) + l_ciBar()</code></pre>
-<p><img src="/sc1/tidyverse/mgcViz_case_study_files/figure-html/unnamed-chunk-22-1.png" width="672" style="display: block; margin: auto;" />
+<p><img src="/sc1tidyverse/mgcViz_case_study_files/figure-html/unnamed-chunk-22-1.png" width="672" style="display: block; margin: auto;" />
 The point of all this is illustrating that, using the layer-based system provided by <code>ggplot</code>, it is easy to introduce new GAM-specific layers for <code>mgcViz</code>, without modifying the functions used to build the initial plots (here <code>plot.mgcv.smooth.1D</code> and <code>plot.ptermFactor</code>). Of course, the new layer introduced here (<code>l_binRes</code>) is quite trivial, and we might be better off using the raw <code>ggplot2</code> layers directly (e.g. <code>stat_summary_2d</code>), but some of the layers implemented by <code>mgcViz</code> are quite complicated, hence coding them in <code>mgcViz</code> is worthwhile (see, e.g., the code for <code>mgcViz:::l_fitDens.1D</code>).</p>
 
 

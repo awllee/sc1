@@ -69,9 +69,13 @@
 
 
 
+
+
+
+
 <nav class="breadcrumbs">
     
-        <a href="https://awllee.github.io/sc1/">home / </a>
+        <a href="https://awllee.github.io/sc1">home / </a>
     
         <a href="https://awllee.github.io/sc1/integration/">integration / </a>
     
@@ -222,11 +226,11 @@ f &lt;- function(x) {
 }
 
 plot.polynomial.approximation(f, c(-2, 2), a, b)</code></pre>
-<p><img src="/sc1/integration/quadrature_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
+<p><img src="/sc1integration/quadrature_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
 <pre class="r"><code>plot.polynomial.approximation(f, c(-2, 0, 2), a, b)</code></pre>
-<p><img src="/sc1/integration/quadrature_files/figure-html/unnamed-chunk-2-2.png" width="672" /></p>
+<p><img src="/sc1integration/quadrature_files/figure-html/unnamed-chunk-2-2.png" width="672" /></p>
 <pre class="r"><code>plot.polynomial.approximation(f, c(-2, 0, 2, 4), a, b)</code></pre>
-<p><img src="/sc1/integration/quadrature_files/figure-html/unnamed-chunk-2-3.png" width="672" /></p>
+<p><img src="/sc1integration/quadrature_files/figure-html/unnamed-chunk-2-3.png" width="672" /></p>
 <p>Of course, one might instead want a different representation of the polynomial, e.g. as sums of monomials with appropriate coefficients.</p>
 <p><span class="math display">\[p(x) = \sum_{i=1}^k a_i x^{i-1}.\]</span></p>
 <p>This can be accomplished in principle by solving a linear system. In practice, this representation is often avoided for large <span class="math inline">\(k\)</span> as solving the linear system is numerically unstable.</p>
@@ -259,7 +263,7 @@ p &lt;- construct.polynomial(compute.monomial.coefficients(f, xs))
 plot.polynomial.approximation(f, xs, a, b)
 vs &lt;- seq(-4, 4, length.out=100)
 lines(vs, vapply(vs, p, 0), col=&quot;blue&quot;, lty=&quot;dashed&quot;)</code></pre>
-<p><img src="/sc1/integration/quadrature_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+<p><img src="/sc1integration/quadrature_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
 </div>
 <div id="polynomial-interpolation-error" class="section level2">
 <h2>Polynomial interpolation error</h2>
@@ -281,19 +285,19 @@ f(x)-p_{k-1}(x) = \frac{1}{k!} f^{(k)}(\xi) \prod_{i=1}^k (x-x_i).
 a &lt;- 1
 b &lt;- 2
 plot.polynomial.approximation(log, construct.uniform.point.set(a, b, 10), a, b)</code></pre>
-<p><img src="/sc1/integration/quadrature_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<p><img src="/sc1integration/quadrature_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
 <p>However, there are functions for which uniformly spaced points are not suitable. A famous example is the Runge function <span class="math inline">\(x \mapsto 1/(1+25x^2)\)</span> on <span class="math inline">\([-1,1]\)</span>. For <span class="math inline">\(k=50\)</span>, the polynomial approximation is very poor close to the ends of the interval, and the situation does not improve by increasing <span class="math inline">\(k\)</span>.</p>
 <pre class="r"><code>a &lt;- -1
 b &lt;- 1
 f &lt;- function(x) return(1/(1+25*x^2))
 plot.polynomial.approximation(f, construct.uniform.point.set(a,b,50), a, b)</code></pre>
-<p><img src="/sc1/integration/quadrature_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<p><img src="/sc1integration/quadrature_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
 <p>This does not contradict the Interpolation Error Theorem because the maximum over <span class="math inline">\([-1,1]\)</span> of the <span class="math inline">\(k\)</span>th derivative of the Runge function grows very quickly with <span class="math inline">\(k\)</span>, and in particular more quickly than the product term decreases with <span class="math inline">\(k\)</span>.</p>
 <p>Another example is to take the function <span class="math inline">\(x \mapsto |x|\)</span> on <span class="math inline">\([-1,1]\)</span>.</p>
 <pre class="r"><code>a &lt;- -1
 b &lt;- 1
 plot.polynomial.approximation(abs, construct.uniform.point.set(a,b,50), a, b)</code></pre>
-<p><img src="/sc1/integration/quadrature_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<p><img src="/sc1integration/quadrature_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
 <p>This does not contradict the Interpolation Error Theorem because <span class="math inline">\(x \mapsto |x|\)</span> is not differentiable at <span class="math inline">\(0\)</span>.</p>
 <p>It is possible to mitigate this issue to some extent by choosing the interpolation points more carefully. For example, one can choose the points for each <span class="math inline">\(k\)</span> so as to minimize the maximum absolute value of the product term in <a href="#eq:interpolation-error">(1)</a>, which gives the Chebyshev points. Specifically, for a given <span class="math inline">\(k\)</span>, one chooses the points
 <span class="math display">\[\cos \left (\frac{2i-1}{2k}\pi \right ),\qquad i\in \{1,\ldots,k\},\]</span>
@@ -304,12 +308,12 @@ and the absolute value of the product term is then bounded above by <span class=
 }
 
 plot.polynomial.approximation(f, construct.chebyshev.point.set(50), a, b)</code></pre>
-<p><img src="/sc1/integration/quadrature_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+<p><img src="/sc1integration/quadrature_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
 <pre class="r"><code>plot.polynomial.approximation(abs, construct.chebyshev.point.set(50), a, b)</code></pre>
-<p><img src="/sc1/integration/quadrature_files/figure-html/unnamed-chunk-7-2.png" width="672" /></p>
+<p><img src="/sc1integration/quadrature_files/figure-html/unnamed-chunk-7-2.png" width="672" /></p>
 <p>You may notice that these points are clustered around <span class="math inline">\(-1\)</span> and <span class="math inline">\(1\)</span>.</p>
 <pre class="r"><code>hist(construct.chebyshev.point.set(10000))</code></pre>
-<p><img src="/sc1/integration/quadrature_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+<p><img src="/sc1integration/quadrature_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
 <p>This is not a complete solution: there exist functions for which the interpolating polynomial obtained using Chebyshev points diverges, but these are usually quite complicated. Moreover, the reduction in absolute value of the product term in the error expression is not sufficient to explain the improved performance for the Runge function, and the Interpolation Error Theorem says nothing about functions that are not differentiable such as <span class="math inline">\(x \mapsto |x|\)</span>.</p>
 </div>
 <div id="composite-polynomial-interpolation" class="section level2">
@@ -369,17 +373,17 @@ plot.piecewise.polynomial.approximation &lt;- function(f, a, b, nintervals, k, c
   abline(v = subinterval.points)
 }</code></pre>
 <pre class="r"><code>plot.piecewise.polynomial.approximation(sin, 0, 10, 5, 1, TRUE)</code></pre>
-<p><img src="/sc1/integration/quadrature_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
+<p><img src="/sc1integration/quadrature_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
 <pre class="r"><code>plot.piecewise.polynomial.approximation(sin, 0, 10, 5, 2, TRUE)</code></pre>
-<p><img src="/sc1/integration/quadrature_files/figure-html/unnamed-chunk-10-2.png" width="672" /></p>
+<p><img src="/sc1integration/quadrature_files/figure-html/unnamed-chunk-10-2.png" width="672" /></p>
 <pre class="r"><code>plot.piecewise.polynomial.approximation(sin, 0, 10, 5, 2, FALSE)</code></pre>
-<p><img src="/sc1/integration/quadrature_files/figure-html/unnamed-chunk-10-3.png" width="672" /></p>
+<p><img src="/sc1integration/quadrature_files/figure-html/unnamed-chunk-10-3.png" width="672" /></p>
 <pre class="r"><code>plot.piecewise.polynomial.approximation(sin, 0, 10, 5, 3, TRUE)</code></pre>
-<p><img src="/sc1/integration/quadrature_files/figure-html/unnamed-chunk-10-4.png" width="672" /></p>
+<p><img src="/sc1integration/quadrature_files/figure-html/unnamed-chunk-10-4.png" width="672" /></p>
 <pre class="r"><code>plot.piecewise.polynomial.approximation(sin, 0, 10, 20, 1, TRUE)</code></pre>
-<p><img src="/sc1/integration/quadrature_files/figure-html/unnamed-chunk-10-5.png" width="672" /></p>
+<p><img src="/sc1integration/quadrature_files/figure-html/unnamed-chunk-10-5.png" width="672" /></p>
 <pre class="r"><code>plot.piecewise.polynomial.approximation(sin, 0, 10, 20, 1, FALSE)</code></pre>
-<p><img src="/sc1/integration/quadrature_files/figure-html/unnamed-chunk-10-6.png" width="672" /></p>
+<p><img src="/sc1integration/quadrature_files/figure-html/unnamed-chunk-10-6.png" width="672" /></p>
 <p>The error associated with the approximation can be obtained using the Interpolation Error Theorem. In particular, one can see that for a large number of subintervals the product term in <a href="#eq:interpolation-error">(1)</a> can be made arbitrarily small in absolute value. If one chooses, say, <span class="math inline">\(k=1\)</span> (resp. <span class="math inline">\(k=2\)</span>) and the function is almost constant (resp. linear) on small intervals, the approximation error can then be made very small.</p>
 </div>
 <div id="other-polynomial-interpolation-schemes" class="section level2">
@@ -518,7 +522,7 @@ df &lt;- rbind(df, nc.example(function(x) x^3, &quot;x^3&quot;, 1/4))
 df &lt;- rbind(df, nc.example(function(x) x^4, &quot;x^4&quot;, 1/5))
 
 ggplot(df, aes(fill=rule, y=error, x=f)) + geom_bar(position=&quot;dodge&quot;, stat=&quot;identity&quot;)</code></pre>
-<p><img src="/sc1/integration/quadrature_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
+<p><img src="/sc1integration/quadrature_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
 </div>
 <div id="composite-rules" class="section level2">
 <h2>Composite rules</h2>
@@ -605,7 +609,7 @@ ts &lt;- tibble(m=ms, rule=&quot;simpsons&quot;, log.error=log(composite.simpson
             theory=log(v2*1/2880*10^5/ms^4))
 tib &lt;- bind_rows(tr, tt, tm, ts)
 ggplot(tib, aes(x=m, colour=rule)) + geom_point(aes(y=log.error)) + geom_line(aes(y=theory))</code></pre>
-<p><img src="/sc1/integration/quadrature_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
+<p><img src="/sc1integration/quadrature_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
 </div>
 <div id="gaussian-quadrature" class="section level2">
 <h2>Gaussian quadrature</h2>
@@ -630,7 +634,7 @@ Therefore, <span class="math inline">\(\hat{I}(f) = \hat{I}(r)\)</span> approxim
 <pre class="r"><code>pts &lt;- c(-sqrt(3/5), 0, sqrt(3/5))
 f &lt;- function(x) 1 + x + x^2 + x^3 + x^4 + x^5
 plot.polynomial.approximation(f, pts, -1, 1)</code></pre>
-<p><img src="/sc1/integration/quadrature_files/figure-html/unnamed-chunk-15-1.png" width="672" /></p>
+<p><img src="/sc1integration/quadrature_files/figure-html/unnamed-chunk-15-1.png" width="672" /></p>
 <p>For this function, the quotient polynomial <span class="math inline">\(f/p_3\)</span> is <span class="math inline">\(q(x) = x^2+x+1.6\)</span> and the remainder polynomial is <span class="math inline">\(r(x) = 1.6x^2+1.96x+1\)</span>. For intuition, we can plot the polynomial approximation of <span class="math inline">\(f - r = p_3 q\)</span>.</p>
 <pre class="r"><code>p3 &lt;- function(x) x^3 - 0.6*x
 q &lt;- function(x) x^2+x+1.6
@@ -638,12 +642,12 @@ r &lt;- function(x) 1.6*x^2+1.96*x+1
 
 p3q &lt;- function(x) p3(x)*q(x)
 plot.polynomial.approximation(p3q, pts, -1, 1)</code></pre>
-<p><img src="/sc1/integration/quadrature_files/figure-html/unnamed-chunk-16-1.png" width="672" /></p>
+<p><img src="/sc1integration/quadrature_files/figure-html/unnamed-chunk-16-1.png" width="672" /></p>
 <p>The approximating polynomial is the zero polynomial, simply because <span class="math inline">\(p_3\)</span> is <span class="math inline">\(0\)</span> at the interpolation points by construction. While this is a poor approximation of the function, the integral of <span class="math inline">\(p_3 q\)</span> over <span class="math inline">\([-1,1]\)</span> is <span class="math inline">\(0\)</span> so their integrals are the same. Finally, we can superimpose the function <span class="math inline">\(r\)</span> over the polynomial approximation of <span class="math inline">\(f\)</span>, and we see that indeed the polynomial approximation is exactly <span class="math inline">\(r\)</span>.</p>
 <pre class="r"><code>plot.polynomial.approximation(f, pts, -1, 1)
 vs &lt;- seq(-1,1,0.01)
 lines(vs, r(vs), col=&quot;blue&quot;, lty=&quot;dashed&quot;)</code></pre>
-<p><img src="/sc1/integration/quadrature_files/figure-html/unnamed-chunk-17-1.png" width="672" /></p>
+<p><img src="/sc1integration/quadrature_files/figure-html/unnamed-chunk-17-1.png" width="672" /></p>
 <p>In the case where <span class="math inline">\(w \equiv 1\)</span>, for a given <span class="math inline">\(k\)</span> one has
 <span class="math display">\[\hat{I}_{\rm Gauss-Legendre}(f) = \frac{(b-a)^{2k+1}(k!)^4}{(2k+1)\{(2k)!\}^3} f^{(2k)}(\xi),\]</span>
 for some <span class="math inline">\(\xi \in (a,b)\)</span>. For a composite Gauss–Legendre rule, one obtains
@@ -716,7 +720,7 @@ tg5 &lt;- tibble(m=ms, rule=&quot;gauss-legendre 5&quot;, log.error=log(abs(comp
             theory=log(0.18*factorial(5)^4/factorial(2*5)^3/(2*5+1)*10^11/ms^10))
 tib &lt;- bind_rows(tr, tt, tm, ts, tg3, tg4, tg5)
 ggplot(tib, aes(x=m, colour=rule)) + geom_point(aes(y=log.error), na.rm=TRUE) + geom_line(aes(y=theory))</code></pre>
-<p><img src="/sc1/integration/quadrature_files/figure-html/unnamed-chunk-19-1.png" width="672" /></p>
+<p><img src="/sc1integration/quadrature_files/figure-html/unnamed-chunk-19-1.png" width="672" /></p>
 <p>The Gauss–Legendre rule for <span class="math inline">\(k=1\)</span> is equivalent to the midpoint rule, and the Gauss–Legendre rule for <span class="math inline">\(k=2\)</span> is very similar to Simpson’s rule in terms of error. However, with <span class="math inline">\(k=3\)</span> we begin to see a dramatic improvement due to the much faster rate of convergence.</p>
 </div>
 <div id="practical-algorithms" class="section level2">

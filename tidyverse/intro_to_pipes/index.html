@@ -65,9 +65,13 @@
 
 
 
+
+
+
+
 <nav class="breadcrumbs">
     
-        <a href="https://awllee.github.io/sc1/">home / </a>
+        <a href="https://awllee.github.io/sc1">home / </a>
     
         <a href="https://awllee.github.io/sc1/tidyverse/">tidyverse / </a>
     
@@ -152,12 +156,12 @@ text-align: justify}
 <pre class="r"><code>x &lt;- seq(0, 2*pi, by = 0.01)
 
 plot(sqrt(abs(cos(x))))</code></pre>
-<p><img src="/sc1/tidyverse/Intro_to_pipes_files/figure-html/unnamed-chunk-1-1.png" width="672" />
+<p><img src="/sc1tidyverse/Intro_to_pipes_files/figure-html/unnamed-chunk-1-1.png" width="672" />
 which is plotting <span class="math inline">\(\sqrt(|\text{cos}(x)|)\)</span>. The piped version of this is:</p>
 <pre class="r"><code>library(magrittr)
 
 x %&gt;% cos %&gt;% abs %&gt;% sqrt %&gt;% plot</code></pre>
-<p><img src="/sc1/tidyverse/Intro_to_pipes_files/figure-html/unnamed-chunk-2-1.png" width="672" />
+<p><img src="/sc1tidyverse/Intro_to_pipes_files/figure-html/unnamed-chunk-2-1.png" width="672" />
 As you can see, the output is the same, with the exception of the y-axis label, which is now “.” (we’ll explain the reason for that in a moment). Now, what is happening? Essentially, the pipe operator is used in expressions of the type <code>R_object %&gt;% A_function</code> and it transforms this expression into something equivalent to <code>A_function( R_object )</code>. So the function composition <code>f1(f2(x))</code> becomes <code>x %&gt;% f2 %&gt;% f1</code>.</p>
 <p>To be more precise, the code <code>x %&gt;% cos %&gt;% abs %&gt;% sqrt %&gt;% plot</code> is equivalent to:</p>
 <pre class="r"><code> myFun &lt;- function(.){ 
@@ -170,21 +174,21 @@ As you can see, the output is the same, with the exception of the y-axis label, 
 }
  
 myFun(x)</code></pre>
-<p><img src="/sc1/tidyverse/Intro_to_pipes_files/figure-html/unnamed-chunk-3-1.png" width="672" />
+<p><img src="/sc1tidyverse/Intro_to_pipes_files/figure-html/unnamed-chunk-3-1.png" width="672" />
 that is, we are applying a sequence of functions and we are storing the partial results in the “.”. This should explain why <code>.</code> appears in the y-axis label.</p>
 <p>Now, what do we do if we want to specify some extra arguments, for example as in the code:</p>
 <pre class="r"><code>plot(x = x, y = sqrt(abs(cos(x))), ylab = &quot;y&quot;)</code></pre>
-<p><img src="/sc1/tidyverse/Intro_to_pipes_files/figure-html/unnamed-chunk-4-1.png" width="672" />
+<p><img src="/sc1tidyverse/Intro_to_pipes_files/figure-html/unnamed-chunk-4-1.png" width="672" />
 ? This is achieved as follows:</p>
 <pre class="r"><code>x %&gt;% cos %&gt;% abs %&gt;% sqrt %&gt;% plot(x = x, y = ., ylab = &quot;y&quot;)</code></pre>
-<p><img src="/sc1/tidyverse/Intro_to_pipes_files/figure-html/unnamed-chunk-5-1.png" width="672" />
+<p><img src="/sc1tidyverse/Intro_to_pipes_files/figure-html/unnamed-chunk-5-1.png" width="672" />
 Hence, we use <code>.</code> as a placeholder for the argument that is being piped (the lhs of the pipe operator).</p>
 <p>WARNING: a clarifications is needed here. By default the placeholder <code>.</code> will be used as the first argument of the function to be applied (here <code>plot()</code>). That is, <code>x %&gt;% plot(ylab = "y")</code> is equivalent to <code>plot(., ylab = "y")</code> where <code>.</code> is equal to <code>x</code>, the lhs of the pipe. This behaviour is overridden if the placeholder appears somewhere on the rhs. For instance <code>y %&gt;% plot(x = x, col = .)</code> is not equivalent to <code>plot(., x = x, col = .)</code> with <code>. == y</code>, but it is the same as <code>plot(x = x, col = y)</code>. Hence, if we use the placeholder explicitly on the rhs of the pipe, the placeholder <code>.</code> will not be assigned to the first argument of the rhs function. However, notice that the following does not work:</p>
 <pre class="r"><code>x %&gt;% plot(x = x, y = . + 1, ylab = &quot;y&quot;)
 # Error in plot.xy(xy, type, ...) : invalid plot type</code></pre>
 <p>Why? Because here the placeholder appears only the nested expression (<code>. + 1</code>) and the above code is equivalent to <code>plot(., x = x, y = . + 1, ylab = "y")</code> with <code>. == x</code>, which leads to an error. Hence, when the placeholder appears only in nested expressions on the rhs of the pipe, the <code>%&gt;%</code> follows the default behaviour consisting of using the <code>.</code> (where <code>. == x</code> here) as the first argument of the rhs function to be applied (<code>plot</code>). To override this behaviour, we must sandwhich the rhs of the pipe using curly <code>{}</code> brackets:</p>
 <pre class="r"><code>x %&gt;% { plot(x = x, y = . + 1, ylab = &quot;y&quot;) }</code></pre>
-<p><img src="/sc1/tidyverse/Intro_to_pipes_files/figure-html/unnamed-chunk-7-1.png" width="672" />
+<p><img src="/sc1tidyverse/Intro_to_pipes_files/figure-html/unnamed-chunk-7-1.png" width="672" />
 which makes so that the <code>.</code> is used only in the function arguments where it appears explicitly.</p>
 <p>Having clarified this, we can now show how the <code>.</code> can be used multiple times inside the rhs function, for instance:</p>
 <pre class="r"><code>3 %&gt;% { matrix(1 : (. * .), ncol = ., nrow = .) }</code></pre>
@@ -229,7 +233,7 @@ head(UKload)</code></pre>
          100), 
        Posan = Posan * 365)
      )</code></pre>
-<p><img src="/sc1/tidyverse/Intro_to_pipes_files/figure-html/unnamed-chunk-11-1.png" width="672" />
+<p><img src="/sc1tidyverse/Intro_to_pipes_files/figure-html/unnamed-chunk-11-1.png" width="672" />
 What are we doing here? We are performing the following steps:</p>
 <ol style="list-style-type: decimal">
 <li><code>subset</code> selects the Mondays (<code>"lundi"</code>) and the <code>NetDemand</code> and <code>Posan</code> columns;</li>
@@ -243,7 +247,7 @@ What are we doing here? We are performing the following steps:</p>
   head(100) %&gt;%
   transform(Posan = Posan * 365) %&gt;%
   plot(NetDemand ~ Posan, data = .)</code></pre>
-<p><img src="/sc1/tidyverse/Intro_to_pipes_files/figure-html/unnamed-chunk-12-1.png" width="672" />
+<p><img src="/sc1tidyverse/Intro_to_pipes_files/figure-html/unnamed-chunk-12-1.png" width="672" />
 In fact, we can understand which operations are being performed by simply going from the top to the bottom line. It is also clear what arguments are being provided to each function. In summary, pipes are useful when you are calling a sequence of functions where the output of one function is going to be the input of the next one.</p>
 </div>
 <div id="advanced-piping" class="section level2">
@@ -278,7 +282,7 @@ x</code></pre>
   seq(0, 2*pi, length.out = .) %&gt;%
   cos %&gt;%
   plot</code></pre>
-<p><img src="/sc1/tidyverse/Intro_to_pipes_files/figure-html/unnamed-chunk-16-1.png" width="672" />
+<p><img src="/sc1tidyverse/Intro_to_pipes_files/figure-html/unnamed-chunk-16-1.png" width="672" />
 which is plotting the <span class="math inline">\(\text{cos}(x)\)</span> at 100 values in <span class="math inline">\([0, 2\pi]\)</span>. Now, what if also we want to store the computed values of <span class="math inline">\(\text{cos}(x)\)</span>? The following would not work:</p>
 <pre class="r"><code>x &lt;- 100 %&gt;% 
   seq(0, 2*pi, length.out = .) %&gt;%
@@ -303,7 +307,7 @@ which is plotting the <span class="math inline">\(\text{cos}(x)\)</span> at 100 
   plot(ylab = &quot;cos(x)&quot;) %&gt;%
   acos %&gt;%
   plot(ylab = &quot;acos(cos(x))&quot;)</code></pre>
-<p><img src="/sc1/tidyverse/Intro_to_pipes_files/figure-html/unnamed-chunk-19-1.png" width="672" />
+<p><img src="/sc1tidyverse/Intro_to_pipes_files/figure-html/unnamed-chunk-19-1.png" width="672" />
 which clarifies that the <code>cos %T&gt;% plot</code> section of the pipeline passes the output of <code>cos()</code> to the next section. So the <code>%T&gt;%</code> operator is useful when you want to “keep piping” by skipping the output of one pipeline component. In this specific example we are not interested in the output of <code>plot</code>, which is being called only for its side effects (the plot it draws).</p>
 </div>
 <div id="the-exposition-pipe" class="section level3">

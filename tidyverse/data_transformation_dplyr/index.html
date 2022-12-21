@@ -65,9 +65,13 @@
 
 
 
+
+
+
+
 <nav class="breadcrumbs">
     
-        <a href="https://awllee.github.io/sc1/">home / </a>
+        <a href="https://awllee.github.io/sc1">home / </a>
     
         <a href="https://awllee.github.io/sc1/tidyverse/">tidyverse / </a>
     
@@ -172,10 +176,10 @@ library(magrittr)
 library(GGally)
 UKload %&gt;% select(NetDemand, wM, Posan) %&gt;% 
            ggpairs()</code></pre>
-<p><img src="/sc1/tidyverse/data_transformation_dplyr_files/figure-html/unnamed-chunk-2-1.png" width="672" style="display: block; margin: auto;" />
+<p><img src="/sc1tidyverse/data_transformation_dplyr_files/figure-html/unnamed-chunk-2-1.png" width="672" style="display: block; margin: auto;" />
 where <code>GGally::ggpairs</code> is the <code>ggplot2</code> version of <code>graphics::pairs</code>, so the code above is similar to:</p>
 <pre class="r"><code>pairs( UKload[ , c(&quot;NetDemand&quot;, &quot;wM&quot;, &quot;Posan&quot;)] )</code></pre>
-<p><img src="/sc1/tidyverse/data_transformation_dplyr_files/figure-html/unnamed-chunk-3-1.png" width="672" style="display: block; margin: auto;" />
+<p><img src="/sc1tidyverse/data_transformation_dplyr_files/figure-html/unnamed-chunk-3-1.png" width="672" style="display: block; margin: auto;" />
 We can also remove variables, for instance:</p>
 <pre class="r"><code>UKload %&lt;&gt;% select(-Date)</code></pre>
 <p>removes the <code>Date</code> variable from the data set (notice that we are over-writing <code>UKload</code> by using the assignment pipe <code>%&lt;&gt;%</code>).</p>
@@ -325,7 +329,7 @@ UKweek</code></pre>
 fit &lt;- gamV(TotDemand ~ nHoly + s(tempMax) + s(tempMin) + s(Posan), data = UKweek)</code></pre>
 <p>and we then plot the effects:</p>
 <pre class="r"><code>print(plot(fit, allTerms = TRUE), pages = 1)</code></pre>
-<p><img src="/sc1/tidyverse/data_transformation_dplyr_files/figure-html/unnamed-chunk-19-1.png" width="768" style="display: block; margin: auto;" />
+<p><img src="/sc1tidyverse/data_transformation_dplyr_files/figure-html/unnamed-chunk-19-1.png" width="768" style="display: block; margin: auto;" />
 We can see a strong heating effect depending on the minimal weekly temperature, but little cooling effect (recall that this is UK data!). As expected consumption is higher in the winter than in the summer, and weeks containing holidays have a lower total consumption.</p>
 <p>This section showed how to use the basic tools provided by <code>dplyr</code> to transform <code>data.frames</code>. To appreciate the practical utility of such tools, you are encouraged to try to transform <code>UKload</code> into <code>UKweek</code> using only the tools provided by base <code>R</code> (that is, without using <code>group_by</code> and <code>summarise</code>). You are also encouraged to issue a pull request including your solutions, as it would be cool to see how base <code>R</code> solutions to this problem look, relative to the <code>dplyr</code>-based solution above.</p>
 </div>

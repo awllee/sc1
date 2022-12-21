@@ -65,9 +65,13 @@
 
 
 
+
+
+
+
 <nav class="breadcrumbs">
     
-        <a href="https://awllee.github.io/sc1/">home / </a>
+        <a href="https://awllee.github.io/sc1">home / </a>
     
         <a href="https://awllee.github.io/sc1/matrices/">matrices / </a>
     
@@ -151,7 +155,7 @@ C &lt;- Matrix(rnorm(4), nrow=2, ncol=2)
 c(rankMatrix(A), rankMatrix(B), rankMatrix(B, tol=1e-7))</code></pre>
 <pre><code>## [1] 1 2 1</code></pre>
 <pre class="r"><code>c(rcond(A), rcond(B), rcond(C), rcond(C/1e5))</code></pre>
-<pre><code>## [1] 0.000000e+00 1.722426e-10 4.870981e-01 4.870981e-01</code></pre>
+<pre><code>## [1] 0.000000e+00 1.226727e-09 3.926243e-02 3.926243e-02</code></pre>
 <p>A sparse matrix is one where most entries will be 0. It is inefficient to store all these 0’s in memory.</p>
 <pre class="r"><code>set.seed(7)
 nrows &lt;- 1000
@@ -252,7 +256,7 @@ pkgDep(pkg, suggests=FALSE, enhances=FALSE, includeBasePkgs=TRUE)</code></pre>
 <pre><code>##  [1] &quot;igraph&quot;    &quot;methods&quot;   &quot;graphics&quot;  &quot;grDevices&quot; &quot;magrittr&quot;  &quot;Matrix&quot;   
 ##  [7] &quot;pkgconfig&quot; &quot;rlang&quot;     &quot;stats&quot;     &quot;utils&quot;     &quot;grid&quot;      &quot;lattice&quot;</code></pre>
 <pre class="r"><code>plot(g1, vertex.size=20)</code></pre>
-<p><img src="/sc1/matrices/sparse_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<p><img src="/sc1matrices/sparse_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
 <pre class="r"><code>m_pkg1</code></pre>
 <pre><code>## 11 x 11 sparse Matrix of class &quot;dgCMatrix&quot;</code></pre>
 <pre><code>##    [[ suppressing 11 column names &#39;igraph&#39;, &#39;methods&#39;, &#39;graphics&#39; ... ]]</code></pre>

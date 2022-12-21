@@ -67,9 +67,13 @@ Vectorisation is &amp;hellip;">
 
 
 
+
+
+
+
 <nav class="breadcrumbs">
     
-        <a href="https://awllee.github.io/sc1/">home / </a>
+        <a href="https://awllee.github.io/sc1">home / </a>
     
         <a href="https://awllee.github.io/sc1/common-r/">common-r / </a>
     
@@ -159,10 +163,10 @@ Vectorisation is &amp;hellip;">
 <pre class="r"><code>x &lt;- 1:1e6 #runif(1e+06, min=-1, max=1)
 system.time(fsum1(x))</code></pre>
 <pre><code>##    user  system elapsed 
-##   0.131   0.000   0.132</code></pre>
+##   0.102   0.000   0.102</code></pre>
 <pre class="r"><code>system.time(fsum2(x))</code></pre>
 <pre><code>##    user  system elapsed 
-##   0.025   0.004   0.028</code></pre>
+##   0.018   0.000   0.018</code></pre>
 <p>As can been seen in this example, vectorised code is not only faster but also more elegant.</p>
 </div>
 <div id="matrix-operations-higher-dimensional-vectorisation" class="section level2">
@@ -185,15 +189,15 @@ system.time(fsum1(x))</code></pre>
 }
 num_heads &lt;- coin_toss2(10000)
 hist(num_heads, breaks=50)</code></pre>
-<p><img src="/sc1/common-r/vectorisation_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<p><img src="/sc1common-r/vectorisation_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
 <p>Let us compare the speed using <code>system.time()</code>.</p>
 <pre class="r"><code>n &lt;- 10000
 system.time(coin_toss1(n))</code></pre>
 <pre><code>##    user  system elapsed 
-##   8.638   0.020   8.660</code></pre>
+##   7.276   0.012   7.289</code></pre>
 <pre class="r"><code>system.time(coin_toss2(n))</code></pre>
 <pre><code>##    user  system elapsed 
-##   0.045   0.008   0.054</code></pre>
+##   0.045   0.000   0.046</code></pre>
 <p>Generally speaking, more layers of loops result in higher speedup if the code is properly vectorised. Having 3 layers of loops or higher should be avoided in an interpreted language such as <code>R</code>.</p>
 </div>
 

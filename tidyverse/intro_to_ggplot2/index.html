@@ -67,9 +67,13 @@
 
 
 
+
+
+
+
 <nav class="breadcrumbs">
     
-        <a href="https://awllee.github.io/sc1/">home / </a>
+        <a href="https://awllee.github.io/sc1">home / </a>
     
         <a href="https://awllee.github.io/sc1/tidyverse/">tidyverse / </a>
     
@@ -163,7 +167,7 @@ head(mcycle)</code></pre>
 ## 6   6.2  -2.7</code></pre>
 <p>The data set contains only two variables: acceleration and the time at which it was measured during a simulated motorcycle accident (see <code>?mcycle</code> for more info). This is a classic example where we would like to visualize the data using a scatterplot, which can done quite easily using base <code>R</code> plotting methods (more precisely, <code>plot.default</code> from the <code>graphics</code> package):</p>
 <pre class="r"><code>plot(x = mcycle$times, y = mcycle$accel)</code></pre>
-<p><img src="/sc1/tidyverse/Intro_to_ggplot2_files/figure-html/unnamed-chunk-2-1.png" width="480" style="display: block; margin: auto;" />
+<p><img src="/sc1tidyverse/Intro_to_ggplot2_files/figure-html/unnamed-chunk-2-1.png" width="480" style="display: block; margin: auto;" />
 Base R plots are generally called for their side effects, rather than for their returned value. For example, the <code>R</code> code executed within <code>plot.default</code> renders the scatterplot shown above, but this function does not return anything useful:</p>
 <pre class="r"><code>tmp &lt;- plot(x = mcycle$times, y = mcycle$accel)</code></pre>
 <pre class="r"><code>tmp</code></pre>
@@ -175,12 +179,12 @@ class(pl)</code></pre>
 <pre><code>## [1] &quot;gg&quot;     &quot;ggplot&quot;</code></pre>
 <p>As you can see, nothing has been plotted so far, the plot is rendered upon evaluation on the console:</p>
 <pre class="r"><code>pl</code></pre>
-<p><img src="/sc1/tidyverse/Intro_to_ggplot2_files/figure-html/unnamed-chunk-5-1.png" width="480" style="display: block; margin: auto;" />
+<p><img src="/sc1tidyverse/Intro_to_ggplot2_files/figure-html/unnamed-chunk-5-1.png" width="480" style="display: block; margin: auto;" />
 but the plot is empty, so there nothing to see! This is because we haven’t added any graphical layer to the plot. To get a scatterplot we must add the <code>geom_point</code> layer from <code>ggplot2</code> as follows:</p>
 <pre class="r"><code>pl &lt;- pl + geom_point(mapping = aes(x = times, y = accel)) </code></pre>
 <p>We’ll explain how the <code>mapping</code> argument works in minute. To render the plot, we do:</p>
 <pre class="r"><code>pl</code></pre>
-<p><img src="/sc1/tidyverse/Intro_to_ggplot2_files/figure-html/unnamed-chunk-7-1.png" width="480" style="display: block; margin: auto;" />
+<p><img src="/sc1tidyverse/Intro_to_ggplot2_files/figure-html/unnamed-chunk-7-1.png" width="480" style="display: block; margin: auto;" />
 Remember that evaluating an object, <code>pl</code> in this case, on the <code>R</code> console triggers a call to the generic <code>print</code> function. Given that <code>pl</code> has class <code>ggplot</code>, this dispatches to the <code>print.ggplot</code> method (not exported by <code>ggplot2</code>, but you can see its code by doing <code>ggplot2:::print.ggplot</code>). Of course, we can do the whole thing in one step and get the same result (not shown):</p>
 <pre class="r"><code>ggplot(data = mcycle) + geom_point(mapping = aes(x = times, y = accel))</code></pre>
 <p>The code above shows that the first difference between <code>ggplot2</code> and <code>graphics</code> plotting methods is that <code>ggplot2</code> explicitly separates the plot-building phase (initial plot creation using <code>ggplot</code>, followed by addition of layers such as <code>geom_point</code>) from the rendering phase (performed by <code>print</code>). <code>ggplot2</code> also distinguishes the <code>data.frame</code> that contains the variables to be used in the plot (<code>mcycle</code> in this example, which is passed to the initial <code>ggplot</code> function) from the variables names that are specified when calling the specific layers (<code>accel</code> and <code>times</code>, which are passed to <code>geom_point</code>). A generic <code>ggplot2</code> template might look something like this:</p>
@@ -222,7 +226,7 @@ UKload$Period &lt;- UKload %$% factor(Posan &lt; 0.25 | Posan &gt; 0.75,
 UKload %&gt;% ggplot(mapping = aes(x = wM, y = NetDemand, col = Period)) +
            geom_point(alpha = 0.6) + 
            theme_bw()</code></pre>
-<p><img src="/sc1/tidyverse/Intro_to_ggplot2_files/figure-html/unnamed-chunk-11-1.png" width="480" style="display: block; margin: auto;" />
+<p><img src="/sc1tidyverse/Intro_to_ggplot2_files/figure-html/unnamed-chunk-11-1.png" width="480" style="display: block; margin: auto;" />
 In the first line we loaded the <code>magrittr</code> package, because we want to illustrate that <code>ggplot2</code> is compatible with pipes, while the second line creates the <code>Period</code> factor variable. Notice that the mapping now contains also the <code>col</code> argument. Argument <code>alpha</code> is used to make the points semi-transparent, which is useful because there is quite a lot of overlap between the points here. <code>theme_bm()</code> is not a layer, but a function that modifies the graphical appearance of the whole plot. The code above illustrates that the main workflow is based on getting the main <code>data.frame</code> ready beforehand and passing it to the <code>ggplot</code> function. Notice that the mapping between the variables in the <code>data.frame</code> and some of the characteristics of the plot (here the <code>x</code> and <code>y</code> axis, and the colour <code>col</code>) can be specified either in the initial call to <code>ggplot</code>, or in the specific layers (as in a previous example).</p>
 <p>The last plot shows that, unsurprisingly, temperatures are lower in the summer than in the winter period (as defined above) and that at low temperatures the demand decreases almost linearly with temperature, while in the warmer perior the relation between demand and temperature is more complex. We also see that, in both periods, there are two vertically shifted modes of the joint distribution of demand and temperature. Investigating the origin of these modes gives us an opportunity to illustrate the faceting facilites offered by <code>ggplot2</code>. In particular, consider the following code:</p>
 <pre class="r"><code>UKload$DayType &lt;- UKload %$% factor(as.logical(Dow %in% c(&quot;dimanche&quot;, &quot;samedi&quot;)) | 
@@ -232,14 +236,14 @@ UKload %&gt;% ggplot(mapping = aes(x = wM, y = NetDemand, col = Period)) +
            geom_point(alpha = 0.6) + 
            theme_bw() + 
            facet_wrap(~ DayType)</code></pre>
-<p><img src="/sc1/tidyverse/Intro_to_ggplot2_files/figure-html/unnamed-chunk-12-1.png" width="672" style="display: block; margin: auto;" />
+<p><img src="/sc1tidyverse/Intro_to_ggplot2_files/figure-html/unnamed-chunk-12-1.png" width="672" style="display: block; margin: auto;" />
 In the first three lines of code we are simply creating a new factor variable (<code>Daytype</code>) which takes value <code>"Holiday"</code> on weekends and holidays (e.g. Christmas day) and <code>"Workday"</code> on the remaining days. Then we are creating the same <code>ggplot</code> as before, with the difference that we are adding <code>facet_wrap</code> to create a sequence of plots which depends on the value of <code>Daytype</code>. The faceted plot show that the two modes we identified before roughly correspond to the working days and holidays/weekends, the demand being lower during the latter.</p>
 <p>It is quite simple to understand how faceting works. The main argument of the faceting function is a formula (which is a data structure in <code>R</code>, not necessarily representing an equation) containing the <strong>discrete</strong> variable(s) along which the faceting is performed. We can do faceting along two variables using the <code>facet_grid</code> function, for example:</p>
 <pre class="r"><code>UKload %&gt;% ggplot(mapping = aes(x = wM, y = NetDemand)) +
            geom_point(alpha = 0.6) + 
            theme_bw() + 
            facet_grid(Period ~ DayType)</code></pre>
-<p><img src="/sc1/tidyverse/Intro_to_ggplot2_files/figure-html/unnamed-chunk-13-1.png" width="576" style="display: block; margin: auto;" /></p>
+<p><img src="/sc1tidyverse/Intro_to_ggplot2_files/figure-html/unnamed-chunk-13-1.png" width="576" style="display: block; margin: auto;" /></p>
 <p>This section illustrated how <code>ggplot2</code> works, using basic examples. Hopefully it should be clear by now that using <code>ggplot2</code> requires having created the “right” <code>data.frame</code> before starting the visualization process. Here we used readymade data.frames (<code>mcycle</code> and <code>UKload</code>) and we limited ourselves to adding a couple of variables (<code>Period</code> and <code>DayType</code>). However, the Tidyverse provides some packages (mainly <code>dplyr</code> and <code>tidyr</code>) which make <code>data.frame</code> preparation and transformation easier, relative to base <code>R</code>. Such packages will be described in a later section. Before doing that, we’ll go through a <code>ggplot2</code> case study, namely the <code>mgcViz</code> package. The reason is that, while this section illustrates how <code>ggplot2</code> tidily breaks down the visualization process into an layered object-oriented framework of smaller steps and components (e.g., creating the main plot using <code>ggplot</code>, adding layers, dividing the plot into facets and finally rendering it on the screen), you might be wondering: “Why bother?”. Indeed, if you just want to construct a standard scatterplot or histogram, you might be better off using base <code>R</code> (i.e. the <code>graphics</code> package). However, by going through a detailed case study, the next section should convince you that <code>ggplot2</code> might be preferable to base <code>R</code> for the purpose of constructing a tidy visualization library for a specific class of statistical models.</p>
 </div>
 

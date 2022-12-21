@@ -65,9 +65,13 @@
 
 
 
+
+
+
+
 <nav class="breadcrumbs">
     
-        <a href="https://awllee.github.io/sc1/">home / </a>
+        <a href="https://awllee.github.io/sc1">home / </a>
     
         <a href="https://awllee.github.io/sc1/integration/">integration / </a>
     
@@ -279,7 +283,7 @@ xs &lt;- replicate(100000, rejection.sample(dnorm, laplace, M))
 plot(density(xs))
 vs &lt;- seq(-5,5,0.01)
 lines(vs, dnorm(vs), col=&quot;red&quot;)</code></pre>
-<p><img src="/sc1/integration/monte-carlo_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+<p><img src="/sc1integration/monte-carlo_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
 <p><em>Warning</em>. In many practical applications <span class="math inline">\(M\)</span> is prohibitively large, and rejection sampling can easily suffer from the curse of dimensionality. For example, consider what happens as <span class="math inline">\(d\)</span> increases when for some densities <span class="math inline">\(p\)</span> and <span class="math inline">\(g\)</span>, <span class="math inline">\(\pi(x)=\prod_{i=1}^{d} p(x_{i})\)</span>, <span class="math inline">\(\mu(x) = \prod_{i=1}^{d} g(x_{i})\)</span> and <span class="math inline">\(\sup_{x} \frac{p(x)}{g(x)} &gt; 1\)</span>.</p>
 <p>For complicated <span class="math inline">\(\pi\)</span>, especially in high dimensions, we do not usually know how to find a “good” <span class="math inline">\(\mu\)</span>.</p>
 </div>
@@ -447,14 +451,14 @@ xs &lt;- simulate.chain(P, 1, 100000)
 plot(density(xs))
 vs &lt;- seq(-5,5,0.01)
 lines(vs, dnorm(vs), col=&quot;red&quot;)</code></pre>
-<p><img src="/sc1/integration/monte-carlo_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+<p><img src="/sc1integration/monte-carlo_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
 <p>We can simulate an <span class="math inline">\({\rm Exponential}(1)\)</span> random variable using a normal proposal.</p>
 <pre class="r"><code>P &lt;- make.metropolis.hastings.kernel(dexp, make.normal.proposal(1.0))
 xs &lt;- simulate.chain(P, 1, 100000)
 plot(density(xs))
 vs &lt;- seq(0,5,0.01)
 lines(vs, dexp(vs), col=&quot;red&quot;)</code></pre>
-<p><img src="/sc1/integration/monte-carlo_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+<p><img src="/sc1integration/monte-carlo_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
 <p>Actually, the proposal in the above two cases is “symmetric” in the sense that <span class="math inline">\(q(x,y) = q(y,x)\)</span> for any <span class="math inline">\(x,y \in \mathbb{R}\)</span>. We can check that the algorithm still works when <span class="math inline">\(q(x,y) \neq q(y,x)\)</span> and also show that it works for discrete random variables.</p>
 <pre class="r"><code>step.proposal &lt;- list()
 step.proposal$sample &lt;- function(x) x + sample(c(-1,1), 1, prob = c(0.4,0.6))
@@ -465,20 +469,20 @@ xs &lt;- simulate.chain(P, 1, 100000)
 hist(xs, breaks=seq(min(xs)-0.5, max(xs)+0.5, 1), probability = TRUE, ylim=c(0,0.5))
 vs &lt;- seq(1,10,1)
 points(vs, 1/vs/sum(1/vs), col=&quot;red&quot;, pch=20)</code></pre>
-<p><img src="/sc1/integration/monte-carlo_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
+<p><img src="/sc1integration/monte-carlo_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
 <p>Finally, we can visualize how the chain depends on the choice of proposal standard deviation. In particular, this controls where the chain makes frequent moderate jumps, infrequent large jumps or very frequent but very small jumps. In practice, it is important to choose the proposal variance (or covariance in multivariate settings) to control the frequency and size of jumps.</p>
 <pre class="r"><code>P &lt;- make.metropolis.hastings.kernel(dnorm, make.normal.proposal(1.0))
 xs &lt;- simulate.chain(P, 0, 1000)
 plot(xs, pch=20)</code></pre>
-<p><img src="/sc1/integration/monte-carlo_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
+<p><img src="/sc1integration/monte-carlo_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
 <pre class="r"><code>P &lt;- make.metropolis.hastings.kernel(dnorm, make.normal.proposal(10.0))
 xs &lt;- simulate.chain(P, 0, 1000)
 plot(xs, pch=20)</code></pre>
-<p><img src="/sc1/integration/monte-carlo_files/figure-html/unnamed-chunk-10-2.png" width="672" /></p>
+<p><img src="/sc1integration/monte-carlo_files/figure-html/unnamed-chunk-10-2.png" width="672" /></p>
 <pre class="r"><code>P &lt;- make.metropolis.hastings.kernel(dnorm, make.normal.proposal(0.1))
 xs &lt;- simulate.chain(P, 0, 1000)
 plot(xs, pch=20)</code></pre>
-<p><img src="/sc1/integration/monte-carlo_files/figure-html/unnamed-chunk-10-3.png" width="672" /></p>
+<p><img src="/sc1integration/monte-carlo_files/figure-html/unnamed-chunk-10-3.png" width="672" /></p>
 </div>
 <div id="validity" class="section level3">
 <h3>Validity</h3>
