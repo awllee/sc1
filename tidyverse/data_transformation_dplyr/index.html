@@ -198,11 +198,10 @@ We can also remove variables, for instance:</p>
 <p>Here we are selecting only the Mondays (“Lundi” in French) where the temperature is below 5 degrees Celsius. We are also printing the first and last few rows of the data by exploiting the <code>%T&gt;%</code> pipe (by the way, why do we need the curly brackets <code>{}</code> around <code>print</code>?). <strong>Warning</strong>: notice that the following would not work:</p>
 <pre class="r"><code>coldMondays &lt;- UKload %&gt;% filter(wM &lt; 5 &amp;&amp; Dow == &quot;lundi&quot;) %T&gt;% 
                           {print(head(.), digits = 2)}</code></pre>
-<pre><code>## Warning in wM &lt; 5 &amp;&amp; Dow == &quot;lundi&quot;: &#39;length(x) = 2008 &gt; 1&#39; in coercion to
-## &#39;logical(1)&#39;</code></pre>
-<pre><code>## [1] NetDemand    wM           wM_s95       Posan        Dow         
-## [6] Trend        NetDemand.48 Holy         Year        
-## &lt;0 rows&gt; (or 0-length row.names)</code></pre>
+<pre><code>## Error in `filter()`:
+## ℹ In argument: `wM &lt; 5 &amp;&amp; Dow == &quot;lundi&quot;`.
+## Caused by error in `wM &lt; 5 &amp;&amp; Dow == &quot;lundi&quot;`:
+## ! &#39;length = 2008&#39; in coercion to &#39;logical(1)&#39;</code></pre>
 <p>because we need to use <code>&amp;</code>, which performs elementwise comparisons, not <code>&amp;&amp;</code>, which is typically used for programming control-flow (e.g. in if-else statements). Same for <code>|</code> and <code>||</code>.</p>
 <p>You might also find useful the <code>arrange</code> function, which allows you to sort the rows of the data using one of more variable:</p>
 <pre class="r"><code>UKload %&lt;&gt;% arrange(Dow, desc(wM)) %T&gt;% 
@@ -290,7 +289,8 @@ UKweek</code></pre>
 ##  8     43988  7.08   7.25 0.0205  samedi   1294484400        51698 0      2011
 ##  9     43340  4.89   3.53 0.0233  dimanche 1294570800        43988 0      2011
 ## 10     50645  6.33   3.47 0.0260  lundi    1294657200        43340 0      2011
-## # … with 1,998 more rows, and 2 more variables: Date &lt;dttm&gt;, wk &lt;dbl&gt;</code></pre>
+## # ℹ 1,998 more rows
+## # ℹ 2 more variables: Date &lt;dttm&gt;, wk &lt;dbl&gt;</code></pre>
 <p>Here we are using <code>mutate</code> and <code>lubridate::week</code> to create a new variable, <code>wk</code> <span class="math inline">\(\in \{1, 2, \dots, 53\}\)</span>, indicating the week to which each observation belongs and then we are grouping the data by year and week. As you can see, the output of <code>group_by</code> is not just a <code>data.frame</code> but a tibble, which is a “tidy” version of a <code>data.frame</code>. Without going too much into details, tibbles inherits the <code>data.frame</code> class:</p>
 <pre class="r"><code>class(UKweek)</code></pre>
 <pre><code>## [1] &quot;grouped_df&quot; &quot;tbl_df&quot;     &quot;tbl&quot;        &quot;data.frame&quot;</code></pre>
@@ -318,7 +318,7 @@ UKweek</code></pre>
 ##  8  2011     8    323699   13.0    4.46  0.144   0    
 ##  9  2011     9    321129    8.28   3.07  0.163   0    
 ## 10  2011    10    314010   10.8    4.83  0.182   0    
-## # … with 281 more rows</code></pre>
+## # ℹ 281 more rows</code></pre>
 <p>we are calculating the <strong>weekly</strong> total demand, max and min temperature, the mean position along the year (<code>Posan</code>) and the total number of holidays (ranging from 0 to 7). Now we have a weekly demand data set but, before starting modelling it, we discard the last two weeks and the first week of the year by doing:</p>
 <pre class="r"><code>UKweek %&lt;&gt;% filter(wk &lt; 52 &amp; wk &gt; 1)</code></pre>
 <p>The reason for this is that the Christmas and New Year period is quite special in terms of electricity demand dynamics, hence we prefer to discard it here.</p>
