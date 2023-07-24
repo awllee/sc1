@@ -42,7 +42,7 @@ coldMondays <- UKload %>% filter(wM < 5 & Dow == "lundi") %T>%
                           {print(head(.), digits = 2)}
 ```
 Here we are selecting only the Mondays ("Lundi" in French) where the temperature is below 5 degrees Celsius. We are also printing the first and last few rows of the data by exploiting the `%T>%` pipe (by the way, why do we need the curly brackets `{}` around `print`?). **Warning**: notice that the following would not work:
-```{r}
+```{r, error=TRUE}
 coldMondays <- UKload %>% filter(wM < 5 && Dow == "lundi") %T>% 
                           {print(head(.), digits = 2)}
 ```
