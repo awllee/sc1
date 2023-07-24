@@ -69,13 +69,9 @@
 
 
 
-
-
-
-
 <nav class="breadcrumbs">
     
-        <a href="https://awllee.github.io/sc1">home / </a>
+        <a href="https://awllee.github.io/sc1/">home / </a>
     
         <a href="https://awllee.github.io/sc1/functional-oo/">functional-oo / </a>
     
@@ -241,12 +237,12 @@ plot.simple_lin_regression &lt;- function(x, y = NULL, ...) {
 ## Estimated regression: E[y|x] = b0 + b1 * x
 ## b0 = 2.147615 and b1 = -1.035079.</code></pre>
 <pre class="r"><code>plot(sl1)</code></pre>
-<p><img src="/sc1functional-oo/object-oriented_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+<p><img src="/sc1/functional-oo/object-oriented_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
 <p>Note that to implement a method for an S3 class, a generic function of the same name needs to exist. You can, for example, see the definition of the generic function <code>plot</code> by</p>
 <pre class="r"><code>plot</code></pre>
 <pre><code>## function (x, y, ...) 
 ## UseMethod(&quot;plot&quot;)
-## &lt;bytecode: 0x5623f00179e8&gt;
+## &lt;bytecode: 0x5585d78caa20&gt;
 ## &lt;environment: namespace:base&gt;</code></pre>
 <p>Note that the generic function <code>plot</code> has two compulsory arguments <code>x</code> and <code>y</code> and optional arguments indicated by <code>...</code>. The generic functions body is always a call of the function <code>UseMethod("[name_of_generic_function]")</code>.</p>
 <p>When defining a method that implements a generic function for an S3 object it must have the same arguments as the generic function.</p>
@@ -262,7 +258,7 @@ plot.simple_lin_regression &lt;- function(x, y = NULL, ...) {
 }</code></pre>
 <p>Now, we can apply the residual analysis function to our object:</p>
 <pre class="r"><code>residual_analysis(sl1)</code></pre>
-<p><img src="/sc1functional-oo/object-oriented_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+<p><img src="/sc1/functional-oo/object-oriented_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
 <p>S3 classes allow for inheritance by setting the <code>class</code> attribute to a vector of class names.</p>
 <p>For an example let us create an object of class <code>ordered</code> and check its class:</p>
 <pre class="r"><code>ord_factor &lt;- ordered(c(&quot;a&quot;, &quot;b&quot;, &quot;a&quot;))
@@ -368,7 +364,7 @@ str(slm1)</code></pre>
 ## Estimated regression: E[y|x] = b0 + b1 * x
 ## b0 = 2.036957 and b1 = -1.007284.</code></pre>
 <pre class="r"><code>plot(slm1)</code></pre>
-<p><img src="/sc1functional-oo/object-oriented_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
+<p><img src="/sc1/functional-oo/object-oriented_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
 <p>Next, we implement an S4 version of <code>residual_analysis</code> that we had also discussed in the chapter on S3:</p>
 <pre class="r"><code>setGeneric(&quot;residual_analysis&quot;)</code></pre>
 <pre><code>## [1] &quot;residual_analysis&quot;</code></pre>
@@ -381,7 +377,7 @@ str(slm1)</code></pre>
 )
 
 residual_analysis(slm1)</code></pre>
-<p><img src="/sc1functional-oo/object-oriented_files/figure-html/unnamed-chunk-15-1.png" width="672" /></p>
+<p><img src="/sc1/functional-oo/object-oriented_files/figure-html/unnamed-chunk-15-1.png" width="672" /></p>
 <p>In S4, we use <code>setGeneric</code> to make the <code>residual_analysis</code> generic function available and then <code>setMethod</code> to implement it for objects of class <code>simple_lin_regression</code>. Note that we have again used the <code>@</code> operator in the implementation.</p>
 <p>Next, we will add getter and setter methods that were mentioned before. Getter and setter methods should be provided to end users when they are meant to read and write the values of slots. First we do this for the <code>response</code> slot:</p>
 <pre class="r"><code>setGeneric(&quot;response&quot;, function(x) standardGeneric(&quot;response&quot;))</code></pre>
@@ -464,7 +460,7 @@ estimate(slm1)</code></pre>
 <pre><code>## [1] 2.5684450 0.8505311</code></pre>
 <p>The residual plot nicely shows the outlier that we have introduced:</p>
 <pre class="r"><code>residual_analysis(slm1)</code></pre>
-<p><img src="/sc1functional-oo/object-oriented_files/figure-html/unnamed-chunk-23-1.png" width="672" /></p>
+<p><img src="/sc1/functional-oo/object-oriented_files/figure-html/unnamed-chunk-23-1.png" width="672" /></p>
 <p>We are now going to (very briefly) discuss how <a href="https://en.wikipedia.org/wiki/Class_diagram#Relationships">relationships between objects</a> can be modelled with S4. For a more depth discussion on this topic, please refer to the recommended literature.</p>
 <p>When individual objects are related to one another this can be called an <a href="https://en.wikipedia.org/wiki/Class_diagram#Instance-level_relationships">instance-level relationship</a>. To model this kind of relationship a slot is added to the two classes of which individual objects will be related and the type of the slot will be the class of the related object.</p>
 <p>When all objects of one class are related to all objects of another class in the way that one is a more general version of the other then we model <a href="https://en.wikipedia.org/wiki/Class_diagram#Generalization/Inheritance">inheritance</a>. In S4 a class is modelled to inherit from another class by adding the <code>contains</code> argument to the call of <code>setClass</code>. If a child class inherits from a parent class this implies that the child will have all slots available that are available to the parent. S4 allows for multiple inheritance such that a vector of classes to inherit from can be provided. In this case a child has all slots of all its parents available.</p>

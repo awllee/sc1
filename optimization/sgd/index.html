@@ -67,13 +67,9 @@
 
 
 
-
-
-
-
 <nav class="breadcrumbs">
     
-        <a href="https://awllee.github.io/sc1">home / </a>
+        <a href="https://awllee.github.io/sc1/">home / </a>
     
         <a href="https://awllee.github.io/sc1/optimization/">optimization / </a>
     
@@ -254,7 +250,7 @@ for (k in 1:n_iter) {
 #lines(f_val_trace[, 1])
 lines(f_val_trace[, 1], col=&#39;blue&#39;)
 legend(n_iter/50, max(f_val_trace)*0.95, legend=c(&#39;SGD&#39;, &#39;steepest descent&#39;), col=c(&#39;red&#39;, &#39;blue&#39;), lty=c(1,1))</code></pre>
-<p><img src="/sc1optimization/sgd_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
+<p><img src="/sc1/optimization/sgd_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
 <p>We see that in this problem SGD does not compare favourably to steepest descent, whose performance is already woeful compare to Levenberg-Marquardt. In fact, SGD does not converge even after 300,000 iterations. But one thing to keep in mind is that here the size of the dataset is very small and the parameter optimisation problem quite hard. With a much larger dataset, SGD performs reasonably well and is moreover, easy to implement. Furthermore, in real-world applications, whether the algorithm converges is not as important as the out-of-sample performance of the model. In reality, the SGD algorithm would have been stopped when out-of-sample performance begins to deteriorate, long before convergence.</p>
 </div>
 

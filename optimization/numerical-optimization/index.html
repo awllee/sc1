@@ -67,13 +67,9 @@
 
 
 
-
-
-
-
 <nav class="breadcrumbs">
     
-        <a href="https://awllee.github.io/sc1">home / </a>
+        <a href="https://awllee.github.io/sc1/">home / </a>
     
         <a href="https://awllee.github.io/sc1/optimization/">optimization / </a>
     
@@ -162,7 +158,7 @@ where <span class="math inline">\(f:\mathbb{R}^N \to \mathbb{R}\)</span> is the 
 <p>We start with the one-dimensional case where we can graph the function easily.</p>
 <pre class="r"><code>f &lt;- function(x) cos(x) + cos(2*x) + sin(3*x)
 curve(f, from=0, to=2*pi)</code></pre>
-<p><img src="/sc1optimization/numerical-optimization_files/figure-html/unnamed-chunk-1-1.png" width="672" /></p>
+<p><img src="/sc1/optimization/numerical-optimization_files/figure-html/unnamed-chunk-1-1.png" width="672" /></p>
 <div id="the-optimize-function" class="section level2">
 <h2>The <code>optimize</code> function</h2>
 <p>We apply the base <code>R</code> function <code>optimize</code>, which only works on functions of one variable, to this function:</p>
@@ -226,7 +222,7 @@ for (i in 1:6) {
 ## -37.3609</code></pre>
 <p>As one can see, if the initial guess is somewhat close to a local minimum, then convergence to that minimum is rapid. But if the initial guess is not that close (which is hard to know beforehand), then the value Newton’s method converges to seems to be quite willful. Let’s see what the function is like near -37:</p>
 <pre class="r"><code>curve(f, from=-40, to=-30)</code></pre>
-<p><img src="/sc1optimization/numerical-optimization_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<p><img src="/sc1/optimization/numerical-optimization_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
 <p>It seems -37.36 is a local maximum, which is not surprising since Newton’s method doesn’t distinguish between mimima and maxima. Another downside of Newton’s method is the requirement of second derivatives, which may not be available all the time.</p>
 <p>One dimensional optimisation problems should be easy, but as we have seen, even these “easy” problems can be troublesome for algorithms if we simply apply them blindly.</p>
 </div>

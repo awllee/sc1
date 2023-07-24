@@ -69,13 +69,9 @@
 
 
 
-
-
-
-
 <nav class="breadcrumbs">
     
-        <a href="https://awllee.github.io/sc1">home / </a>
+        <a href="https://awllee.github.io/sc1/">home / </a>
     
         <a href="https://awllee.github.io/sc1/functional-oo/">functional-oo / </a>
     
@@ -234,7 +230,7 @@ plot(test.X%*%beta.true, col=&quot;red&quot;, pch=20,
   xlab=&quot;test index&quot;, ylab=&quot;y&quot;)
 # and also the predicted means
 points(f(test.X), col=&quot;blue&quot;, pch=20)</code></pre>
-<p><img src="/sc1functional-oo/functional_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<p><img src="/sc1/functional-oo/functional_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
 <p>The important feature is that the estimated coefficient vector is <em>captured</em> by the closure. In some sense, the predictor function carries data along with it: one does not need to pass in the original data or the estimated coefficients to the predictor function. This can allow very simple interfaces to functions that are quite complicated.</p>
 <p>The idea of closures carrying data along with functions can be thought of as an alternative to objects providing an interface to data and methods in object-oriented programming.</p>
 <p><em>Note</em>. One fairly common source of bugs is capturing the wrong variable. For example, unintentionally referring to a global variable rather than a local variable due to a spelling mistake.</p>
