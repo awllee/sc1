@@ -121,7 +121,7 @@ where we use `ungroup` to remove the grouping created by `group_by`. Now, suppos
 ```{r}
 wideDat <- longDat %>% pivot_wider(names_from = "ID", values_from = "dem")
 
-print(wideDat, n = 5, width = 60, n_extra = 0)
+print(wideDat, n = 5, width = 60, max_extra_cols = 0)
 ```
 As you can see we got back a wide `data.frame`, where the values of `longDat$ID` are variable names. Now, suppose that we wanted to transform `wideDat` back to a long format. Simply doing the following is not a good idea:
 ```{r}
