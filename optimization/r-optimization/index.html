@@ -112,11 +112,11 @@
   
   <li><a href="/sc1/profile-debug/">Performance / Bugs</a></li>
   
+  <li><a href="/sc1/integration/">Integration</a></li>
+  
   <li><a href="/sc1/matrices/">Matrices</a></li>
   
   <li><a href="/sc1/optimization/">Optimization</a></li>
-  
-  <li><a href="/sc1/integration/">Integration</a></li>
   
   
   </ul>
@@ -359,10 +359,10 @@ f1(0,0)</code></pre>
 <p>We observe that BFGS and L-BFGS-B requires far fewer iterations than either Nelder-Mead or CG. Finally, we try simulated annealing, the only method that claims to be able find the global minimum.</p>
 <pre class="r"><code>optim(c(-1.5, 1.5), function(x) f(x[1], x[2]), method=&quot;SANN&quot;, control=list(maxit=100))</code></pre>
 <pre><code>## $par
-## [1] -1.144731  0.465840
+## [1] -0.4029562  1.4201792
 ## 
 ## $value
-## [1] 0.87834
+## [1] 1.507025
 ## 
 ## $counts
 ## function gradient 
@@ -375,10 +375,10 @@ f1(0,0)</code></pre>
 ## NULL</code></pre>
 <pre class="r"><code>optim(c(-1.5, 1.5), function(x) f(x[1], x[2]), method=&quot;SANN&quot;, control=list(maxit=1000))</code></pre>
 <pre><code>## $par
-## [1] -0.7533953  0.6005835
+## [1] -0.7376177  0.5945150
 ## 
 ## $value
-## [1] 0.5944014
+## [1] 0.5922922
 ## 
 ## $counts
 ## function gradient 
@@ -391,10 +391,10 @@ f1(0,0)</code></pre>
 ## NULL</code></pre>
 <pre class="r"><code>optim(c(-1.5, 1.5), function(x) f(x[1], x[2]), method=&quot;SANN&quot;, control=list(maxit=3000))</code></pre>
 <pre><code>## $par
-## [1] -0.7275265  0.5849290
+## [1] -0.7360070  0.5871476
 ## 
 ## $value
-## [1] 0.5920476
+## [1] 0.5919145
 ## 
 ## $counts
 ## function gradient 
@@ -524,11 +524,11 @@ nlm(f, mydata=my_data, p=start1)</code></pre>
 ## [1] &quot;CONVERGENCE: REL_REDUCTION_OF_F &lt;= FACTR*EPSMCH&quot;</code></pre>
 <pre class="r"><code>optim(par=start1, fn=f, mydata=my_data, method=&quot;SANN&quot;, control=list(maxit=30000))</code></pre>
 <pre><code>## $par
-##         b1         b2         b3 
-## 98.6551531 33.2355627  0.4093278 
+##          b1          b2          b3 
+## 100.3721850  35.4742320   0.4124073 
 ## 
 ## $value
-## [1] 233.9337
+## [1] 200.7782
 ## 
 ## $counts
 ## function gradient 

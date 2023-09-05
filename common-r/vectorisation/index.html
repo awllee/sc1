@@ -114,11 +114,11 @@ Vectorisation is &amp;hellip;">
   
   <li><a href="/sc1/profile-debug/">Performance / Bugs</a></li>
   
+  <li><a href="/sc1/integration/">Integration</a></li>
+  
   <li><a href="/sc1/matrices/">Matrices</a></li>
   
   <li><a href="/sc1/optimization/">Optimization</a></li>
-  
-  <li><a href="/sc1/integration/">Integration</a></li>
   
   
   </ul>
@@ -161,10 +161,10 @@ Vectorisation is &amp;hellip;">
 <pre class="r"><code>x &lt;- 1:1e6 #runif(1e+06, min=-1, max=1)
 system.time(fsum1(x))</code></pre>
 <pre><code>##    user  system elapsed 
-##   0.129   0.000   0.130</code></pre>
+##   0.112   0.000   0.113</code></pre>
 <pre class="r"><code>system.time(fsum2(x))</code></pre>
 <pre><code>##    user  system elapsed 
-##   0.021   0.004   0.025</code></pre>
+##   0.011   0.008   0.018</code></pre>
 <p>As can been seen in this example, vectorised code is not only faster but also more elegant.</p>
 </div>
 <div id="matrix-operations-higher-dimensional-vectorisation" class="section level2">
@@ -192,10 +192,10 @@ hist(num_heads, breaks=50)</code></pre>
 <pre class="r"><code>n &lt;- 10000
 system.time(coin_toss1(n))</code></pre>
 <pre><code>##    user  system elapsed 
-##   8.836   0.012   8.849</code></pre>
+##   7.577   0.004   7.581</code></pre>
 <pre class="r"><code>system.time(coin_toss2(n))</code></pre>
 <pre><code>##    user  system elapsed 
-##   0.052   0.003   0.056</code></pre>
+##   0.047   0.000   0.046</code></pre>
 <p>Generally speaking, more layers of loops result in higher speedup if the code is properly vectorised. Having 3 layers of loops or higher should be avoided in an interpreted language such as <code>R</code>.</p>
 </div>
 

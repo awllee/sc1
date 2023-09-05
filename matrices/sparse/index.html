@@ -112,11 +112,11 @@
   
   <li><a href="/sc1/profile-debug/">Performance / Bugs</a></li>
   
+  <li><a href="/sc1/integration/">Integration</a></li>
+  
   <li><a href="/sc1/matrices/">Matrices</a></li>
   
   <li><a href="/sc1/optimization/">Optimization</a></li>
-  
-  <li><a href="/sc1/integration/">Integration</a></li>
   
   
   </ul>
@@ -153,7 +153,7 @@ C &lt;- Matrix(rnorm(4), nrow=2, ncol=2)
 c(rankMatrix(A), rankMatrix(B), rankMatrix(B, tol=1e-7))</code></pre>
 <pre><code>## [1] 1 2 1</code></pre>
 <pre class="r"><code>c(rcond(A), rcond(B), rcond(C), rcond(C/1e5))</code></pre>
-<pre><code>## [1] 0.000000e+00 2.344463e-09 2.434865e-01 2.434865e-01</code></pre>
+<pre><code>## [1] 0.000000e+00 1.375407e-09 5.890797e-02 5.890797e-02</code></pre>
 <p>A sparse matrix is one where most entries will be 0. It is inefficient to store all these 0’s in memory.</p>
 <pre class="r"><code>set.seed(7)
 nrows &lt;- 1000
@@ -253,9 +253,9 @@ A / 10</code></pre>
 load(&#39;matrix_packages.RData&#39;)
 pkg &lt;- &#39;igraph&#39;
 pkgDep(pkg, suggests=FALSE, enhances=FALSE, includeBasePkgs=TRUE)</code></pre>
-<pre><code>##  [1] &quot;igraph&quot;    &quot;methods&quot;   &quot;cli&quot;       &quot;graphics&quot;  &quot;grDevices&quot; &quot;magrittr&quot; 
-##  [7] &quot;Matrix&quot;    &quot;pkgconfig&quot; &quot;rlang&quot;     &quot;stats&quot;     &quot;utils&quot;     &quot;cpp11&quot;    
-## [13] &quot;grid&quot;      &quot;lattice&quot;</code></pre>
+<pre><code>##  [1] &quot;igraph&quot;    &quot;methods&quot;   &quot;cli&quot;       &quot;graphics&quot;  &quot;grDevices&quot; &quot;lifecycle&quot;
+##  [7] &quot;magrittr&quot;  &quot;Matrix&quot;    &quot;pkgconfig&quot; &quot;rlang&quot;     &quot;stats&quot;     &quot;utils&quot;    
+## [13] &quot;cpp11&quot;     &quot;glue&quot;      &quot;grid&quot;      &quot;lattice&quot;</code></pre>
 <pre class="r"><code>plot(g1, vertex.size=20)</code></pre>
 <pre><code>## This graph was created by an old(er) igraph version.
 ##   Call upgrade_graph() on it to use with the current igraph version
