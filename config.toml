@@ -41,7 +41,7 @@ footnotereturnlinkcontents = "↩"
 [[menu.main]]
     name = "Matrices"
     url = "/matrices/"
-    weight = 9
+    weight = 10
 [[menu.main]]
     name = "Optimization"
     url = "/optimization/"
@@ -49,7 +49,7 @@ footnotereturnlinkcontents = "↩"
 [[menu.main]]
     name = "Integration"
     url = "/integration/"
-    weight = 12
+    weight = 9
 
 [params]
     description = "Statistical Computing 1"
