@@ -21,7 +21,7 @@ A simple example of an R package using GitHub Actions for CI is the [SC1ExampleP
 
 `R-CMD-check.yaml`: this workflow runs the tests defined in the package on Windows, macOS and Linux with the latest release of R, and also on Linux with the latest development build of R. It was created automatically by running
 ```
-usethis::use_github_action_check_standard()
+usethis::use_github_action("check-standard")
 ```
 
 `test-coverage.yaml`: this workflow runs `covr::codecov()`, which essentially runs the package tests on macOS and monitors which lines of source code have been run, and then uploads the results to [Codecov.io](https://about.codecov.io/). It was created automatically by running
