@@ -151,7 +151,7 @@ CI is a useful tool when developing software collaboratively &amp;hellip;">
 <h2 id="a-simple-example-package-testing">A simple example: package testing</h2>
 <p>A simple example of an R package using GitHub Actions for CI is the <a href="https://github.com/awllee/SC1ExamplePackage">SC1ExamplePackage</a>. The instructions for CI are contained in the <code>.github</code> directory, and in particular in the <code>workflows</code> subdirectory. There are two workflows.</p>
 <p><code>R-CMD-check.yaml</code>: this workflow runs the tests defined in the package on Windows, macOS and Linux with the latest release of R, and also on Linux with the latest development build of R. It was created automatically by running</p>
-<pre tabindex="0"><code>usethis::use_github_action_check_standard()
+<pre tabindex="0"><code>usethis::use_github_action(&#34;check-standard&#34;)
 </code></pre><p><code>test-coverage.yaml</code>: this workflow runs <code>covr::codecov()</code>, which essentially runs the package tests on macOS and monitors which lines of source code have been run, and then uploads the results to <a href="https://about.codecov.io/">Codecov.io</a>. It was created automatically by running</p>
 <pre tabindex="0"><code>usethis::use_github_action(&#34;test-coverage&#34;)
 </code></pre><p>You can log on to Codecov using GitHub credentials and manage coverage settings for your GitHub repository there.</p>
