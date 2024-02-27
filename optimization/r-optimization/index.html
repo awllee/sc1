@@ -231,7 +231,7 @@ f1(0,0)</code></pre>
 ## [1] -0.7366992  0.5830349
 ## 
 ## $gradient
-## [1]  3.996803e-08 -1.554312e-09
+## [1]  3.996803e-08 -1.776357e-09
 ## 
 ## $code
 ## [1] 1
@@ -359,10 +359,10 @@ f1(0,0)</code></pre>
 <p>We observe that BFGS and L-BFGS-B requires far fewer iterations than either Nelder-Mead or CG. Finally, we try simulated annealing, the only method that claims to be able find the global minimum.</p>
 <pre class="r"><code>optim(c(-1.5, 1.5), function(x) f(x[1], x[2]), method=&quot;SANN&quot;, control=list(maxit=100))</code></pre>
 <pre><code>## $par
-## [1] -0.6937081  0.5650131
+## [1] -0.7244211  0.5261632
 ## 
 ## $value
-## [1] 0.5994278
+## [1] 0.6032669
 ## 
 ## $counts
 ## function gradient 
@@ -375,10 +375,10 @@ f1(0,0)</code></pre>
 ## NULL</code></pre>
 <pre class="r"><code>optim(c(-1.5, 1.5), function(x) f(x[1], x[2]), method=&quot;SANN&quot;, control=list(maxit=1000))</code></pre>
 <pre><code>## $par
-## [1] -0.6880668  0.5068977
+## [1] -0.7621775  0.5859042
 ## 
 ## $value
-## [1] 0.6220386
+## [1] 0.5937823
 ## 
 ## $counts
 ## function gradient 
@@ -391,10 +391,10 @@ f1(0,0)</code></pre>
 ## NULL</code></pre>
 <pre class="r"><code>optim(c(-1.5, 1.5), function(x) f(x[1], x[2]), method=&quot;SANN&quot;, control=list(maxit=3000))</code></pre>
 <pre><code>## $par
-## [1] -0.7567339  0.5841729
+## [1] -0.7599764  0.5642328
 ## 
 ## $value
-## [1] 0.5929719
+## [1] 0.593034
 ## 
 ## $counts
 ## function gradient 
@@ -447,7 +447,7 @@ nlm(f, mydata=my_data, p=start1)</code></pre>
 ## [1] 196.2832646  49.0967439   0.3135034
 ## 
 ## $gradient
-## [1]  2.396657e-08 -6.501680e-08  3.163825e-05
+## [1]  2.383761e-08 -6.476354e-08  3.170175e-05
 ## 
 ## $code
 ## [1] 2
@@ -508,14 +508,14 @@ nlm(f, mydata=my_data, p=start1)</code></pre>
 <pre class="r"><code>optim(par=start1, fn=f, mydata=my_data, method=&quot;L-BFGS-B&quot;)</code></pre>
 <pre><code>## $par
 ##          b1          b2          b3 
-## 196.1652577  49.0795134   0.3135607 
+## 196.5325081  49.1219542   0.3133583 
 ## 
 ## $value
-## [1] 2.5873
+## [1] 2.587556
 ## 
 ## $counts
 ## function gradient 
-##      137      137 
+##      104      104 
 ## 
 ## $convergence
 ## [1] 0
@@ -525,10 +525,10 @@ nlm(f, mydata=my_data, p=start1)</code></pre>
 <pre class="r"><code>optim(par=start1, fn=f, mydata=my_data, method=&quot;SANN&quot;, control=list(maxit=30000))</code></pre>
 <pre><code>## $par
 ##         b1         b2         b3 
-## 96.8056135 35.7457110  0.4258422 
+## 98.3608388 33.5661121  0.4142424 
 ## 
 ## $value
-## [1] 237.7595
+## [1] 234.2907
 ## 
 ## $counts
 ## function gradient 
@@ -620,7 +620,7 @@ alt="Web Analytics"></a></div></noscript>
 
   
   <hr>
-  <div class="copyright">© 2020 <a href="https://sites.google.com/view/anthonylee">Anthony Lee</a>, <a href="http://www.bristol.ac.uk/maths/people/feng-yu/index.html">Feng Yu</a>, <a href="https://people.maths.bris.ac.uk/~tk18582/">Tobias Kley</a>, <a href="https://mfasiolo.github.io/">Matteo Fasiolo</a></div>
+  <div class="copyright">© 2024 <a href="https://awllee.github.io/">Anthony Lee</a>, <a href="https://research-information.bris.ac.uk/en/persons/feng-yu">Feng Yu</a>, Tobias Kley, <a href="https://mfasiolo.github.io/">Matteo Fasiolo</a></div>
   
   </footer>
   </article>

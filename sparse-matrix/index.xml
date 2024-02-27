@@ -5,6 +5,7 @@
     <link>https://awllee.github.io/sc1/sparse-matrix/</link>
     <description>Recent content in Sparse matrix computations on SC1</description>
     <generator>Hugo -- gohugo.io</generator>
-    <language>en-us</language><atom:link href="https://awllee.github.io/sc1/sparse-matrix/index.xml" rel="self" type="application/rss+xml" />
+    <language>en-us</language>
+    <atom:link href="https://awllee.github.io/sc1/sparse-matrix/index.xml" rel="self" type="application/rss+xml" />
   </channel>
 </rss>

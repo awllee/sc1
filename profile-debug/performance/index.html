@@ -174,12 +174,12 @@ a2 &lt;- rep(0,10000)
 library(microbenchmark)
 microbenchmark(add.one(a1))</code></pre>
 <pre><code>## Unit: microseconds
-##         expr   min    lq    mean median     uq     max neval
-##  add.one(a1) 344.4 361.3 566.654 365.85 368.75 20559.3   100</code></pre>
+##         expr     min       lq     mean   median      uq      max neval
+##  add.one(a1) 274.722 291.5535 440.2578 293.0215 295.295 15050.79   100</code></pre>
 <pre class="r"><code>microbenchmark(add.one(a2))</code></pre>
 <pre><code>## Unit: microseconds
-##         expr   min    lq   mean median     uq   max neval
-##  add.one(a2) 671.8 686.8 696.19 689.45 700.95 746.8   100</code></pre>
+##         expr     min      lq     mean  median      uq     max neval
+##  add.one(a2) 550.236 553.647 562.3838 555.115 565.008 602.613   100</code></pre>
 <p>On the other hand, small changes in the code (that would not affect performance in languages that pass by reference) can cause many copies of the array to made.</p>
 <pre class="r"><code>add.one.bad &lt;- function(x) {
   y &lt;- x
@@ -204,16 +204,16 @@ add.one.slow &lt;- function(x) {
 
 system.time(add.one.bad(a1))</code></pre>
 <pre><code>##    user  system elapsed 
-##   0.043   0.024   0.067</code></pre>
+##   0.020   0.020   0.039</code></pre>
 <pre class="r"><code>system.time(add.one.bad(a2))</code></pre>
 <pre><code>##    user  system elapsed 
-##   0.158   0.028   0.186</code></pre>
+##   0.069   0.021   0.090</code></pre>
 <pre class="r"><code>system.time(add.one.slow(a1))</code></pre>
 <pre><code>##    user  system elapsed 
-##   0.052   0.020   0.073</code></pre>
+##   0.026   0.019   0.046</code></pre>
 <pre class="r"><code>system.time(add.one.slow(a2))</code></pre>
 <pre><code>##    user  system elapsed 
-##   0.257   0.024   0.280</code></pre>
+##   0.152   0.016   0.169</code></pre>
 </div>
 <div id="column-major-storage" class="section level2">
 <h2>Column-major storage</h2>
@@ -240,10 +240,10 @@ fill.by.row &lt;- function(n) {
 <pre class="r"><code>n &lt;- 10000
 system.time(Y1 &lt;- fill.by.column(n))</code></pre>
 <pre><code>##    user  system elapsed 
-##   0.348   0.296   0.643</code></pre>
+##   0.256   0.208   0.463</code></pre>
 <pre class="r"><code>system.time(Y2 &lt;- fill.by.row(n))</code></pre>
 <pre><code>##    user  system elapsed 
-##   0.828   0.315   1.143</code></pre>
+##   0.405   0.237   0.641</code></pre>
 <p>Filling the matrix column by column is faster because reading and writing memory in contiguous blocks is faster than reading and writing memory locations that are far apart.</p>
 </div>
 <div id="example-logistic-regression" class="section level2">
@@ -323,22 +323,22 @@ X &lt;- matrix(rnorm(n*(d-1)), n, d-1)
 X &lt;- cbind(1, X)
 theta.true &lt;- rnorm(d)
 theta.true</code></pre>
-<pre><code>##  [1]  0.38089936 -1.44004198  1.56249292 -0.81366414  1.22862804 -0.51794611
-##  [7]  0.22351675 -0.08295774 -0.70567505  0.88577802</code></pre>
+<pre><code>##  [1]  0.7730284516  1.5010194004  0.0007482869 -1.3841930815 -0.7413789861
+##  [6]  0.3331858781 -0.4203261857  0.3719883660  1.1242558766  0.0992382317</code></pre>
 <pre class="r"><code>y &lt;- generate.y(X, theta.true)
 
 system.time(mle &lt;- maximize.ell(ell, score, X, y, rep(0,d)))</code></pre>
 <pre><code>##    user  system elapsed 
-##   0.124   0.060   0.092</code></pre>
+##   0.136   0.271   0.102</code></pre>
 <pre class="r"><code>mle</code></pre>
-<pre><code>##  [1]  0.36020737 -1.47781387  1.58118459 -0.87303363  1.25965603 -0.51523820
-##  [7]  0.20372511 -0.07667871 -0.67902056  0.86588396</code></pre>
+<pre><code>##  [1]  0.76257618  1.47940575 -0.02365275 -1.36797772 -0.76945086  0.32827624
+##  [7] -0.39184201  0.38196698  1.16350937  0.09149555</code></pre>
 <pre class="r"><code>system.time(mle &lt;- maximize.ell(ell.slow, score.slow, X, y, rep(0,d)))</code></pre>
 <pre><code>##    user  system elapsed 
-##   1.939   0.016   1.904</code></pre>
+##   2.988   0.140   2.945</code></pre>
 <pre class="r"><code>mle</code></pre>
-<pre><code>##  [1]  0.36020736 -1.47781389  1.58118460 -0.87303360  1.25965597 -0.51523815
-##  [7]  0.20372508 -0.07667877 -0.67902056  0.86588395</code></pre>
+<pre><code>##  [1]  0.76257610  1.47940574 -0.02365278 -1.36797768 -0.76945084  0.32827624
+##  [7] -0.39184200  0.38196701  1.16350930  0.09149553</code></pre>
 </div>
 <div id="example-matrix-vector-multiplications" class="section level2">
 <h2>Example: matrix vector multiplications</h2>
@@ -360,12 +360,12 @@ foo &lt;- function(A, B) {
 
 system.time(C &lt;- A%*%B)</code></pre>
 <pre><code>##    user  system elapsed 
-##   0.032   0.017   0.026</code></pre>
+##   0.103   0.016   0.030</code></pre>
 <pre class="r"><code>system.time(C.alt &lt;- foo(A, B))</code></pre>
 <pre><code>##    user  system elapsed 
-##   0.992   0.278   0.637</code></pre>
+##   0.963   1.110   0.519</code></pre>
 <pre class="r"><code>norm(C-C.alt)</code></pre>
-<pre><code>## [1] 5.202822e-11</code></pre>
+<pre><code>## [1] 6.39271e-11</code></pre>
 <p>Clearly, the matrix-matrix multiplication is more computationally efficient. This is because the implementation of matrix multiplication is <a href="https://en.wikipedia.org/wiki/Matrix_multiplication_algorithm">highly optimized</a> and is not implemented by performing several matrix-vector multiplications.</p>
 <p>In some applications one might need to perform several matrix-vector multiplications with the same vector. For performance, it is better to combine the vectors in a matrix. However, this can sometimes also lead to code that is harder to understand, extend and maintain. So it is usually a good idea to use profiling to ensure that any performance improvements that come at the cost of easily understandable and maintainable code are appropriately justified.</p>
 </div>
@@ -453,7 +453,7 @@ alt="Web Analytics"></a></div></noscript>
 
   
   <hr>
-  <div class="copyright">© 2020 <a href="https://sites.google.com/view/anthonylee">Anthony Lee</a>, <a href="http://www.bristol.ac.uk/maths/people/feng-yu/index.html">Feng Yu</a>, <a href="https://people.maths.bris.ac.uk/~tk18582/">Tobias Kley</a>, <a href="https://mfasiolo.github.io/">Matteo Fasiolo</a></div>
+  <div class="copyright">© 2024 <a href="https://awllee.github.io/">Anthony Lee</a>, <a href="https://research-information.bris.ac.uk/en/persons/feng-yu">Feng Yu</a>, Tobias Kley, <a href="https://mfasiolo.github.io/">Matteo Fasiolo</a></div>
   
   </footer>
   </article>

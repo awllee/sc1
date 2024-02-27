@@ -161,10 +161,10 @@ Vectorisation is &amp;hellip;">
 <pre class="r"><code>x &lt;- 1:1e6 #runif(1e+06, min=-1, max=1)
 system.time(fsum1(x))</code></pre>
 <pre><code>##    user  system elapsed 
-##   0.108   0.000   0.108</code></pre>
+##   0.081   0.000   0.081</code></pre>
 <pre class="r"><code>system.time(fsum2(x))</code></pre>
 <pre><code>##    user  system elapsed 
-##   0.017   0.004   0.021</code></pre>
+##   0.013   0.004   0.016</code></pre>
 <p>As can been seen in this example, vectorised code is not only faster but also more elegant.</p>
 </div>
 <div id="matrix-operations-higher-dimensional-vectorisation" class="section level2">
@@ -192,10 +192,10 @@ hist(num_heads, breaks=50)</code></pre>
 <pre class="r"><code>n &lt;- 10000
 system.time(coin_toss1(n))</code></pre>
 <pre><code>##    user  system elapsed 
-##   7.527   0.012   7.541</code></pre>
+##   5.795   0.024   5.820</code></pre>
 <pre class="r"><code>system.time(coin_toss2(n))</code></pre>
 <pre><code>##    user  system elapsed 
-##   0.039   0.008   0.046</code></pre>
+##   0.024   0.008   0.032</code></pre>
 <p>Generally speaking, more layers of loops result in higher speedup if the code is properly vectorised. Having 3 layers of loops or higher should be avoided in an interpreted language such as <code>R</code>.</p>
 </div>
 
@@ -277,7 +277,7 @@ alt="Web Analytics"></a></div></noscript>
 
   
   <hr>
-  <div class="copyright">© 2020 <a href="https://sites.google.com/view/anthonylee">Anthony Lee</a>, <a href="http://www.bristol.ac.uk/maths/people/feng-yu/index.html">Feng Yu</a>, <a href="https://people.maths.bris.ac.uk/~tk18582/">Tobias Kley</a>, <a href="https://mfasiolo.github.io/">Matteo Fasiolo</a></div>
+  <div class="copyright">© 2024 <a href="https://awllee.github.io/">Anthony Lee</a>, <a href="https://research-information.bris.ac.uk/en/persons/feng-yu">Feng Yu</a>, Tobias Kley, <a href="https://mfasiolo.github.io/">Matteo Fasiolo</a></div>
   
   </footer>
   </article>

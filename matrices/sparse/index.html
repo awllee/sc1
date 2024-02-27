@@ -153,7 +153,7 @@ C &lt;- Matrix(rnorm(4), nrow=2, ncol=2)
 c(rankMatrix(A), rankMatrix(B), rankMatrix(B, tol=1e-7))</code></pre>
 <pre><code>## [1] 1 2 1</code></pre>
 <pre class="r"><code>c(rcond(A), rcond(B), rcond(C), rcond(C/1e5))</code></pre>
-<pre><code>## [1] 0.000000e+00 2.028571e-09 4.300090e-01 4.300090e-01</code></pre>
+<pre><code>## [1] 0.000000e+00 2.882359e-09 6.976583e-01 6.976583e-01</code></pre>
 <p>A sparse matrix is one where most entries will be 0. It is inefficient to store all these 0’s in memory.</p>
 <pre class="r"><code>set.seed(7)
 nrows &lt;- 1000
@@ -197,7 +197,7 @@ m1[1:2, 1:10]</code></pre>
 object.size(m3)</code></pre>
 <pre><code>## 245856 bytes</code></pre>
 <pre class="r"><code>m3[1:2, 1:10]</code></pre>
-<pre><code>## 2 x 10 sparse Matrix of class &quot;dgTMatrix&quot;
+<pre><code>## 2 x 10 sparse Matrix of class &quot;dgRMatrix&quot;
 ##                         
 ## [1,] 2 . . . . . . . . .
 ## [2,] . . . . . . . . . .</code></pre>
@@ -255,7 +255,7 @@ pkg &lt;- &#39;igraph&#39;
 pkgDep(pkg, suggests=FALSE, enhances=FALSE, includeBasePkgs=TRUE)</code></pre>
 <pre><code>##  [1] &quot;igraph&quot;    &quot;methods&quot;   &quot;cli&quot;       &quot;graphics&quot;  &quot;grDevices&quot; &quot;lifecycle&quot;
 ##  [7] &quot;magrittr&quot;  &quot;Matrix&quot;    &quot;pkgconfig&quot; &quot;rlang&quot;     &quot;stats&quot;     &quot;utils&quot;    
-## [13] &quot;cpp11&quot;     &quot;glue&quot;      &quot;grid&quot;      &quot;lattice&quot;</code></pre>
+## [13] &quot;vctrs&quot;     &quot;cpp11&quot;     &quot;glue&quot;      &quot;grid&quot;      &quot;lattice&quot;</code></pre>
 <pre class="r"><code>plot(g1, vertex.size=20)</code></pre>
 <pre><code>## This graph was created by an old(er) igraph version.
 ##   Call upgrade_graph() on it to use with the current igraph version
@@ -384,7 +384,7 @@ compute_pagerank(m_pkg1)</code></pre>
 A1 &lt;- bandSparse(n, k=c(0,1), diag=list(rep(1,n), rep(-0.2, n)), symm=T)
 A1inv &lt;- solve(A1)
 c(object.size(A1), object.size(A1inv))</code></pre>
-<pre><code>## [1]  11712 121904</code></pre>
+<pre><code>## [1] 11904 62728</code></pre>
 <pre class="r"><code>c(sum(abs(A1) &lt; 1e-100), sum(abs(A1inv) &lt; 1e-100))</code></pre>
 <pre><code>## [1] 9702    0</code></pre>
 <p>Instead, just as in the case of dense matrix, one should try to use <code>solve(A, b)</code> whenever possible.</p>
@@ -468,7 +468,7 @@ alt="Web Analytics"></a></div></noscript>
 
   
   <hr>
-  <div class="copyright">© 2020 <a href="https://sites.google.com/view/anthonylee">Anthony Lee</a>, <a href="http://www.bristol.ac.uk/maths/people/feng-yu/index.html">Feng Yu</a>, <a href="https://people.maths.bris.ac.uk/~tk18582/">Tobias Kley</a>, <a href="https://mfasiolo.github.io/">Matteo Fasiolo</a></div>
+  <div class="copyright">© 2024 <a href="https://awllee.github.io/">Anthony Lee</a>, <a href="https://research-information.bris.ac.uk/en/persons/feng-yu">Feng Yu</a>, Tobias Kley, <a href="https://mfasiolo.github.io/">Matteo Fasiolo</a></div>
   
   </footer>
   </article>
